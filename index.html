@@ -34,7 +34,12 @@
         }
 
         .cell.selected {
-            outline: 2px solid #f00;
+            outline: 2px solid #333;
+            background-color: #ffffcc;
+        }
+
+        .cell.highlight {
+            background-color: #e0f7ff;
         }
 
         .cell .num {
@@ -48,8 +53,17 @@
             background-color: #000;
         }
 
-        .selected {
-            outline: 2px solid blue;
+
+        /* Clue list styling */
+        #clues ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .clue-num {
+            font-weight: bold;
+            margin-right: 0.3em;
         }
 
         #clues {
