@@ -1,4 +1,5 @@
 // Crossword Viewer implementation
+(function(){
 
 console.log('Crossword Viewer: Starting');
 
@@ -380,3 +381,10 @@ buildGrid(puzzleData);
 buildClues(puzzleData.cluesAcross, puzzleData.cluesDown);
 
 console.log('Crossword Viewer: Ready');
+
+// Expose test helpers for console usage
+window.testGridIsBuilt = testGridIsBuilt;
+window.testCluesPresent = testCluesPresent;
+window.logGridState = logGridState;
+
+})();
