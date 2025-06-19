@@ -114,6 +114,30 @@
             flex: 1;
         }
 
+        #mobile-input {
+            position: absolute;
+            opacity: 0;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            border: none;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                flex-direction: column;
+                margin: 1rem;
+                align-items: center;
+            }
+            #clues {
+                flex-direction: column;
+                max-width: none;
+            }
+            #grid {
+                margin-bottom: 1rem;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -126,6 +150,7 @@
             <button id="check-current-down">Check Down</button>
         </div>
         <div id="grid"></div>
+        <input id="mobile-input" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     </div>
 
     <div id="clues">
