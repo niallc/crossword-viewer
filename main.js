@@ -11,6 +11,7 @@ let highlightedCells = [];
 let currentDirection = 'across';
 let directionButton = null;
 let checkButton = null;
+let mobileInput = null;
 
 function parsePuzzleData(xmlString) {
   const parser = new DOMParser();
@@ -75,6 +76,7 @@ function createCellElement(cellData, x, y) {
       cell.appendChild(num);
     }
     cell.addEventListener('click', () => selectCell(cell));
+    cell.addEventListener('touchstart', () => selectCell(cell));
   }
 
   return cell;
@@ -133,6 +135,10 @@ function selectCell(cell) {
   selectedCell = cell;
   selectedCell.classList.add('selected');
   highlightWord(selectedCell);
+  if (mobileInput) {
+    mobileInput.value = '';
+    mobileInput.focus();
+  }
 }
 
 function testGridIsBuilt() {
@@ -321,6 +327,30 @@ if (checkAcrossBtn) {
 const checkDownBtn = document.getElementById('check-current-down');
 if (checkDownBtn) {
     checkDownBtn.addEventListener('click', () => checkCurrentAnswer('down'));
+}
+
+mobileInput = document.getElementById('mobile-input');
+if (mobileInput) {
+    mobileInput.addEventListener('input', (e) => {
+        const val = mobileInput.value;
+        if (!val) return;
+        const letter = val.slice(-1);
+        mobileInput.value = '';
+        if (/^[a-zA-Z]$/.test(letter) && selectedCell) {
+            selectedCell.style.color = '';
+            selectedCell.textContent = letter.toUpperCase();
+            autoAdvance();
+        }
+    });
+    mobileInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace') {
+            e.preventDefault();
+            handleBackspace();
+        } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+            e.preventDefault();
+            moveSelection(e.key);
+        }
+    });
 }
 
 document.addEventListener('keydown', (e) => {
