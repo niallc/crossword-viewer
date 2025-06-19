@@ -150,6 +150,20 @@ function logGridState() {
     console.log('Grid letters:', letters);
 }
 
+const puzzleData = parsePuzzleData(CrosswordPuzzleData);
+
+document.addEventListener('keydown', (e) => {
+    if (!selectedCell) return;
+    const key = e.key;
+    if (/^[a-zA-Z]$/.test(key)) {
+        selectedCell.textContent = key.toUpperCase();
+    } else if (key === 'Backspace') {
+        selectedCell.textContent = '';
+    } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+        moveSelection(key);
+    }
+});
+
 buildGrid(puzzleData);
 
 buildClues(puzzleData.cluesAcross, puzzleData.cluesDown);
