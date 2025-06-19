@@ -70,3 +70,8 @@ The following simple test functions may be useful:
 ```js
 testGridIsBuilt(); // should return true if grid is correctly built
 testCluesPresent(); // should return true if clues are present
+logGridState();    // print current grid contents
+```
+
+Run these commands in the browser console after loading `index.html` to verify that the puzzle loads correctly.
+

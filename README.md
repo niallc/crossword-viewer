@@ -32,3 +32,11 @@ The following helper functions can be run from the browser console:
 - `testGridIsBuilt()` — returns true if the grid has been created
 - `testCluesPresent()` — returns true if clues are displayed
 - `logGridState()` — logs current cell contents
+
+## Puzzle Data
+
+The sample puzzle lives in `Social_Deduction.js`. Replace the XML string in that file to view a different crossword.
+
+## Developer Notes
+
+Further guidance on coding style and useful helper functions can be found in `AGENTS.md`.
