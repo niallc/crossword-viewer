@@ -64,9 +64,13 @@ function createCellElement(cellData, x, y) {
 
   if (cellData.type === 'block') {
     cell.classList.add('block');
-  }
-
-  if (!cell.classList.contains('block')) {
+  } else {
+    if (cellData.number) {
+      const num = document.createElement('div');
+      num.classList.add('num');
+      num.textContent = cellData.number;
+      cell.appendChild(num);
+    }
     cell.addEventListener('click', () => selectCell(cell));
   }
 
