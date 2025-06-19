@@ -72,6 +72,9 @@ testGridIsBuilt(); // should return true if grid is correctly built
 testCluesPresent(); // should return true if clues are present
 ```
 
+These functions rely on the browser DOM. They will not run inside the
+container's Node environment. Use them from a browser console instead.
+
 ## Working with this Repository
 
 - The puzzle data file `Social_Deduction.js` is one very long line (about 16k
@@ -79,8 +82,10 @@ testCluesPresent(); // should return true if clues are present
   overflowing the console. `wc -l` will report `0` because there are no newline
   characters.
 - There is no build system or dependency installation. Open `index.html` in a
-  browser to run the viewer and access helper functions such as
-  `testGridIsBuilt()` and `testCluesPresent()` from the developer console.
+  browser to run the viewer. The helper functions
+  `testGridIsBuilt()` and `testCluesPresent()` are available from the
+  developer console, but they require a browser environment and will not run
+  in Node.
 
 ## Notes for Future Contributors
 
