@@ -83,6 +83,10 @@
             margin-bottom: 1em; /* spacing between clues */
         }
 
+        #clues li.highlight {
+            background-color: #fff4a3;
+        }
+
         #controls {
             display: flex;
             flex-direction: column;

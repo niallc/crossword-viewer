@@ -107,6 +107,7 @@ function buildClues(across, down) {
 
   across.forEach(cl => {
     const li = document.createElement('li');
+    li.dataset.number = cl.number;
     const num = document.createElement('span');
     num.className = 'clue-num';
     num.textContent = cl.number;
@@ -117,6 +118,7 @@ function buildClues(across, down) {
 
   down.forEach(cl => {
     const li = document.createElement('li');
+    li.dataset.number = cl.number;
     const num = document.createElement('span');
     num.className = 'clue-num';
     num.textContent = cl.number;
@@ -246,6 +248,19 @@ function highlightWord(cell) {
         el.classList.add('highlight');
         highlightedCells.push(el);
     });
+
+    // highlight matching clue
+    document.querySelectorAll('#clues li.highlight').forEach(li => li.classList.remove('highlight'));
+    const clueNumber = cells.length > 0 ? cells[0].data.number : null;
+    if (clueNumber) {
+        const selector = currentDirection === 'across'
+            ? `#clues-across li[data-number="${clueNumber}"]`
+            : `#clues-down li[data-number="${clueNumber}"]`;
+        const clueEl = document.querySelector(selector);
+        if (clueEl) {
+            clueEl.classList.add('highlight');
+        }
+    }
 }
 
 function checkCurrentAnswer(direction) {
