@@ -70,3 +70,14 @@ The following simple test functions may be useful:
 ```js
 testGridIsBuilt(); // should return true if grid is correctly built
 testCluesPresent(); // should return true if clues are present
+```
+
+## Working with this Repository
+
+- The puzzle data file `Social_Deduction.js` is one very long line (about 16k
+  characters). Inspect it using `head -c`/`tail -c` or tools like `dd` to avoid
+  overflowing the console. `wc -l` will report `0` because there are no newline
+  characters.
+- There is no build system or dependency installation. Open `index.html` in a
+  browser to run the viewer and access helper functions such as
+  `testGridIsBuilt()` and `testCluesPresent()` from the developer console.
