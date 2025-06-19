@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crossword Viewer (Modernized)</title>
+    <style>
+        /* Basic styles for skeleton */
+        body {
+            font-family: sans-serif;
+            margin: 2rem;
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(15, 30px);
+            grid-template-rows: repeat(15, 30px);
+            gap: 2px;
+            border: 1px solid #000;
+        }
+
+        .cell {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 16px;
+            line-height: 30px;
+            cursor: pointer;
+        }
+
+        .block {
+            background-color: #000;
+        }
+
+        #clues {
+            max-width: 400px;
+        }
+
+        .clue-group {
+            margin-bottom: 1em;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="grid"></div>
+
+    <div id="clues">
+        <div class="clue-group" id="clues-across">
+            <h3>Across</h3>
+            <ul></ul>
+        </div>
+        <div class="clue-group" id="clues-down">
+            <h3>Down</h3>
+            <ul></ul>
+        </div>
+    </div>
+
+    <script src="Social_Deduction.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
