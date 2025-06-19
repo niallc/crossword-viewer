@@ -132,6 +132,15 @@ function selectCell(cell) {
   if (cell.classList.contains('block')) {
     return;
   }
+
+  // if clicking the currently selected cell, toggle direction
+  if (selectedCell === cell) {
+    currentDirection = currentDirection === 'across' ? 'down' : 'across';
+    highlightWord(cell);
+    updateDirectionButton();
+    return;
+  }
+
   if (selectedCell) {
     selectedCell.classList.remove('selected');
   }
