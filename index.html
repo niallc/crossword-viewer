@@ -12,6 +12,7 @@
             display: flex;
             flex-direction: row;
             gap: 2rem;
+            background-color: #fff8e8; /* pastel background */
         }
 
         #grid {
@@ -49,6 +50,19 @@
             font-size: 10px;
         }
 
+        /* Button styling */
+        button {
+            background-color: #e6eaff;
+            border: 1px solid #888;
+            border-radius: 4px;
+            padding: 0.4em 0.8em;
+            margin-right: 0.5em;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #d4d8ff;
+        }
+
         .block {
             background-color: #000;
         }
@@ -64,6 +78,9 @@
         .clue-num {
             font-weight: bold;
             margin-right: 0.3em;
+            display: inline-block;
+            width: 2em;
+            text-align: right;
         }
 
         #clues {
@@ -101,3 +118,4 @@
     <script src="main.js"></script>
 </body>
 </html>
+
