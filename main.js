@@ -380,6 +380,10 @@ if (mobileInput) {
 
 document.addEventListener('keydown', (e) => {
     if (!selectedCell) return;
+    if (mobileInput && document.activeElement === mobileInput) {
+        // Prevent double character entry when the hidden mobile input is focused
+        return;
+    }
     const key = e.key;
     if (/^[a-zA-Z]$/.test(key)) {
         selectedCell.style.color = '';

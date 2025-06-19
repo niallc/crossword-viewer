@@ -81,3 +81,12 @@ testCluesPresent(); // should return true if clues are present
 - There is no build system or dependency installation. Open `index.html` in a
   browser to run the viewer and access helper functions such as
   `testGridIsBuilt()` and `testCluesPresent()` from the developer console.
+
+## Notes for Future Contributors
+
+- Mobile text entry uses a hidden `<input>` element (`#mobile-input`).
+  Characters typed there trigger its `input` handler. A document-level `keydown`
+  listener also handles desktop keyboard events. If that listener fires while
+  the hidden input is focused, letters may be added twice on some mobile
+  browsers. Skip handling in the document listener when
+  `document.activeElement === mobileInput` to prevent duplicate entry.
