@@ -1,136 +1,133 @@
-// Entry point for crossword viewer
+// Crossword Viewer implementation
 
 console.log('Crossword Viewer: Starting');
 
-if (typeof CrosswordPuzzleData !== 'undefined') {
-    console.log('CrosswordPuzzleData loaded, length =', CrosswordPuzzleData.length);
-} else {
-    console.error('ERROR: CrosswordPuzzleData not found.');
+if (typeof CrosswordPuzzleData === 'undefined') {
+  console.error('ERROR: CrosswordPuzzleData not found.');
 }
 
 let selectedCell = null;
-let gridSize = {width: 0, height: 0};
 
 function parsePuzzleData(xmlString) {
-    console.log('Parsing puzzle data...');
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(xmlString, 'text/xml');
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlString, 'text/xml');
 
-    const gridEl = xml.querySelector('grid');
-    gridSize.width = parseInt(gridEl.getAttribute('width'), 10);
-    gridSize.height = parseInt(gridEl.getAttribute('height'), 10);
+  const gridNode = doc.querySelector('grid');
+  const width = parseInt(gridNode.getAttribute('width'), 10);
+  const height = parseInt(gridNode.getAttribute('height'), 10);
+  const grid = Array.from({ length: height }, () => Array(width).fill(null));
 
-    const grid = Array.from({length: gridSize.height}, () =>
-        Array.from({length: gridSize.width}, () => ({letter: '', number: null, isBlock: false}))
-    );
+  doc.querySelectorAll('cell').forEach(cell => {
+    const x = parseInt(cell.getAttribute('x'), 10) - 1;
+    const y = parseInt(cell.getAttribute('y'), 10) - 1;
+    const type = cell.getAttribute('type');
+    if (type === 'block') {
+      grid[y][x] = { type: 'block' };
+    } else {
+      grid[y][x] = {
+        type: 'letter',
+        solution: cell.getAttribute('solution') || '',
+        number: cell.getAttribute('number') || ''
+      };
+    }
+  });
 
-    gridEl.querySelectorAll('cell').forEach(cell => {
-        const x = parseInt(cell.getAttribute('x'), 10) - 1;
-        const y = parseInt(cell.getAttribute('y'), 10) - 1;
-        const isBlock = cell.getAttribute('type') === 'block';
-        const letter = cell.getAttribute('solution') || '';
-        const number = cell.getAttribute('number');
-        grid[y][x] = {
-            isBlock,
-            letter,
-            number: number ? parseInt(number, 10) : null
-        };
+  const clueSections = doc.querySelectorAll('clues[ordering="normal"]');
+  const cluesAcross = [];
+  const cluesDown = [];
+  if (clueSections[0]) {
+    clueSections[0].querySelectorAll('clue').forEach(cl => {
+      cluesAcross.push({
+        number: cl.getAttribute('number'),
+        text: cl.textContent
+      });
     });
-
-    const clueSections = xml.querySelectorAll('clues[ordering]');
-    const cluesAcross = [];
-    const cluesDown = [];
-    clueSections.forEach((section, idx) => {
-        const target = idx === 0 ? cluesAcross : cluesDown;
-        section.querySelectorAll('clue').forEach(clueEl => {
-            target.push({
-                number: clueEl.getAttribute('number'),
-                text: clueEl.textContent
-            });
-        });
+  }
+  if (clueSections[1]) {
+    clueSections[1].querySelectorAll('clue').forEach(cl => {
+      cluesDown.push({
+        number: cl.getAttribute('number'),
+        text: cl.textContent
+      });
     });
+  }
 
-    console.log('Parsed', gridSize.width, 'x', gridSize.height, 'grid');
-    console.log('Across clues:', cluesAcross.length, 'Down clues:', cluesDown.length);
-
-    return {grid, cluesAcross, cluesDown};
+  return { width, height, grid, cluesAcross, cluesDown };
 }
 
 function createCellElement(cellData, x, y) {
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    cell.dataset.x = x;
-    cell.dataset.y = y;
-    if (cellData.isBlock) {
-        cell.classList.add('block');
-    } else if (cellData.number) {
-        const num = document.createElement('span');
-        num.classList.add('num');
-        num.textContent = cellData.number;
-        num.style.fontSize = '10px';
-        num.style.position = 'absolute';
-        num.style.left = '2px';
-        num.style.top = '0';
-        cell.appendChild(num);
-    }
+  const cell = document.createElement('div');
+  cell.classList.add('cell');
+  cell.dataset.x = x;
+  cell.dataset.y = y;
+
+  if (cellData.type === 'block') {
+    cell.classList.add('block');
+  }
+
+  if (!cell.classList.contains('block')) {
     cell.addEventListener('click', () => selectCell(cell));
-    return cell;
+  }
+
+  return cell;
 }
 
-function buildGrid(gridData) {
-    console.log('Building grid...');
-    const gridEl = document.getElementById('grid');
-    gridEl.style.gridTemplateColumns = `repeat(${gridSize.width}, 30px)`;
-    gridEl.style.gridTemplateRows = `repeat(${gridSize.height}, 30px)`;
-    gridEl.innerHTML = '';
-    gridData.forEach((row, y) => {
-        row.forEach((cellData, x) => {
-            const cellEl = createCellElement(cellData, x, y);
-            gridEl.appendChild(cellEl);
-        });
+function buildGrid(data) {
+  console.log('Building grid...');
+  const gridEl = document.getElementById('grid');
+  gridEl.innerHTML = '';
+  gridEl.style.gridTemplateColumns = `repeat(${data.width}, 30px)`;
+  gridEl.style.gridTemplateRows = `repeat(${data.height}, 30px)`;
+
+  data.grid.forEach((row, y) => {
+    row.forEach((cellData, x) => {
+      const cellEl = createCellElement(cellData, x, y);
+      gridEl.appendChild(cellEl);
     });
+  });
 }
 
 function buildClues(across, down) {
-    console.log('Building clues...');
-    const acrossEl = document.querySelector('#clues-across ul');
-    const downEl = document.querySelector('#clues-down ul');
-    acrossEl.innerHTML = '';
-    downEl.innerHTML = '';
-    across.forEach(clue => {
-        const li = document.createElement('li');
-        li.textContent = `${clue.number}. ${clue.text}`;
-        acrossEl.appendChild(li);
-    });
-    down.forEach(clue => {
-        const li = document.createElement('li');
-        li.textContent = `${clue.number}. ${clue.text}`;
-        downEl.appendChild(li);
-    });
+  console.log('Building clues...');
+  const acrossEl = document.querySelector('#clues-across ul');
+  const downEl = document.querySelector('#clues-down ul');
+  acrossEl.innerHTML = '';
+  downEl.innerHTML = '';
+
+  across.forEach(cl => {
+    const li = document.createElement('li');
+    li.textContent = `${cl.number}. ${cl.text}`;
+    acrossEl.appendChild(li);
+  });
+
+  down.forEach(cl => {
+    const li = document.createElement('li');
+    li.textContent = `${cl.number}. ${cl.text}`;
+    downEl.appendChild(li);
+  });
 }
 
 function selectCell(cell) {
-    if (selectedCell) {
-        selectedCell.classList.remove('selected');
-    }
-    selectedCell = cell;
-    if (selectedCell) {
-        selectedCell.classList.add('selected');
-    }
+  if (cell.classList.contains('block')) {
+    return;
+  }
+  if (selectedCell) {
+    selectedCell.classList.remove('selected');
+  }
+  selectedCell = cell;
+  selectedCell.classList.add('selected');
 }
 
-document.addEventListener('keydown', (e) => {
-    if (!selectedCell) return;
-    const key = e.key;
-    if (/^[a-zA-Z]$/.test(key)) {
-        selectedCell.textContent = key.toUpperCase();
-    } else if (key === 'Backspace') {
-        selectedCell.textContent = '';
-    } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
-        moveSelection(key);
-    }
-});
+function testGridIsBuilt() {
+  return document.querySelectorAll('#grid .cell').length > 0;
+}
 
+function testCluesPresent() {
+  return (
+    document.querySelectorAll('#clues-across li').length > 0 &&
+    document.querySelectorAll('#clues-down li').length > 0
+  );
+}
 function moveSelection(direction) {
     if (!selectedCell) return;
     const x = parseInt(selectedCell.dataset.x, 10);
@@ -153,19 +150,8 @@ function logGridState() {
     console.log('Grid letters:', letters);
 }
 
-function testGridIsBuilt() {
-    const gridEl = document.getElementById('grid');
-    return gridEl.children.length === gridSize.width * gridSize.height;
-}
+buildGrid(puzzleData);
 
-function testCluesPresent() {
-    const across = document.querySelectorAll('#clues-across li').length;
-    const down = document.querySelectorAll('#clues-down li').length;
-    return across > 0 && down > 0;
-}
-
-const puzzleData = parsePuzzleData(CrosswordPuzzleData);
-buildGrid(puzzleData.grid);
 buildClues(puzzleData.cluesAcross, puzzleData.cluesDown);
 
 console.log('Crossword Viewer: Ready');
