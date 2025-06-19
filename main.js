@@ -423,6 +423,21 @@ buildGrid(puzzleData);
 
 buildClues(puzzleData.cluesAcross, puzzleData.cluesDown);
 
+// Debug output to trace focus and pointer events on mobile
+if (mobileInput) {
+    mobileInput.addEventListener('focus', () =>
+        console.log('mobile-input focus', Date.now()));
+    mobileInput.addEventListener('blur', () =>
+        console.log('mobile-input blur', Date.now()));
+}
+
+document.querySelectorAll('#grid .cell').forEach(cell => {
+    ['pointerdown', 'pointerup', 'click'].forEach(ev =>
+        cell.addEventListener(ev, () =>
+            console.log(ev, cell.dataset.x, cell.dataset.y,
+                'active:', document.activeElement.id)));
+});
+
 console.log('Crossword Viewer: Ready');
 
 // Expose test helpers for console usage
