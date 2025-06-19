@@ -272,7 +272,7 @@ function checkAnswers() {
         checkButton = document.getElementById('check-answer');
     }
     if (checkButton) {
-        checkButton.textContent = `Check (${wrong} wrong)`;
+        checkButton.textContent = `Num Wrong: ${wrong}`;
         if (wrong === 0) {
             checkButton.style.backgroundColor = 'green';
             checkButton.style.color = 'white';

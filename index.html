@@ -93,14 +93,25 @@
         #controls {
             display: flex;
             flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #button-container {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 0.5em;
+            margin-bottom: 1em;
         }
 
         #clues {
-            max-width: 400px;
+            display: flex;
+            gap: 2rem;
+            max-width: 600px;
         }
 
         .clue-group {
             margin-bottom: 1em;
+            flex: 1;
         }
 
     </style>
@@ -108,10 +119,12 @@
 <body>
 
     <div id="controls">
-        <button id="toggle-direction">Mode: Across</button>
-        <button id="check-answer">Check Answers</button>
-        <button id="check-current-across">Check Across</button>
-        <button id="check-current-down">Check Down</button>
+        <div id="button-container">
+            <button id="toggle-direction">Mode: Across</button>
+            <button id="check-answer">Num Squares Wrong</button>
+            <button id="check-current-across">Check Across</button>
+            <button id="check-current-down">Check Down</button>
+        </div>
         <div id="grid"></div>
     </div>
 
