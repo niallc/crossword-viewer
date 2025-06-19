@@ -128,10 +128,30 @@ function testCluesPresent() {
     document.querySelectorAll('#clues-down li').length > 0
   );
 }
+function moveSelection(direction) {
+    if (!selectedCell) return;
+    const x = parseInt(selectedCell.dataset.x, 10);
+    const y = parseInt(selectedCell.dataset.y, 10);
+    let nx = x, ny = y;
+    if (direction === 'ArrowUp') ny -= 1;
+    if (direction === 'ArrowDown') ny += 1;
+    if (direction === 'ArrowLeft') nx -= 1;
+    if (direction === 'ArrowRight') nx += 1;
+    const next = document.querySelector(`.cell[data-x="${nx}"][data-y="${ny}"]`);
+    if (next && !next.classList.contains('block')) {
+        selectCell(next);
+    }
+}
 
-const puzzleData = parsePuzzleData(CrosswordPuzzleData);
+function logGridState() {
+    const gridEl = document.getElementById('grid');
+    const cells = gridEl.querySelectorAll('.cell');
+    const letters = Array.from(cells).map(c => c.textContent || ' ').join('');
+    console.log('Grid letters:', letters);
+}
 
 buildGrid(puzzleData);
+
 buildClues(puzzleData.cluesAcross, puzzleData.cluesDown);
 
 console.log('Crossword Viewer: Ready');
