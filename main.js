@@ -146,6 +146,17 @@ function selectCell(cell) {
   }
   selectedCell = cell;
   selectedCell.classList.add('selected');
+  // auto-adjust direction if the current one has no word
+  let cells = getWordCells(selectedCell, currentDirection);
+  if (cells.length <= 1) {
+    const other = currentDirection === 'across' ? 'down' : 'across';
+    const otherCells = getWordCells(selectedCell, other);
+    if (otherCells.length > cells.length) {
+      currentDirection = other;
+      cells = otherCells;
+      updateDirectionButton();
+    }
+  }
   highlightWord(selectedCell);
   if (mobileInput) {
     mobileInput.value = '';
