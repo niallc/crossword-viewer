@@ -9,6 +9,7 @@ if (typeof CrosswordPuzzleData === 'undefined') {
 let selectedCell = null;
 let currentDirection = 'across';
 let directionButton = null;
+let checkButton = null;
 
 function parsePuzzleData(xmlString) {
   const parser = new DOMParser();
@@ -190,6 +191,36 @@ function handleBackspace() {
     }
 }
 
+function checkAnswers() {
+    let wrong = 0;
+    document.querySelectorAll('#grid .cell').forEach(cell => {
+        const x = parseInt(cell.dataset.x, 10);
+        const y = parseInt(cell.dataset.y, 10);
+        const data = puzzleData.grid[y][x];
+        if (data.type === 'letter') {
+            const expected = (data.solution || '').toUpperCase();
+            const actual = (cell.textContent || '').trim().toUpperCase();
+            if (actual !== expected) wrong += 1;
+        }
+    });
+    if (!checkButton) {
+        checkButton = document.getElementById('check-answer');
+    }
+    if (checkButton) {
+        checkButton.textContent = `Check (${wrong} wrong)`;
+        if (wrong === 0) {
+            checkButton.style.backgroundColor = 'green';
+            checkButton.style.color = 'white';
+        } else if (wrong > 2) {
+            checkButton.style.backgroundColor = 'red';
+            checkButton.style.color = 'white';
+        } else {
+            checkButton.style.backgroundColor = 'yellow';
+            checkButton.style.color = 'black';
+        }
+    }
+}
+
 function updateDirectionButton() {
     if (directionButton) {
         directionButton.textContent = 'Mode: ' + (currentDirection === 'across' ? 'Across' : 'Down');
@@ -207,6 +238,11 @@ directionButton = document.getElementById('toggle-direction');
 if (directionButton) {
     directionButton.addEventListener('click', toggleDirection);
     updateDirectionButton();
+}
+
+checkButton = document.getElementById('check-answer');
+if (checkButton) {
+    checkButton.addEventListener('click', checkAnswers);
 }
 
 document.addEventListener('keydown', (e) => {
