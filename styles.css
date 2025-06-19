@@ -1,0 +1,133 @@
+        /* Basic styles for skeleton */
+        body {
+            font-family: sans-serif;
+            margin: 2rem;
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+            background-color: #eef6ff; /* pastel blue background */
+        }
+
+        #grid {
+            display: grid;
+            gap: 2px;
+            border: 1px solid #000;
+            position: relative;
+            background-color: #ffffff; /* keep grid white */
+            margin-top: 15px; /* spacing from buttons */
+        }
+
+        .cell {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 16px;
+            line-height: 30px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cell.selected {
+            outline: 2px solid #333;
+            background-color: #e6f0ff; /* faint blue */
+        }
+
+        .cell.highlight {
+            background-color: #e0f7ff;
+        }
+
+        .cell .num {
+            position: absolute;
+            top: 1px;
+            left: 2px;
+            font-size: 10px;
+            line-height: 10px;
+        }
+
+        /* Button styling */
+        button {
+            background-color: #e6eaff;
+            border: 1px solid #888;
+            border-radius: 4px;
+            padding: 0.4em 0.8em;
+            margin-bottom: 0.5em;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #d4d8ff;
+        }
+
+        .block {
+            background-color: #000;
+        }
+
+
+        /* Clue list styling */
+        #clues ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .clue-num {
+            font-weight: bold;
+            margin-right: 0.6em;
+            display: inline-block;
+            width: 2em;
+            text-align: left; /* left justify numbers */
+        }
+
+        #clues li {
+            margin-bottom: 1em; /* spacing between clues */
+        }
+
+        #controls {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #button-container {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 0.5em;
+            margin-bottom: 1em;
+        }
+
+        #clues {
+            display: flex;
+            gap: 2rem;
+            max-width: 600px;
+        }
+
+        .clue-group {
+            margin-bottom: 1em;
+            flex: 1;
+        }
+
+        #mobile-input {
+            position: absolute;
+            opacity: 0;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            border: none;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                flex-direction: column;
+                margin: 1rem;
+                align-items: center;
+            }
+            #clues {
+                flex-direction: column;
+                max-width: none;
+            }
+            #grid {
+                margin-bottom: 1rem;
+            }
+        }
+
