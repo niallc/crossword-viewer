@@ -8,6 +8,7 @@ if (typeof CrosswordPuzzleData === 'undefined') {
 
 let selectedCell = null;
 let currentDirection = 'across';
+let directionButton = null;
 
 function parsePuzzleData(xmlString) {
   const parser = new DOMParser();
@@ -134,7 +135,7 @@ function testCluesPresent() {
   );
 }
 function moveSelection(direction) {
-    if (!selectedCell) return;
+    if (!selectedCell) return false;
     const x = parseInt(selectedCell.dataset.x, 10);
     const y = parseInt(selectedCell.dataset.y, 10);
     let nx = x, ny = y;
@@ -145,14 +146,26 @@ function moveSelection(direction) {
     const next = document.querySelector(`.cell[data-x="${nx}"][data-y="${ny}"]`);
     if (next && !next.classList.contains('block')) {
         selectCell(next);
+        return true;
     }
+    return false;
 }
 
 function autoAdvance() {
+    let moved = false;
     if (currentDirection === 'across') {
-        moveSelection('ArrowRight');
+        moved = moveSelection('ArrowRight');
     } else if (currentDirection === 'down') {
-        moveSelection('ArrowDown');
+        moved = moveSelection('ArrowDown');
+    }
+    if (!moved) {
+        currentDirection = currentDirection === 'across' ? 'down' : 'across';
+        updateDirectionButton();
+        if (currentDirection === 'across') {
+            moveSelection('ArrowRight');
+        } else {
+            moveSelection('ArrowDown');
+        }
     }
 }
 
@@ -163,7 +176,38 @@ function logGridState() {
     console.log('Grid letters:', letters);
 }
 
+function handleBackspace() {
+    if (!selectedCell) return;
+    if (selectedCell.textContent) {
+        selectedCell.textContent = '';
+        const dir = currentDirection === 'across' ? 'ArrowLeft' : 'ArrowUp';
+        moveSelection(dir);
+    } else {
+        const dir = currentDirection === 'across' ? 'ArrowLeft' : 'ArrowUp';
+        if (moveSelection(dir)) {
+            selectedCell.textContent = '';
+        }
+    }
+}
+
+function updateDirectionButton() {
+    if (directionButton) {
+        directionButton.textContent = 'Mode: ' + (currentDirection === 'across' ? 'Across' : 'Down');
+    }
+}
+
+function toggleDirection() {
+    currentDirection = currentDirection === 'across' ? 'down' : 'across';
+    updateDirectionButton();
+}
+
 const puzzleData = parsePuzzleData(CrosswordPuzzleData);
+
+directionButton = document.getElementById('toggle-direction');
+if (directionButton) {
+    directionButton.addEventListener('click', toggleDirection);
+    updateDirectionButton();
+}
 
 document.addEventListener('keydown', (e) => {
     if (!selectedCell) return;
@@ -172,7 +216,8 @@ document.addEventListener('keydown', (e) => {
         selectedCell.textContent = key.toUpperCase();
         autoAdvance();
     } else if (key === 'Backspace') {
-        selectedCell.textContent = '';
+        e.preventDefault();
+        handleBackspace();
     } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
         moveSelection(key);
         if (key === 'ArrowUp' || key === 'ArrowDown') {
@@ -181,6 +226,7 @@ document.addEventListener('keydown', (e) => {
         if (key === 'ArrowLeft' || key === 'ArrowRight') {
             currentDirection = 'across';
         }
+        updateDirectionButton();
     }
 });
 
