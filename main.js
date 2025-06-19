@@ -181,14 +181,59 @@ function handleBackspace() {
     if (!selectedCell) return;
     if (selectedCell.textContent) {
         selectedCell.textContent = '';
+        selectedCell.style.color = '';
         const dir = currentDirection === 'across' ? 'ArrowLeft' : 'ArrowUp';
         moveSelection(dir);
     } else {
         const dir = currentDirection === 'across' ? 'ArrowLeft' : 'ArrowUp';
         if (moveSelection(dir)) {
             selectedCell.textContent = '';
+            selectedCell.style.color = '';
         }
     }
+}
+
+function getWordCells(cell, direction) {
+    if (!cell) return [];
+    const x = parseInt(cell.dataset.x, 10);
+    const y = parseInt(cell.dataset.y, 10);
+    const cells = [];
+    if (puzzleData.grid[y][x].type === 'block') return cells;
+    if (direction === 'across') {
+        let sx = x;
+        while (sx > 0 && puzzleData.grid[y][sx - 1] && puzzleData.grid[y][sx - 1].type !== 'block') {
+            sx--;
+        }
+        for (let cx = sx; cx < puzzleData.width && puzzleData.grid[y][cx] && puzzleData.grid[y][cx].type !== 'block'; cx++) {
+            const el = document.querySelector(`.cell[data-x="${cx}"][data-y="${y}"]`);
+            cells.push({ el, data: puzzleData.grid[y][cx] });
+        }
+    } else if (direction === 'down') {
+        let sy = y;
+        while (sy > 0 && puzzleData.grid[sy - 1][x] && puzzleData.grid[sy - 1][x].type !== 'block') {
+            sy--;
+        }
+        for (let cy = sy; cy < puzzleData.height && puzzleData.grid[cy][x] && puzzleData.grid[cy][x].type !== 'block'; cy++) {
+            const el = document.querySelector(`.cell[data-x="${x}"][data-y="${cy}"]`);
+            cells.push({ el, data: puzzleData.grid[cy][x] });
+        }
+    }
+    return cells;
+}
+
+function checkCurrentAnswer(direction) {
+    if (!selectedCell) return;
+    const cells = getWordCells(selectedCell, direction);
+    if (cells.length === 0) return;
+    cells.forEach(({ el, data }) => {
+        const expected = (data.solution || '').toUpperCase();
+        const actual = (el.textContent || '').trim().toUpperCase();
+        if (expected === actual) {
+            el.style.color = 'green';
+        } else {
+            el.style.color = 'red';
+        }
+    });
 }
 
 function checkAnswers() {
@@ -245,10 +290,21 @@ if (checkButton) {
     checkButton.addEventListener('click', checkAnswers);
 }
 
+const checkAcrossBtn = document.getElementById('check-current-across');
+if (checkAcrossBtn) {
+    checkAcrossBtn.addEventListener('click', () => checkCurrentAnswer('across'));
+}
+
+const checkDownBtn = document.getElementById('check-current-down');
+if (checkDownBtn) {
+    checkDownBtn.addEventListener('click', () => checkCurrentAnswer('down'));
+}
+
 document.addEventListener('keydown', (e) => {
     if (!selectedCell) return;
     const key = e.key;
     if (/^[a-zA-Z]$/.test(key)) {
+        selectedCell.style.color = '';
         selectedCell.textContent = key.toUpperCase();
         autoAdvance();
     } else if (key === 'Backspace') {
