@@ -124,7 +124,7 @@
             body {
                 flex-direction: column;
                 margin: 1rem;
-                align-items: center;
+                align-items: flex-start;
             }
             #clues {
                 flex-direction: column;
