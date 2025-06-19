@@ -76,8 +76,12 @@ function createCellElement(cellData, x, y) {
       num.textContent = cellData.number;
       cell.appendChild(num);
     }
-    cell.addEventListener('click', () => selectCell(cell));
-    cell.addEventListener('touchstart', () => selectCell(cell));
+    // use pointer events to handle both mouse and touch in one handler
+    cell.addEventListener('pointerdown', (e) => {
+      selectCell(cell);
+      // prevent generation of a subsequent click event on touch devices
+      e.preventDefault();
+    });
   }
 
   return cell;
