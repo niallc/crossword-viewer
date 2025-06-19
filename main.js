@@ -7,6 +7,7 @@ if (typeof CrosswordPuzzleData === 'undefined') {
 }
 
 let selectedCell = null;
+let highlightedCells = [];
 let currentDirection = 'across';
 let directionButton = null;
 let checkButton = null;
@@ -103,13 +104,21 @@ function buildClues(across, down) {
 
   across.forEach(cl => {
     const li = document.createElement('li');
-    li.textContent = `${cl.number}. ${cl.text}`;
+    const num = document.createElement('span');
+    num.className = 'clue-num';
+    num.textContent = cl.number;
+    li.appendChild(num);
+    li.appendChild(document.createTextNode(cl.text));
     acrossEl.appendChild(li);
   });
 
   down.forEach(cl => {
     const li = document.createElement('li');
-    li.textContent = `${cl.number}. ${cl.text}`;
+    const num = document.createElement('span');
+    num.className = 'clue-num';
+    num.textContent = cl.number;
+    li.appendChild(num);
+    li.appendChild(document.createTextNode(cl.text));
     downEl.appendChild(li);
   });
 }
@@ -123,6 +132,7 @@ function selectCell(cell) {
   }
   selectedCell = cell;
   selectedCell.classList.add('selected');
+  highlightWord(selectedCell);
 }
 
 function testGridIsBuilt() {
@@ -221,6 +231,16 @@ function getWordCells(cell, direction) {
     return cells;
 }
 
+function highlightWord(cell) {
+    highlightedCells.forEach(c => c.classList.remove('highlight'));
+    highlightedCells = [];
+    const cells = getWordCells(cell, currentDirection);
+    cells.forEach(({ el }) => {
+        el.classList.add('highlight');
+        highlightedCells.push(el);
+    });
+}
+
 function checkCurrentAnswer(direction) {
     if (!selectedCell) return;
     const cells = getWordCells(selectedCell, direction);
@@ -275,6 +295,9 @@ function updateDirectionButton() {
 function toggleDirection() {
     currentDirection = currentDirection === 'across' ? 'down' : 'across';
     updateDirectionButton();
+    if (selectedCell) {
+        highlightWord(selectedCell);
+    }
 }
 
 const puzzleData = parsePuzzleData(CrosswordPuzzleData);
