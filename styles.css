@@ -27,6 +27,9 @@
             line-height: 30px;
             cursor: pointer;
             position: relative;
+            /* avoid double events and accidental text selection on mobile */
+            touch-action: manipulation;
+            user-select: none;
         }
 
         .cell.selected {
