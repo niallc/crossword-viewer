@@ -27,4 +27,8 @@ Open `index.html` in a modern browser.
 
 ## Testing
 
-Test functions are provided in `main.js`:
+The following helper functions can be run from the browser console:
+
+- `testGridIsBuilt()` — returns true if the grid has been created
+- `testCluesPresent()` — returns true if clues are displayed
+- `logGridState()` — logs current cell contents
