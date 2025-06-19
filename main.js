@@ -7,6 +7,7 @@ if (typeof CrosswordPuzzleData === 'undefined') {
 }
 
 let selectedCell = null;
+let currentDirection = 'across';
 
 function parsePuzzleData(xmlString) {
   const parser = new DOMParser();
@@ -143,6 +144,14 @@ function moveSelection(direction) {
     }
 }
 
+function autoAdvance() {
+    if (currentDirection === 'across') {
+        moveSelection('ArrowRight');
+    } else if (currentDirection === 'down') {
+        moveSelection('ArrowDown');
+    }
+}
+
 function logGridState() {
     const gridEl = document.getElementById('grid');
     const cells = gridEl.querySelectorAll('.cell');
@@ -157,10 +166,17 @@ document.addEventListener('keydown', (e) => {
     const key = e.key;
     if (/^[a-zA-Z]$/.test(key)) {
         selectedCell.textContent = key.toUpperCase();
+        autoAdvance();
     } else if (key === 'Backspace') {
         selectedCell.textContent = '';
     } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
         moveSelection(key);
+        if (key === 'ArrowUp' || key === 'ArrowDown') {
+            currentDirection = 'down';
+        }
+        if (key === 'ArrowLeft' || key === 'ArrowRight') {
+            currentDirection = 'across';
+        }
     }
 });
 
