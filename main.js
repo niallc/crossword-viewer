@@ -4,6 +4,15 @@ const TEST_MODE = true;
 
 export let crossword;
 
+function removeTextNodes(elem) {
+  if (!elem) return;
+  Array.from(elem.childNodes).forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      elem.removeChild(node);
+    }
+  });
+}
+
 class Crossword {
   constructor(xmlData) {
     console.log('Crossword Viewer: Starting');
@@ -270,11 +279,7 @@ class Crossword {
 
   setCellLetter(cell, letter) {
     if (!cell) return;
-    Array.from(cell.childNodes).forEach(n => {
-      if (n.nodeType === Node.TEXT_NODE) {
-        cell.removeChild(n);
-      }
-    });
+    removeTextNodes(cell);
     const letterEl = cell.querySelector('.letter');
     if (letterEl) {
       letterEl.textContent = letter.toUpperCase();
@@ -494,9 +499,7 @@ class Crossword {
     if (!letter) {
       letter = cell.textContent.trim();
     }
-    Array.from(cell.childNodes).forEach(n => {
-      if (n.nodeType === Node.TEXT_NODE) cell.removeChild(n);
-    });
+    removeTextNodes(cell);
     if (!letter) return;
     letter = letter.slice(-1);
     if (/^[a-zA-Z]$/.test(letter)) {
