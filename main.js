@@ -16,7 +16,6 @@ class Crossword {
     this.currentDirection = 'across';
     this.directionButton = null;
     this.checkButton = null;
-    this.mobileInput = null;
     this.copyLinkButton = null;
     this.clearProgressButton = null;
     this.cellEls = [];
@@ -126,10 +125,14 @@ class Crossword {
       const letter = document.createElement('div');
       letter.classList.add('letter');
       cell.appendChild(letter);
+      cell.setAttribute('contenteditable', 'true');
+      cell.setAttribute('inputmode', 'text');
+      cell.tabIndex = 0;
       cell.addEventListener('pointerdown', (e) => {
         this.selectCell(cell);
         e.preventDefault();
       });
+      cell.addEventListener('keydown', (e) => this.handleKeyDown(e));
     }
 
     return cell;
@@ -220,14 +223,11 @@ class Crossword {
       }
     }
     this.highlightWord(this.selectedCell);
-    if (this.mobileInput) {
-      this.mobileInput.value = '';
-      if (this.mobileInput.focus) {
-        try {
-          this.mobileInput.focus({ preventScroll: true });
-        } catch (e) {
-          this.mobileInput.focus();
-        }
+    if (this.selectedCell.focus) {
+      try {
+        this.selectedCell.focus({ preventScroll: true });
+      } catch (e) {
+        this.selectedCell.focus();
       }
     }
   }
@@ -430,6 +430,32 @@ class Crossword {
     this.saveStateToLocalStorage();
   }
 
+  handleKeyDown(e) {
+    if (!this.selectedCell) return;
+    const key = e.key;
+    if (/^[a-zA-Z]$/.test(key)) {
+      e.preventDefault();
+      this.selectedCell.style.color = '';
+      const letterEl = this.selectedCell.querySelector('.letter');
+      if (letterEl) letterEl.textContent = key.toUpperCase();
+      this.autoAdvance();
+      this.saveStateToLocalStorage();
+    } else if (key === 'Backspace') {
+      e.preventDefault();
+      this.handleBackspace();
+    } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+      e.preventDefault();
+      this.moveSelection(key);
+      if (key === 'ArrowUp' || key === 'ArrowDown') {
+        this.currentDirection = 'down';
+      }
+      if (key === 'ArrowLeft' || key === 'ArrowRight') {
+        this.currentDirection = 'across';
+      }
+      this.updateDirectionButton();
+    }
+  }
+
   getWordCells(cell, direction) {
     if (!cell) return [];
     const x = parseInt(cell.dataset.x, 10);
@@ -579,57 +605,8 @@ function initCrossword(xmlData) {
     checkDownBtn.addEventListener('click', () => crossword.checkCurrentAnswer('down'));
   }
 
-  crossword.mobileInput = document.getElementById('mobile-input');
-  if (crossword.mobileInput) {
-    crossword.mobileInput.addEventListener('input', (e) => {
-      const letter = e.data || crossword.mobileInput.value.slice(-1);
-      crossword.mobileInput.value = '';
-      if (!letter) return;
-      if (/^[a-zA-Z]$/.test(letter) && crossword.selectedCell) {
-        crossword.selectedCell.style.color = '';
-        const letterEl = crossword.selectedCell.querySelector('.letter');
-        if (letterEl) letterEl.textContent = letter.toUpperCase();
-        crossword.autoAdvance();
-        crossword.saveStateToLocalStorage();
-      }
-    });
-    crossword.mobileInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace') {
-        e.preventDefault();
-        crossword.handleBackspace();
-      } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-        e.preventDefault();
-        crossword.moveSelection(e.key);
-      }
-    });
-  }
 
-  document.addEventListener('keydown', (e) => {
-    if (!crossword.selectedCell) return;
-    if (crossword.mobileInput && document.activeElement === crossword.mobileInput) {
-      return;
-    }
-    const key = e.key;
-    if (/^[a-zA-Z]$/.test(key)) {
-      crossword.selectedCell.style.color = '';
-      const letterEl = crossword.selectedCell.querySelector('.letter');
-      if (letterEl) letterEl.textContent = key.toUpperCase();
-      crossword.autoAdvance();
-      crossword.saveStateToLocalStorage();
-    } else if (key === 'Backspace') {
-      e.preventDefault();
-      crossword.handleBackspace();
-    } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
-      crossword.moveSelection(key);
-      if (key === 'ArrowUp' || key === 'ArrowDown') {
-        crossword.currentDirection = 'down';
-      }
-      if (key === 'ArrowLeft' || key === 'ArrowRight') {
-        crossword.currentDirection = 'across';
-      }
-      crossword.updateDirectionButton();
-    }
-  });
+  document.addEventListener('keydown', (e) => crossword.handleKeyDown(e));
 
   crossword.buildGrid();
 
@@ -676,10 +653,6 @@ function initCrossword(xmlData) {
     });
   }
 
-  if (TEST_MODE && crossword.mobileInput) {
-    crossword.mobileInput.addEventListener('focus', () => console.log('mobile-input focus', Date.now()));
-    crossword.mobileInput.addEventListener('blur', () => console.log('mobile-input blur', Date.now()));
-  }
 
   if (TEST_MODE) {
     crossword.cellEls.flat().forEach(cell => {
