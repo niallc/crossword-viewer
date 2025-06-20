@@ -107,4 +107,3 @@ dispatch `keydown`. The old hidden `mobile-input` element has been removed.
 
 Clue numbers and letter containers inside each cell have `contenteditable="false"`
 and ignore pointer events so typing does not modify them directly.
-
