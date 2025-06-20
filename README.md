@@ -18,6 +18,7 @@ Parse puzzle data from `puzzle.xml` and render an interactive crossword grid and
 - Interactive grid
 - Clues display
 - User can type answers
+- Typing a new letter in a cell replaces any existing letter
 - Shareable URLs for puzzle state
 - Basic test functions
 - Diagnostic output in console
