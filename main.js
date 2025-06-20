@@ -175,6 +175,7 @@ class Crossword {
       li.appendChild(num);
       li.appendChild(document.createTextNode(cl.text + ' (' + cl.length + ')'));
       li.addEventListener('pointerdown', (e) => {
+        if (li.classList.contains('complete')) return;
         this.selectClue(cl.number, 'across');
         e.preventDefault();
       });
@@ -190,11 +191,13 @@ class Crossword {
       li.appendChild(num);
       li.appendChild(document.createTextNode(cl.text + ' (' + cl.length + ')'));
       li.addEventListener('pointerdown', (e) => {
+        if (li.classList.contains('complete')) return;
         this.selectClue(cl.number, 'down');
         e.preventDefault();
       });
       downEl.appendChild(li);
     });
+    this.updateClueCompletion();
   }
 
   selectCell(cell, shouldFocus = true) {
@@ -300,6 +303,7 @@ class Crossword {
     try {
       const serialized = this.serializeGridState();
       localStorage.setItem('crosswordState', serialized);
+      this.updateClueCompletion();
     } catch (e) {
       console.error('Failed to save state to localStorage', e);
     }
@@ -350,6 +354,7 @@ class Crossword {
         }
       }
     }
+    this.updateClueCompletion();
   }
 
   rleEncode(str) {
@@ -536,6 +541,29 @@ class Crossword {
         clueEl.classList.add('highlight');
       }
     }
+  }
+
+  updateClueCompletion() {
+    const updateGroup = (selector, direction, starts) => {
+      document.querySelectorAll(selector).forEach(li => {
+        const num = li.dataset.number;
+        const pos = starts[num];
+        if (!pos) return;
+        const cell = this.cellEls[pos.y][pos.x];
+        const cells = this.getWordCells(cell, direction);
+        const complete = cells.every(({ el }) => {
+          const letterEl = el.querySelector('.letter');
+          return letterEl && letterEl.textContent && letterEl.textContent.trim();
+        });
+        if (complete) {
+          li.classList.add('complete');
+        } else {
+          li.classList.remove('complete');
+        }
+      });
+    };
+    updateGroup('#clues-across li', 'across', this.puzzleData.acrossStarts);
+    updateGroup('#clues-down li', 'down', this.puzzleData.downStarts);
   }
 
   selectClue(number, direction) {
