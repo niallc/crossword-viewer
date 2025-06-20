@@ -65,6 +65,8 @@ function parsePuzzleData(xmlString) {
 
   const acrossLengths = {};
   const downLengths = {};
+  const acrossStarts = {};
+  const downStarts = {};
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const cell = grid[y][x];
@@ -77,6 +79,7 @@ function parsePuzzleData(xmlString) {
           cx++;
         }
         acrossLengths[cell.number] = len;
+        acrossStarts[cell.number] = { x, y };
       }
       if (y === 0 || grid[y - 1][x].type === 'block') {
         let len = 0;
@@ -86,6 +89,7 @@ function parsePuzzleData(xmlString) {
           cy++;
         }
         downLengths[cell.number] = len;
+        downStarts[cell.number] = { x, y };
       }
     }
   }
@@ -97,7 +101,7 @@ function parsePuzzleData(xmlString) {
     cl.length = downLengths[cl.number] || 0;
   });
 
-  return { width, height, grid, cluesAcross, cluesDown };
+  return { width, height, grid, cluesAcross, cluesDown, acrossStarts, downStarts };
 }
 
 function createCellElement(cellData, x, y) {
@@ -159,6 +163,10 @@ function buildClues(across, down) {
     num.textContent = cl.number;
     li.appendChild(num);
     li.appendChild(document.createTextNode(cl.text + ' (' + cl.length + ')'));
+    li.addEventListener('pointerdown', (e) => {
+      selectClue(cl.number, 'across');
+      e.preventDefault();
+    });
     acrossEl.appendChild(li);
   });
 
@@ -170,6 +178,10 @@ function buildClues(across, down) {
     num.textContent = cl.number;
     li.appendChild(num);
     li.appendChild(document.createTextNode(cl.text + ' (' + cl.length + ')'));
+    li.addEventListener('pointerdown', (e) => {
+      selectClue(cl.number, 'down');
+      e.preventDefault();
+    });
     downEl.appendChild(li);
   });
 }
@@ -206,7 +218,13 @@ function selectCell(cell) {
   highlightWord(selectedCell);
   if (mobileInput) {
     mobileInput.value = '';
-    mobileInput.focus();
+    if (mobileInput.focus) {
+      try {
+        mobileInput.focus({ preventScroll: true });
+      } catch (e) {
+        mobileInput.focus();
+      }
+    }
   }
 }
 
@@ -412,6 +430,18 @@ function highlightWord(cell) {
         if (clueEl) {
             clueEl.classList.add('highlight');
         }
+    }
+}
+
+function selectClue(number, direction) {
+    const map = direction === 'across' ? puzzleData.acrossStarts : puzzleData.downStarts;
+    const pos = map[number];
+    if (!pos) return;
+    const cell = document.querySelector(`.cell[data-x="${pos.x}"][data-y="${pos.y}"]`);
+    if (cell) {
+        currentDirection = direction;
+        updateDirectionButton();
+        selectCell(cell);
     }
 }
 
