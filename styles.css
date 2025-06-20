@@ -1,4 +1,7 @@
         /* Basic styles for skeleton */
+        :root {
+            --cell-size: 30px;
+        }
         body {
             font-family: sans-serif;
             margin: 2rem;
@@ -18,13 +21,13 @@
         }
 
         .cell {
-            width: 30px;
-            height: 30px;
+            width: var(--cell-size);
+            height: var(--cell-size);
             border: 1px solid #ccc;
             text-align: center;
             vertical-align: middle;
             font-size: 16px;
-            line-height: 30px;
+            line-height: var(--cell-size);
             cursor: pointer;
             position: relative;
             /* avoid double events and accidental text selection on mobile */
@@ -124,6 +127,24 @@
             gap: 0.5em;
             margin-bottom: 1em;
         }
+
+        #arrows {
+            display: grid;
+            grid-template-areas:
+                '. up .'
+                'left . right'
+                '. down .';
+            gap: 0.3em;
+            margin-top: 0.5em;
+        }
+        #arrows button {
+            font-size: 1.2em;
+            padding: 0.2em 0.6em;
+        }
+        #arrows button[data-dir="ArrowUp"] { grid-area: up; }
+        #arrows button[data-dir="ArrowDown"] { grid-area: down; }
+        #arrows button[data-dir="ArrowLeft"] { grid-area: left; }
+        #arrows button[data-dir="ArrowRight"] { grid-area: right; }
 
         #clues {
             display: flex;

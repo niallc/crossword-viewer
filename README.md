@@ -24,6 +24,7 @@ Parse puzzle data from `puzzle.xml` and render an interactive crossword grid and
 - No server required — runs as static HTML/JS
 - Cells cached in memory for faster lookups
 - Clue enumerations shown using values from `puzzle.xml`
+- Grid cell size scales with the viewport for better mobile support
 
 ## Running
 
@@ -36,6 +37,7 @@ Use the "Copy Share Link" button to copy a URL representing your current grid st
 ### Input handling
 
 Each grid cell is `contenteditable` so the on-screen keyboard appears on mobile devices. Keyboard events are handled at the document level: `keydown` covers desktop input while `input` events ensure mobile browsers work correctly. The handler calls `preventDefault()` on `keydown` so characters are not inserted twice.
+On-screen arrow buttons allow navigation when no hardware keyboard is available.
 
 ### Selecting clues
 

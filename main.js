@@ -147,8 +147,10 @@ class Crossword {
     const data = this.puzzleData;
     const gridEl = document.getElementById('grid');
     gridEl.innerHTML = '';
-    gridEl.style.gridTemplateColumns = `repeat(${data.width}, 30px)`;
-    gridEl.style.gridTemplateRows = `repeat(${data.height}, 30px)`;
+    const cellSize = `calc(80vmin / ${Math.max(data.width, data.height)})`;
+    gridEl.style.setProperty('--cell-size', cellSize);
+    gridEl.style.gridTemplateColumns = `repeat(${data.width}, var(--cell-size))`;
+    gridEl.style.gridTemplateRows = `repeat(${data.height}, var(--cell-size))`;
 
     this.cellEls = Array.from({ length: data.height }, () => Array(data.width).fill(null));
 
@@ -715,6 +717,22 @@ function initCrossword(xmlData) {
     crossword.clearProgressButton.addEventListener('click', () => {
       localStorage.removeItem('crosswordState');
       crossword.applyGridState('');
+    });
+  }
+
+  const arrowContainer = document.getElementById('arrows');
+  if (arrowContainer) {
+    arrowContainer.querySelectorAll('button[data-dir]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const dir = btn.dataset.dir;
+        crossword.moveSelection(dir);
+        if (dir === 'ArrowUp' || dir === 'ArrowDown') {
+          crossword.currentDirection = 'down';
+        } else if (dir === 'ArrowLeft' || dir === 'ArrowRight') {
+          crossword.currentDirection = 'across';
+        }
+        crossword.updateDirectionButton();
+      });
     });
   }
 
