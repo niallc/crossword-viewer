@@ -26,7 +26,7 @@
             border: 1px solid #ccc;
             text-align: center;
             vertical-align: middle;
-            font-size: 16px;
+            font-size: calc(var(--cell-size) * 0.6);
             line-height: var(--cell-size);
             cursor: pointer;
             position: relative;
@@ -49,8 +49,8 @@
     position: absolute;
     top: 1px;
     left: 2px;
-    font-size: 10px;
-    line-height: 10px;
+    font-size: calc(var(--cell-size) * 0.3);
+    line-height: calc(var(--cell-size) * 0.3);
     pointer-events: none;
     user-select: none;
 }
@@ -65,6 +65,7 @@
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    font-size: 1em;
 }
 
         /* Button styling */
@@ -128,23 +129,7 @@
             margin-bottom: 1em;
         }
 
-        #arrows {
-            display: grid;
-            grid-template-areas:
-                '. up .'
-                'left . right'
-                '. down .';
-            gap: 0.3em;
-            margin-top: 0.5em;
-        }
-        #arrows button {
-            font-size: 1.2em;
-            padding: 0.2em 0.6em;
-        }
-        #arrows button[data-dir="ArrowUp"] { grid-area: up; }
-        #arrows button[data-dir="ArrowDown"] { grid-area: down; }
-        #arrows button[data-dir="ArrowLeft"] { grid-area: left; }
-        #arrows button[data-dir="ArrowRight"] { grid-area: right; }
+
 
         #clues {
             display: flex;
