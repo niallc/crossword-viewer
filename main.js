@@ -120,10 +120,12 @@ class Crossword {
         const num = document.createElement('div');
         num.classList.add('num');
         num.textContent = cellData.number;
+        num.setAttribute('contenteditable', 'false');
         cell.appendChild(num);
       }
       const letter = document.createElement('div');
       letter.classList.add('letter');
+      letter.setAttribute('contenteditable', 'false');
       cell.appendChild(letter);
       cell.setAttribute('contenteditable', 'true');
       cell.setAttribute('inputmode', 'text');
@@ -132,7 +134,7 @@ class Crossword {
         this.selectCell(cell);
         e.preventDefault();
       });
-      cell.addEventListener('keydown', (e) => this.handleKeyDown(e));
+      // Key events are handled at the document level to avoid duplicates
     }
 
     return cell;
@@ -456,6 +458,36 @@ class Crossword {
     }
   }
 
+  handleInput(e) {
+    const cell = e.target.closest('.cell');
+    if (!cell || cell.classList.contains('block')) return;
+    if (cell !== this.selectedCell) {
+      this.selectCell(cell);
+    }
+
+    if (e.inputType && e.inputType.startsWith('delete')) {
+      this.handleBackspace();
+      return;
+    }
+
+    let letter = e.data;
+    if (!letter) {
+      letter = cell.textContent.trim();
+    }
+    Array.from(cell.childNodes).forEach(n => {
+      if (n.nodeType === Node.TEXT_NODE) cell.removeChild(n);
+    });
+    if (!letter) return;
+    letter = letter.slice(-1);
+    if (/^[a-zA-Z]$/.test(letter)) {
+      cell.style.color = '';
+      const letterEl = cell.querySelector('.letter');
+      if (letterEl) letterEl.textContent = letter.toUpperCase();
+      this.autoAdvance();
+      this.saveStateToLocalStorage();
+    }
+  }
+
   getWordCells(cell, direction) {
     if (!cell) return [];
     const x = parseInt(cell.dataset.x, 10);
@@ -607,6 +639,7 @@ function initCrossword(xmlData) {
 
 
   document.addEventListener('keydown', (e) => crossword.handleKeyDown(e));
+  document.addEventListener('input', (e) => crossword.handleInput(e));
 
   crossword.buildGrid();
 
