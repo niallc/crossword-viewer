@@ -191,3 +191,9 @@ Stray text nodes sometimes accumulate inside grid cells due to user edits.
 The helper `removeTextNodes(elem)` removes all text node children from a
 given element. `setCellLetter()` and `handleInput()` now call this helper
 before inserting letters.
+
+## First Letter Cell Helper (2025)
+
+`Crossword.findFirstLetterCell()` scans the grid and returns the first cell
+that is not a block. `initCrossword` uses this helper to select the initial
+cell after loading the puzzle.
