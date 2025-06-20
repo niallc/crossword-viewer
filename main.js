@@ -15,7 +15,7 @@ class Crossword {
     this.highlightedCells = [];
     this.currentDirection = 'across';
     this.directionButton = null;
-    this.checkButton = null;
+    this.feedbackCells = [];
     this.copyLinkButton = null;
     this.clearProgressButton = null;
     this.cellEls = [];
@@ -448,6 +448,7 @@ class Crossword {
     const key = e.key;
     if (/^[a-zA-Z]$/.test(key)) {
       e.preventDefault();
+      this.clearFeedback();
       this.selectedCell.style.color = '';
       const letterEl = this.selectedCell.querySelector('.letter');
       if (letterEl) letterEl.textContent = key.toUpperCase();
@@ -455,6 +456,7 @@ class Crossword {
       this.saveStateToLocalStorage();
     } else if (key === 'Backspace') {
       e.preventDefault();
+      this.clearFeedback();
       this.handleBackspace();
     } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
       e.preventDefault();
@@ -477,6 +479,7 @@ class Crossword {
     }
 
     if (e.inputType && e.inputType.startsWith('delete')) {
+      this.clearFeedback();
       this.handleBackspace();
       return;
     }
@@ -491,6 +494,7 @@ class Crossword {
     if (!letter) return;
     letter = letter.slice(-1);
     if (/^[a-zA-Z]$/.test(letter)) {
+      this.clearFeedback();
       cell.style.color = '';
       const letterEl = cell.querySelector('.letter');
       if (letterEl) letterEl.textContent = letter.toUpperCase();
@@ -549,6 +553,45 @@ class Crossword {
     }
   }
 
+  clearFeedback() {
+    this.feedbackCells.forEach(c => {
+      c.style.color = '';
+      c.style.backgroundColor = '';
+    });
+    this.feedbackCells = [];
+  }
+
+  checkLetter() {
+    this.clearFeedback();
+    if (!this.selectedCell) return;
+    const x = parseInt(this.selectedCell.dataset.x, 10);
+    const y = parseInt(this.selectedCell.dataset.y, 10);
+    const data = this.puzzleData.grid[y][x];
+    if (data.type !== 'letter') return;
+    const expected = (data.solution || '').toUpperCase();
+    const letterEl = this.selectedCell.querySelector('.letter');
+    const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
+    if (actual && actual !== expected) {
+      this.selectedCell.style.color = 'red';
+      this.feedbackCells.push(this.selectedCell);
+    }
+  }
+
+  checkWord() {
+    this.clearFeedback();
+    if (!this.selectedCell) return;
+    const cells = this.getWordCells(this.selectedCell, this.currentDirection);
+    cells.forEach(({ el, data }) => {
+      const expected = (data.solution || '').toUpperCase();
+      const letterEl = el.querySelector('.letter');
+      const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
+      if (actual && actual !== expected) {
+        el.style.color = 'red';
+        this.feedbackCells.push(el);
+      }
+    });
+  }
+
   updateClueCompletion() {
     const updateGroup = (selector, direction, starts) => {
       document.querySelectorAll(selector).forEach(li => {
@@ -584,53 +627,6 @@ class Crossword {
     }
   }
 
-  checkCurrentAnswer(direction) {
-    if (!this.selectedCell) return;
-    const cells = this.getWordCells(this.selectedCell, direction);
-    if (cells.length === 0) return;
-    cells.forEach(({ el, data }) => {
-      const expected = (data.solution || '').toUpperCase();
-      const letterEl = el.querySelector('.letter');
-      const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
-      if (expected === actual) {
-        el.style.color = 'green';
-      } else {
-        el.style.color = 'red';
-      }
-    });
-  }
-
-  checkAnswers() {
-    let wrong = 0;
-    for (let y = 0; y < this.puzzleData.height; y++) {
-      for (let x = 0; x < this.puzzleData.width; x++) {
-        const data = this.puzzleData.grid[y][x];
-        if (data.type === 'letter') {
-          const cell = this.cellEls[y][x];
-          const expected = (data.solution || '').toUpperCase();
-          const letterEl = cell.querySelector('.letter');
-          const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
-          if (actual !== expected) wrong += 1;
-        }
-      }
-    }
-    if (!this.checkButton) {
-      this.checkButton = document.getElementById('check-answer');
-    }
-    if (this.checkButton) {
-      this.checkButton.textContent = `Num Wrong: ${wrong}`;
-      if (wrong === 0) {
-        this.checkButton.style.backgroundColor = 'green';
-        this.checkButton.style.color = 'white';
-      } else if (wrong > 2) {
-        this.checkButton.style.backgroundColor = 'red';
-        this.checkButton.style.color = 'white';
-      } else {
-        this.checkButton.style.backgroundColor = 'yellow';
-        this.checkButton.style.color = 'black';
-      }
-    }
-  }
 
   updateDirectionButton() {
     if (this.directionButton) {
@@ -656,19 +652,14 @@ function initCrossword(xmlData) {
     crossword.updateDirectionButton();
   }
 
-  crossword.checkButton = document.getElementById('check-answer');
-  if (crossword.checkButton) {
-    crossword.checkButton.addEventListener('click', () => crossword.checkAnswers());
+  const checkLetterBtn = document.getElementById('check-letter');
+  if (checkLetterBtn) {
+    checkLetterBtn.addEventListener('click', () => crossword.checkLetter());
   }
 
-  const checkAcrossBtn = document.getElementById('check-current-across');
-  if (checkAcrossBtn) {
-    checkAcrossBtn.addEventListener('click', () => crossword.checkCurrentAnswer('across'));
-  }
-
-  const checkDownBtn = document.getElementById('check-current-down');
-  if (checkDownBtn) {
-    checkDownBtn.addEventListener('click', () => crossword.checkCurrentAnswer('down'));
+  const checkWordBtn = document.getElementById('check-word');
+  if (checkWordBtn) {
+    checkWordBtn.addEventListener('click', () => crossword.checkWord());
   }
 
 
