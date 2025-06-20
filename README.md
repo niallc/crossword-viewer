@@ -36,6 +36,10 @@ Use the "Copy Share Link" button to copy a URL representing your current grid st
 
 Each grid cell is `contenteditable` so the on-screen keyboard appears on mobile devices. Keyboard events are handled at the document level: `keydown` covers desktop input while `input` events ensure mobile browsers work correctly. The handler calls `preventDefault()` on `keydown` so characters are not inserted twice.
 
+### Selecting clues
+
+Clicking a clue highlights its answer without shifting keyboard focus. The `selectCell()` function now accepts an optional second parameter `shouldFocus` (default `true`) controlling whether the selected cell gains focus.
+
 ## Testing
 
 To enable verbose diagnostic output while developing, open `main.js` and set the

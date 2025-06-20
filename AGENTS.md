@@ -108,3 +108,10 @@ dispatch `keydown`. The old hidden `mobile-input` element has been removed.
 
 Clue numbers and letter containers inside each cell have `contenteditable="false"`
 and ignore pointer events so typing does not modify them directly.
+
+## Optional Focus Parameter (2024)
+
+`selectCell(cell, shouldFocus = true)` selects and highlights a grid cell. When
+`shouldFocus` is `false` the cell is highlighted without moving keyboard focus.
+`selectClue()` uses this to highlight an entry when a clue is clicked without
+focusing the grid.
