@@ -11,8 +11,7 @@ Parse puzzle data from `puzzle.xml` and render an interactive crossword grid and
 
 - `index.html` — main page
 - `main.js` — JS logic (loaded as an ES module)
-- `Social_Deduction.js` — stub referencing the puzzle
-- `puzzle.xml` — puzzle data in XML format
+- `puzzle.xml` — puzzle data in XML format loaded at runtime via fetch
 
 ## Features
 
