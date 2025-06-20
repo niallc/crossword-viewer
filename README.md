@@ -24,7 +24,7 @@ Parse puzzle data from `puzzle.xml` and render an interactive crossword grid and
 - No server required — runs as static HTML/JS
 - Cells cached in memory for faster lookups
 - Clue enumerations shown using values from `puzzle.xml`
-- Grid cell size scales with the viewport for better mobile support
+- Responsive grid: cells scale with the viewport but never exceed 500&nbsp;px in total width; letter and clue number sizes scale with the cells
 - "Check Letter" and "Check Word" buttons highlight incorrect entries until you type again
 
 ## Running

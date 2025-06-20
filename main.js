@@ -147,8 +147,10 @@ class Crossword {
     const data = this.puzzleData;
     const gridEl = document.getElementById('grid');
     gridEl.innerHTML = '';
-    const cellSize = `calc(80vmin / ${Math.max(data.width, data.height)})`;
-    gridEl.style.setProperty('--cell-size', cellSize);
+    const vmin = Math.min(window.innerWidth, window.innerHeight);
+    const maxSize = Math.min(vmin * 0.8, 500);
+    const cellSize = maxSize / Math.max(data.width, data.height);
+    gridEl.style.setProperty('--cell-size', cellSize + 'px');
     gridEl.style.gridTemplateColumns = `repeat(${data.width}, var(--cell-size))`;
     gridEl.style.gridTemplateRows = `repeat(${data.height}, var(--cell-size))`;
 

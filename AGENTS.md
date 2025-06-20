@@ -138,9 +138,10 @@ as `7,5` and are displayed in parentheses next to each clue.
 ## Responsive Grid Sizing (2024)
 
 Grid cell dimensions are controlled by the CSS variable `--cell-size`.
-`buildGrid()` sets this variable to `calc(80vmin / N)` where `N` is the larger of
-the puzzle's width or height. Using `vmin` allows the entire grid to scale with
-the viewport, improving mobile usability.
+`buildGrid()` computes the size in pixels based on the smaller viewport
+dimension. The value is `Math.min(vmin * 0.8, 500) / N` where `N` is the larger
+of the puzzle's width or height. This caps the grid at 500&nbsp;px wide on large
+screens while still filling most of the space on mobile devices.
 
 ## On-Screen Arrow Navigation (2024) - Marked for Deletion
 
@@ -162,3 +163,10 @@ Two new buttons allow solvers to verify their work:
   entry.
 
 Feedback colors clear automatically when the user types again.
+
+## Scaled Font Sizes (2025)
+
+Grid numbers and letters now size proportionally to each cell. `.letter`
+elements use about 60% of the cell size while `.num` uses roughly 30%.
+This keeps text legible on desktop without overwhelming tiny cells on
+mobile devices.
