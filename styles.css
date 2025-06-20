@@ -108,6 +108,8 @@
         /* Faded style for solved clues */
         #clues li.complete {
             opacity: 0.5;
+            text-decoration: line-through;
+            text-decoration-color: #666;
         }
 
         #controls {

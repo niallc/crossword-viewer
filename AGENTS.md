@@ -121,3 +121,8 @@ focusing the grid.
 `updateClueCompletion()` adds the `complete` class to clue `<li>` elements when
 all of their answer cells contain letters. Completed clues are faded via CSS and
 ignored when clicked.
+
+## Strike-Through for Completed Clues (2024)
+
+Completed clues also display a subtle line-through decoration so solvers can
+easily distinguish which clues remain unsolved.
