@@ -17,6 +17,7 @@ let directionButton = null;
 let checkButton = null;
 let mobileInput = null;
 let copyLinkButton = null;
+let clearProgressButton = null;
 
 function parsePuzzleData(xmlString) {
   const parser = new DOMParser();
@@ -264,6 +265,28 @@ function logGridState() {
     console.log('Grid letters:', letters);
 }
 
+function saveStateToLocalStorage() {
+    try {
+        const serialized = serializeGridState();
+        localStorage.setItem('crosswordState', serialized);
+    } catch (e) {
+        console.error('Failed to save state to localStorage', e);
+    }
+}
+
+function loadStateFromLocalStorage() {
+    try {
+        const serialized = localStorage.getItem('crosswordState');
+        if (serialized) {
+            applyGridState(serialized);
+            return true;
+        }
+    } catch (e) {
+        console.error('Failed to load state from localStorage', e);
+    }
+    return false;
+}
+
 function serializeGridState() {
     const letters = [];
     document.querySelectorAll('#grid .cell').forEach(cell => {
@@ -314,10 +337,12 @@ function loadStateFromURL() {
         try {
             const serialized = atob(encoded);
             applyGridState(serialized);
+            return true;
         } catch (e) {
             console.error('Failed to load state from URL', e);
         }
     }
+    return false;
 }
 
 function handleBackspace() {
@@ -336,6 +361,7 @@ function handleBackspace() {
             selectedCell.style.color = '';
         }
     }
+    saveStateToLocalStorage();
 }
 
 function getWordCells(cell, direction) {
@@ -485,6 +511,7 @@ if (mobileInput) {
             const letterEl = selectedCell.querySelector('.letter');
             if (letterEl) letterEl.textContent = letter.toUpperCase();
             autoAdvance();
+            saveStateToLocalStorage();
         }
     });
     mobileInput.addEventListener('keydown', (e) => {
@@ -510,6 +537,7 @@ document.addEventListener('keydown', (e) => {
         const letterEl = selectedCell.querySelector('.letter');
         if (letterEl) letterEl.textContent = key.toUpperCase();
         autoAdvance();
+        saveStateToLocalStorage();
     } else if (key === 'Backspace') {
         e.preventDefault();
         handleBackspace();
@@ -529,7 +557,15 @@ buildGrid(puzzleData);
 
 buildClues(puzzleData.cluesAcross, puzzleData.cluesDown);
 
-loadStateFromURL();
+const loadedFromURL = loadStateFromURL();
+if (!loadedFromURL) {
+    loadStateFromLocalStorage();
+}
+
+const firstCell = document.querySelector('#grid .cell:not(.block)');
+if (firstCell) {
+    selectCell(firstCell);
+}
 
 copyLinkButton = document.getElementById('copy-link');
 if (copyLinkButton) {
@@ -543,6 +579,14 @@ if (copyLinkButton) {
         } else {
             console.warn('Clipboard API not available');
         }
+    });
+}
+
+clearProgressButton = document.getElementById('clear-progress');
+if (clearProgressButton) {
+    clearProgressButton.addEventListener('click', () => {
+        localStorage.removeItem('crosswordState');
+        applyGridState('');
     });
 }
 
