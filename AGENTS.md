@@ -88,11 +88,3 @@ container's Node environment. Use them from a browser console instead.
   developer console, but they require a browser environment and will not run
   in Node.
 
-## Notes for Future Contributors
-
-- Mobile text entry uses a hidden `<input>` element (`#mobile-input`).
-  Characters typed there trigger its `input` handler. A document-level `keydown`
-  listener also handles desktop keyboard events. If that listener fires while
-  the hidden input is focused, letters may be added twice on some mobile
-  browsers. Skip handling in the document listener when
-  `document.activeElement === mobileInput` to prevent duplicate entry.
