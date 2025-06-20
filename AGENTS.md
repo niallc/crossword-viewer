@@ -115,3 +115,9 @@ and ignore pointer events so typing does not modify them directly.
 `shouldFocus` is `false` the cell is highlighted without moving keyboard focus.
 `selectClue()` uses this to highlight an entry when a clue is clicked without
 focusing the grid.
+
+## Solved Clue Styling (2024)
+
+`updateClueCompletion()` adds the `complete` class to clue `<li>` elements when
+all of their answer cells contain letters. Completed clues are faded via CSS and
+ignored when clicked.

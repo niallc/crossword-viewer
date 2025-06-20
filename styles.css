@@ -105,6 +105,11 @@
             background-color: #fff4a3;
         }
 
+        /* Faded style for solved clues */
+        #clues li.complete {
+            opacity: 0.5;
+        }
+
         #controls {
             display: flex;
             flex-direction: column;

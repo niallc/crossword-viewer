@@ -40,6 +40,10 @@ Each grid cell is `contenteditable` so the on-screen keyboard appears on mobile 
 
 Clicking a clue highlights its answer without shifting keyboard focus. The `selectCell()` function now accepts an optional second parameter `shouldFocus` (default `true`) controlling whether the selected cell gains focus.
 
+### Solved clues
+
+When all letters for a clue are filled in the clue becomes faint. Clicking a solved clue no longer jumps to that answer.
+
 ## Testing
 
 To enable verbose diagnostic output while developing, open `main.js` and set the
