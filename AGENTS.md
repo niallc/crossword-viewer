@@ -203,3 +203,9 @@ cell after loading the puzzle.
 `getArrowForDirection(direction, forward = true)` returns the appropriate
 keyboard arrow key for the specified direction. It helps keep navigation
 logic consistent when moving the selection forward or backward.
+
+## Move Back Direction Helper (2025)
+
+`getMoveBackDir(currentDirection)` returns `'ArrowLeft'` when the current
+direction is across and `'ArrowUp'` when it is down. Use this helper
+whenever navigation logic needs the key code for moving backward.

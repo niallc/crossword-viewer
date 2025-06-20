@@ -23,6 +23,10 @@ function getArrowForDirection(direction, forward = true) {
   return '';
 }
 
+function getMoveBackDir(currentDirection) {
+  return currentDirection === 'across' ? 'ArrowLeft' : 'ArrowUp';
+}
+
 class Crossword {
   constructor(xmlData) {
     console.log('Crossword Viewer: Starting');
@@ -451,20 +455,18 @@ class Crossword {
 
   handleBackspace() {
     if (!this.selectedCell) return;
-    const letterEl = this.selectedCell.querySelector('.letter');
+    const backDir = getMoveBackDir(this.currentDirection);
+    let cell = this.selectedCell;
+    const letterEl = cell.querySelector('.letter');
     if (letterEl && letterEl.textContent) {
       letterEl.textContent = '';
-      this.selectedCell.style.color = '';
-      const dir = getArrowForDirection(this.currentDirection, false);
-      this.moveSelection(dir);
-    } else {
-      const dir = getArrowForDirection(this.currentDirection, false);
-      if (this.moveSelection(dir)) {
-        const letterEl2 = this.selectedCell.querySelector('.letter');
-        if (letterEl2) letterEl2.textContent = '';
-        this.selectedCell.style.color = '';
-      }
+      this.moveSelection(backDir);
+    } else if (this.moveSelection(backDir)) {
+      cell = this.selectedCell;
+      const letterEl2 = cell.querySelector('.letter');
+      if (letterEl2) letterEl2.textContent = '';
     }
+    cell.style.color = '';
     this.saveStateToLocalStorage();
   }
 
