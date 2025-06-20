@@ -35,7 +35,7 @@ Use the "Copy Share Link" button to copy a URL representing your current grid st
 
 ### Input handling
 
-Each grid cell is `contenteditable` so the on-screen keyboard appears on mobile devices. Key presses are captured from `keydown` events and handled programmatically. The event handler calls `preventDefault()` to avoid the browser inserting characters twice.
+Each grid cell is `contenteditable` so the on-screen keyboard appears on mobile devices. Keyboard events are handled at the document level: `keydown` covers desktop input while `input` events ensure mobile browsers work correctly. The handler calls `preventDefault()` on `keydown` so characters are not inserted twice.
 
 ## Testing
 

@@ -99,5 +99,9 @@ cell elements. This improves performance and simplifies code.
 
 ## Input Handling (2024)
 
-Grid cells are now `contenteditable` and keyboard input is captured from `keydown` events. The handler calls `preventDefault()` to avoid double entry. The previous invisible `mobile-input` element and associated conditionals can be deleted.
+Keyboard input is processed at the document level. Grid cells are
+`contenteditable` so the on‑screen keyboard appears on mobile devices.
+`keydown` events handle desktop entry (calling `preventDefault()` so letters are
+not inserted twice) while `input` events cover mobile browsers that do not
+dispatch `keydown`. The old hidden `mobile-input` element has been removed.
 
