@@ -337,9 +337,41 @@ function applyGridState(serialized) {
     });
 }
 
+function rleEncode(str) {
+    if (!str) return '';
+    let result = '';
+    let count = 1;
+    for (let i = 1; i <= str.length; i++) {
+        if (str[i] === str[i - 1]) {
+            count++;
+        } else {
+            result += (count > 1 ? count : '') + str[i - 1];
+            count = 1;
+        }
+    }
+    return result;
+}
+
+function rleDecode(str) {
+    let result = '';
+    let countStr = '';
+    for (let i = 0; i < str.length; i++) {
+        const ch = str[i];
+        if (ch >= '0' && ch <= '9') {
+            countStr += ch;
+        } else {
+            const count = countStr ? parseInt(countStr, 10) : 1;
+            result += ch.repeat(count);
+            countStr = '';
+        }
+    }
+    return result;
+}
+
 function getShareableURL() {
     const serialized = serializeGridState();
-    const encoded = btoa(serialized);
+    const compressed = rleEncode(serialized);
+    const encoded = btoa(compressed);
     return location.origin + location.pathname + '#state=' + encoded;
 }
 
@@ -353,7 +385,8 @@ function loadStateFromURL() {
     }
     if (encoded) {
         try {
-            const serialized = atob(encoded);
+            const compressed = atob(encoded);
+            const serialized = rleDecode(compressed);
             applyGridState(serialized);
             return true;
         } catch (e) {
