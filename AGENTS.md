@@ -126,3 +126,9 @@ ignored when clicked.
 
 Completed clues also display a subtle line-through decoration so solvers can
 easily distinguish which clues remain unsolved.
+
+## Clue Enumerations (2024)
+
+Clue text now includes enumeration strings pulled directly from the
+`format` attribute in `puzzle.xml`. These strings indicate letter grouping such
+as `7,5` and are displayed in parentheses next to each clue.

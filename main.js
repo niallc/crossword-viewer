@@ -53,7 +53,8 @@ class Crossword {
       clueSections[0].querySelectorAll('clue').forEach(cl => {
         cluesAcross.push({
           number: cl.getAttribute('number'),
-          text: cl.textContent
+          text: cl.textContent,
+          enumeration: cl.getAttribute('format') || ''
         });
       });
     }
@@ -61,7 +62,8 @@ class Crossword {
       clueSections[1].querySelectorAll('clue').forEach(cl => {
         cluesDown.push({
           number: cl.getAttribute('number'),
-          text: cl.textContent
+          text: cl.textContent,
+          enumeration: cl.getAttribute('format') || ''
         });
       });
     }
@@ -173,7 +175,8 @@ class Crossword {
       num.className = 'clue-num';
       num.textContent = cl.number;
       li.appendChild(num);
-      li.appendChild(document.createTextNode(cl.text + ' (' + cl.length + ')'));
+      const enumStr = cl.enumeration || cl.length;
+      li.appendChild(document.createTextNode(cl.text + ' (' + enumStr + ')'));
       li.addEventListener('pointerdown', (e) => {
         if (li.classList.contains('complete')) return;
         this.selectClue(cl.number, 'across');
@@ -189,7 +192,8 @@ class Crossword {
       num.className = 'clue-num';
       num.textContent = cl.number;
       li.appendChild(num);
-      li.appendChild(document.createTextNode(cl.text + ' (' + cl.length + ')'));
+      const enumStr = cl.enumeration || cl.length;
+      li.appendChild(document.createTextNode(cl.text + ' (' + enumStr + ')'));
       li.addEventListener('pointerdown', (e) => {
         if (li.classList.contains('complete')) return;
         this.selectClue(cl.number, 'down');
