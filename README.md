@@ -1,6 +1,7 @@
 # Crossword Viewer (Modern)
 
 This project builds an interactive crossword viewer in Javascript + HTML.
+The puzzle data lives in `puzzle.xml` and is fetched at runtime.
 
 ## Goal
 
