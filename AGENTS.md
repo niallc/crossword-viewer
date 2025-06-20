@@ -132,3 +132,16 @@ easily distinguish which clues remain unsolved.
 Clue text now includes enumeration strings pulled directly from the
 `format` attribute in `puzzle.xml`. These strings indicate letter grouping such
 as `7,5` and are displayed in parentheses next to each clue.
+
+## Responsive Grid Sizing (2024)
+
+Grid cell dimensions are controlled by the CSS variable `--cell-size`.
+`buildGrid()` sets this variable to `calc(80vmin / N)` where `N` is the larger of
+the puzzle's width or height. Using `vmin` allows the entire grid to scale with
+the viewport, improving mobile usability.
+
+## On-Screen Arrow Navigation (2024)
+
+`index.html` now includes an `#arrows` container with four buttons. Each button
+has a `data-dir` attribute like `ArrowUp`. In `initCrossword()` these buttons call
+`moveSelection()` so solvers can navigate without a physical keyboard.
