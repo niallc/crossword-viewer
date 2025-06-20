@@ -203,3 +203,14 @@ cell after loading the puzzle.
 The default puzzle file was renamed to `social_deduction_ok.xml` and is
 pretty‑printed for easier reading. Update the fetch path in `main.js` if you
 replace this puzzle with your own.
+## Directional Arrow Helper (2025)
+
+`getArrowForDirection(direction, forward = true)` returns the appropriate
+keyboard arrow key for the specified direction. It helps keep navigation
+logic consistent when moving the selection forward or backward.
+
+## Move Back Direction Helper (2025)
+
+`getMoveBackDir(currentDirection)` returns `'ArrowLeft'` when the current
+direction is across and `'ArrowUp'` when it is down. Use this helper
+whenever navigation logic needs the key code for moving backward.
