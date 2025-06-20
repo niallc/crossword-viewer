@@ -23,6 +23,7 @@ Parse puzzle data from `puzzle.xml` and render an interactive crossword grid and
 - Basic test functions
 - Diagnostic output in console
 - No server required — runs as static HTML/JS
+- Cells cached in memory for faster lookups
 
 ## Running
 

@@ -19,6 +19,7 @@ class Crossword {
     this.mobileInput = null;
     this.copyLinkButton = null;
     this.clearProgressButton = null;
+    this.cellEls = [];
     this.puzzleData = this.parsePuzzleData(xmlData);
   }
 
@@ -142,9 +143,12 @@ class Crossword {
     gridEl.style.gridTemplateColumns = `repeat(${data.width}, 30px)`;
     gridEl.style.gridTemplateRows = `repeat(${data.height}, 30px)`;
 
+    this.cellEls = Array.from({ length: data.height }, () => Array(data.width).fill(null));
+
     data.grid.forEach((row, y) => {
       row.forEach((cellData, x) => {
         const cellEl = this.createCellElement(cellData, x, y);
+        this.cellEls[y][x] = cellEl;
         gridEl.appendChild(cellEl);
       });
     });
@@ -229,7 +233,7 @@ class Crossword {
   }
 
   testGridIsBuilt() {
-    return document.querySelectorAll('#grid .cell').length > 0;
+    return this.cellEls.length > 0 && this.cellEls[0].length > 0;
   }
 
   testCluesPresent() {
@@ -248,7 +252,10 @@ class Crossword {
     if (direction === 'ArrowDown') ny += 1;
     if (direction === 'ArrowLeft') nx -= 1;
     if (direction === 'ArrowRight') nx += 1;
-    const next = document.querySelector(`.cell[data-x="${nx}"][data-y="${ny}"]`);
+    let next = null;
+    if (ny >= 0 && ny < this.puzzleData.height && nx >= 0 && nx < this.puzzleData.width) {
+      next = this.cellEls[ny][nx];
+    }
     if (next && !next.classList.contains('block')) {
       this.selectCell(next);
       return true;
@@ -275,13 +282,16 @@ class Crossword {
   }
 
   logGridState() {
-    const gridEl = document.getElementById('grid');
-    const cells = gridEl.querySelectorAll('.cell');
-    const letters = Array.from(cells).map(c => {
-      const letterEl = c.querySelector('.letter');
-      return letterEl ? (letterEl.textContent || ' ') : ' ';
-    }).join('');
-    console.log('Grid letters:', letters);
+    const letters = [];
+    this.cellEls.forEach(row => {
+      row.forEach(cell => {
+        if (!cell) return;
+        const letterEl = cell.querySelector('.letter');
+        letters.push(letterEl ? (letterEl.textContent || ' ') : ' ');
+      });
+    });
+    const str = letters.join('');
+    console.log('Grid letters:', str);
   }
 
   saveStateToLocalStorage() {
@@ -308,34 +318,36 @@ class Crossword {
 
   serializeGridState() {
     const letters = [];
-    document.querySelectorAll('#grid .cell').forEach(cell => {
-      const x = parseInt(cell.dataset.x, 10);
-      const y = parseInt(cell.dataset.y, 10);
-      const data = this.puzzleData.grid[y][x];
-      if (data.type === 'letter') {
-        const letterEl = cell.querySelector('.letter');
-        letters.push(letterEl && letterEl.textContent ? letterEl.textContent : ' ');
+    for (let y = 0; y < this.puzzleData.height; y++) {
+      for (let x = 0; x < this.puzzleData.width; x++) {
+        const data = this.puzzleData.grid[y][x];
+        if (data.type === 'letter') {
+          const cell = this.cellEls[y][x];
+          const letterEl = cell.querySelector('.letter');
+          letters.push(letterEl && letterEl.textContent ? letterEl.textContent : ' ');
+        }
       }
-    });
+    }
     return letters.join('');
   }
 
   applyGridState(serialized) {
     const letters = serialized.split('');
     let idx = 0;
-    document.querySelectorAll('#grid .cell').forEach(cell => {
-      const x = parseInt(cell.dataset.x, 10);
-      const y = parseInt(cell.dataset.y, 10);
-      const data = this.puzzleData.grid[y][x];
-      if (data.type === 'letter') {
-        const ch = letters[idx++] || ' ';
-        const letterEl = cell.querySelector('.letter');
-        if (letterEl) {
-          letterEl.textContent = ch === ' ' ? '' : ch;
+    for (let y = 0; y < this.puzzleData.height; y++) {
+      for (let x = 0; x < this.puzzleData.width; x++) {
+        const data = this.puzzleData.grid[y][x];
+        if (data.type === 'letter') {
+          const ch = letters[idx++] || ' ';
+          const cell = this.cellEls[y][x];
+          const letterEl = cell.querySelector('.letter');
+          if (letterEl) {
+            letterEl.textContent = ch === ' ' ? '' : ch;
+          }
+          cell.style.color = '';
         }
-        cell.style.color = '';
       }
-    });
+    }
   }
 
   rleEncode(str) {
@@ -430,7 +442,7 @@ class Crossword {
         sx--;
       }
       for (let cx = sx; cx < this.puzzleData.width && this.puzzleData.grid[y][cx] && this.puzzleData.grid[y][cx].type !== 'block'; cx++) {
-        const el = document.querySelector(`.cell[data-x="${cx}"][data-y="${y}"]`);
+        const el = this.cellEls[y][cx];
         cells.push({ el, data: this.puzzleData.grid[y][cx] });
       }
     } else if (direction === 'down') {
@@ -439,7 +451,7 @@ class Crossword {
         sy--;
       }
       for (let cy = sy; cy < this.puzzleData.height && this.puzzleData.grid[cy][x] && this.puzzleData.grid[cy][x].type !== 'block'; cy++) {
-        const el = document.querySelector(`.cell[data-x="${x}"][data-y="${cy}"]`);
+        const el = this.cellEls[cy][x];
         cells.push({ el, data: this.puzzleData.grid[cy][x] });
       }
     }
@@ -472,7 +484,7 @@ class Crossword {
     const map = direction === 'across' ? this.puzzleData.acrossStarts : this.puzzleData.downStarts;
     const pos = map[number];
     if (!pos) return;
-    const cell = document.querySelector(`.cell[data-x="${pos.x}"][data-y="${pos.y}"]`);
+    const cell = this.cellEls[pos.y] && this.cellEls[pos.y][pos.x];
     if (cell) {
       this.currentDirection = direction;
       this.updateDirectionButton();
@@ -498,17 +510,18 @@ class Crossword {
 
   checkAnswers() {
     let wrong = 0;
-    document.querySelectorAll('#grid .cell').forEach(cell => {
-      const x = parseInt(cell.dataset.x, 10);
-      const y = parseInt(cell.dataset.y, 10);
-      const data = this.puzzleData.grid[y][x];
-      if (data.type === 'letter') {
-        const expected = (data.solution || '').toUpperCase();
-        const letterEl = cell.querySelector('.letter');
-        const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
-        if (actual !== expected) wrong += 1;
+    for (let y = 0; y < this.puzzleData.height; y++) {
+      for (let x = 0; x < this.puzzleData.width; x++) {
+        const data = this.puzzleData.grid[y][x];
+        if (data.type === 'letter') {
+          const cell = this.cellEls[y][x];
+          const expected = (data.solution || '').toUpperCase();
+          const letterEl = cell.querySelector('.letter');
+          const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
+          if (actual !== expected) wrong += 1;
+        }
       }
-    });
+    }
     if (!this.checkButton) {
       this.checkButton = document.getElementById('check-answer');
     }
@@ -627,7 +640,15 @@ function initCrossword(xmlData) {
     crossword.loadStateFromLocalStorage();
   }
 
-  const firstCell = document.querySelector('#grid .cell:not(.block)');
+  let firstCell = null;
+  outer: for (let y = 0; y < crossword.puzzleData.height; y++) {
+    for (let x = 0; x < crossword.puzzleData.width; x++) {
+      if (crossword.puzzleData.grid[y][x].type !== 'block') {
+        firstCell = crossword.cellEls[y][x];
+        break outer;
+      }
+    }
+  }
   if (firstCell) {
     crossword.selectCell(firstCell);
   }
@@ -661,7 +682,8 @@ function initCrossword(xmlData) {
   }
 
   if (TEST_MODE) {
-    document.querySelectorAll('#grid .cell').forEach(cell => {
+    crossword.cellEls.flat().forEach(cell => {
+      if (!cell) return;
       ['pointerdown', 'pointerup', 'click'].forEach(ev =>
         cell.addEventListener(ev, () =>
           console.log(ev, cell.dataset.x, cell.dataset.y,

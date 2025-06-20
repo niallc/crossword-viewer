@@ -91,3 +91,9 @@ container's Node environment. Use them from a browser console instead.
 `main.js` is loaded as an ES module and exports a `crossword` instance. Methods
 can be invoked via `window.crossword` for debugging.
 
+## DOM Caching
+
+The crossword grid stores its cell elements in `crossword.cellEls[y][x]` when
+`buildGrid()` runs. Use this array instead of repeatedly querying the DOM for
+cell elements. This improves performance and simplifies code.
+
