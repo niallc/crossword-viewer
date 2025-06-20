@@ -120,10 +120,12 @@ class Crossword {
         const num = document.createElement('div');
         num.classList.add('num');
         num.textContent = cellData.number;
+        num.setAttribute('contenteditable', 'false');
         cell.appendChild(num);
       }
       const letter = document.createElement('div');
       letter.classList.add('letter');
+      letter.setAttribute('contenteditable', 'false');
       cell.appendChild(letter);
       cell.setAttribute('contenteditable', 'true');
       cell.setAttribute('inputmode', 'text');

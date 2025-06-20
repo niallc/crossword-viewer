@@ -105,3 +105,5 @@ Keyboard input is processed at the document level. Grid cells are
 not inserted twice) while `input` events cover mobile browsers that do not
 dispatch `keydown`. The old hidden `mobile-input` element has been removed.
 
+Clue numbers and letter containers inside each cell have `contenteditable="false"`
+and ignore pointer events so typing does not modify them directly.
