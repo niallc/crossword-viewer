@@ -87,6 +87,7 @@ container's Node environment. Use them from a browser console instead.
   developer console, but they require a browser environment and will not run
   in Node.
 - The old "Num Squares Wrong" button has been replaced by new checking controls.
+- The on-screen arrow navigation feature has been removed.
 
 ## Notes on Module Structure
 
@@ -114,8 +115,8 @@ and ignore pointer events so typing does not modify them directly.
 
 `selectCell(cell, shouldFocus = true)` selects and highlights a grid cell. When
 `shouldFocus` is `false` the cell is highlighted without moving keyboard focus.
-`selectClue()` uses this to highlight an entry when a clue is clicked without
-focusing the grid.
+`selectClue()` still supports highlighting an entry without focus, but the UI no
+longer triggers this method automatically.
 
 ## Solved Clue Styling (2024)
 
@@ -141,11 +142,15 @@ Grid cell dimensions are controlled by the CSS variable `--cell-size`.
 the puzzle's width or height. Using `vmin` allows the entire grid to scale with
 the viewport, improving mobile usability.
 
-## On-Screen Arrow Navigation (2024)
+## On-Screen Arrow Navigation (2024) - Marked for Deletion
 
-`index.html` now includes an `#arrows` container with four buttons. Each button
-has a `data-dir` attribute like `ArrowUp`. In `initCrossword()` these buttons call
-`moveSelection()` so solvers can navigate without a physical keyboard.
+This section described an earlier feature where arrow buttons moved the grid
+selection. The buttons have been removed to simplify the mobile interface.
+
+## Clue Click Removal (2025)
+
+Clues are no longer clickable. This avoids unwanted scrolling when tapping
+clues on mobile devices. Use `selectClue()` from the console if needed.
 
 ## Checking Entries (2024)
 
