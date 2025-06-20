@@ -58,6 +58,40 @@ function parsePuzzleData(xmlString) {
     });
   }
 
+  const acrossLengths = {};
+  const downLengths = {};
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const cell = grid[y][x];
+      if (!cell || cell.type === 'block' || !cell.number) continue;
+      if (x === 0 || grid[y][x - 1].type === 'block') {
+        let len = 0;
+        let cx = x;
+        while (cx < width && grid[y][cx].type !== 'block') {
+          len++;
+          cx++;
+        }
+        acrossLengths[cell.number] = len;
+      }
+      if (y === 0 || grid[y - 1][x].type === 'block') {
+        let len = 0;
+        let cy = y;
+        while (cy < height && grid[cy][x].type !== 'block') {
+          len++;
+          cy++;
+        }
+        downLengths[cell.number] = len;
+      }
+    }
+  }
+
+  cluesAcross.forEach(cl => {
+    cl.length = acrossLengths[cl.number] || 0;
+  });
+  cluesDown.forEach(cl => {
+    cl.length = downLengths[cl.number] || 0;
+  });
+
   return { width, height, grid, cluesAcross, cluesDown };
 }
 
@@ -116,7 +150,7 @@ function buildClues(across, down) {
     num.className = 'clue-num';
     num.textContent = cl.number;
     li.appendChild(num);
-    li.appendChild(document.createTextNode(cl.text));
+    li.appendChild(document.createTextNode(cl.text + ' (' + cl.length + ')'));
     acrossEl.appendChild(li);
   });
 
@@ -127,7 +161,7 @@ function buildClues(across, down) {
     num.className = 'clue-num';
     num.textContent = cl.number;
     li.appendChild(num);
-    li.appendChild(document.createTextNode(cl.text));
+    li.appendChild(document.createTextNode(cl.text + ' (' + cl.length + ')'));
     downEl.appendChild(li);
   });
 }

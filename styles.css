@@ -76,9 +76,9 @@
 
         .clue-num {
             font-weight: bold;
-            margin-right: 0.6em;
+            margin-right: 0.4em;
             display: inline-block;
-            width: 2em;
+            width: 1.3em;
             text-align: left; /* left justify numbers */
         }
 
