@@ -36,3 +36,11 @@ The following helper functions can be run from the browser console:
 - `testCluesPresent()` — returns true if clues are displayed
 - `logGridState()` — logs current cell contents
 - `getShareableURL()` — returns a URL containing the current puzzle state
+
+## Share Link Format
+
+The puzzle state string is compressed with a simple run-length encoding before
+being Base64 encoded. Runs of the same character are replaced with
+`<count><char>` (the count is omitted when it is `1`). The compressed string is
+then passed to `btoa()` for inclusion in the URL. `loadStateFromURL()` performs
+the inverse operation by Base64 decoding and expanding the run-length data.
