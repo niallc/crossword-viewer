@@ -42,7 +42,7 @@ Clicking a clue highlights its answer without shifting keyboard focus. The `sele
 
 ### Solved clues
 
-When all letters for a clue are filled in the clue becomes faint. Clicking a solved clue no longer jumps to that answer.
+When all letters for a clue are filled in the clue becomes faint and now shows a light strike-through. Clicking a solved clue no longer jumps to that answer.
 
 ## Testing
 
