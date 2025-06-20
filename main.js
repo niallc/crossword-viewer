@@ -636,27 +636,28 @@ clearFeedback() {
     });
   }
 
-  updateClueCompletion() {
-    const updateGroup = (selector, direction, starts) => {
-      document.querySelectorAll(selector).forEach(li => {
-        const num = li.dataset.number;
-        const pos = starts[num];
-        if (!pos) return;
-        const cell = this.cellEls[pos.y][pos.x];
-        const cells = this.getWordCells(cell, direction);
-        const complete = cells.every(({ el }) => {
-          const letterEl = el.querySelector('.letter');
-          return letterEl && letterEl.textContent && letterEl.textContent.trim();
-        });
-        if (complete) {
-          li.classList.add('complete');
-        } else {
-          li.classList.remove('complete');
-        }
+  checkClueGroup(selector, direction, starts) {
+    document.querySelectorAll(selector).forEach(li => {
+      const num = li.dataset.number;
+      const pos = starts[num];
+      if (!pos) return;
+      const cell = this.cellEls[pos.y][pos.x];
+      const cells = this.getWordCells(cell, direction);
+      const complete = cells.every(({ el }) => {
+        const letterEl = el.querySelector('.letter');
+        return letterEl && letterEl.textContent && letterEl.textContent.trim();
       });
-    };
-    updateGroup('#clues-across li', 'across', this.puzzleData.acrossStarts);
-    updateGroup('#clues-down li', 'down', this.puzzleData.downStarts);
+      if (complete) {
+        li.classList.add('complete');
+      } else {
+        li.classList.remove('complete');
+      }
+    });
+  }
+
+  updateClueCompletion() {
+    this.checkClueGroup('#clues-across li', 'across', this.puzzleData.acrossStarts);
+    this.checkClueGroup('#clues-down li', 'down', this.puzzleData.downStarts);
   }
 
   selectClue(number, direction) {
