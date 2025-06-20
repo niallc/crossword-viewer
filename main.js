@@ -2,6 +2,8 @@
 
 const TEST_MODE = false;
 
+export let crossword;
+
 class Crossword {
   constructor(xmlData) {
     console.log('Crossword Viewer: Starting');
@@ -540,138 +542,146 @@ class Crossword {
   }
 }
 
-const crossword = new Crossword(window.CrosswordPuzzleData);
+function initCrossword(xmlData) {
+  crossword = new Crossword(xmlData);
 
-crossword.directionButton = document.getElementById('toggle-direction');
-if (crossword.directionButton) {
-  crossword.directionButton.addEventListener('click', () => crossword.toggleDirection());
-  crossword.updateDirectionButton();
-}
-
-crossword.checkButton = document.getElementById('check-answer');
-if (crossword.checkButton) {
-  crossword.checkButton.addEventListener('click', () => crossword.checkAnswers());
-}
-
-const checkAcrossBtn = document.getElementById('check-current-across');
-if (checkAcrossBtn) {
-  checkAcrossBtn.addEventListener('click', () => crossword.checkCurrentAnswer('across'));
-}
-
-const checkDownBtn = document.getElementById('check-current-down');
-if (checkDownBtn) {
-  checkDownBtn.addEventListener('click', () => crossword.checkCurrentAnswer('down'));
-}
-
-crossword.mobileInput = document.getElementById('mobile-input');
-if (crossword.mobileInput) {
-  crossword.mobileInput.addEventListener('input', (e) => {
-    const letter = e.data || crossword.mobileInput.value.slice(-1);
-    crossword.mobileInput.value = '';
-    if (!letter) return;
-    if (/^[a-zA-Z]$/.test(letter) && crossword.selectedCell) {
-      crossword.selectedCell.style.color = '';
-      const letterEl = crossword.selectedCell.querySelector('.letter');
-      if (letterEl) letterEl.textContent = letter.toUpperCase();
-      crossword.autoAdvance();
-      crossword.saveStateToLocalStorage();
-    }
-  });
-  crossword.mobileInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Backspace') {
-      e.preventDefault();
-      crossword.handleBackspace();
-    } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-      e.preventDefault();
-      crossword.moveSelection(e.key);
-    }
-  });
-}
-
-document.addEventListener('keydown', (e) => {
-  if (!crossword.selectedCell) return;
-  if (crossword.mobileInput && document.activeElement === crossword.mobileInput) {
-    return;
-  }
-  const key = e.key;
-  if (/^[a-zA-Z]$/.test(key)) {
-    crossword.selectedCell.style.color = '';
-    const letterEl = crossword.selectedCell.querySelector('.letter');
-    if (letterEl) letterEl.textContent = key.toUpperCase();
-    crossword.autoAdvance();
-    crossword.saveStateToLocalStorage();
-  } else if (key === 'Backspace') {
-    e.preventDefault();
-    crossword.handleBackspace();
-  } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
-    crossword.moveSelection(key);
-    if (key === 'ArrowUp' || key === 'ArrowDown') {
-      crossword.currentDirection = 'down';
-    }
-    if (key === 'ArrowLeft' || key === 'ArrowRight') {
-      crossword.currentDirection = 'across';
-    }
+  crossword.directionButton = document.getElementById('toggle-direction');
+  if (crossword.directionButton) {
+    crossword.directionButton.addEventListener('click', () => crossword.toggleDirection());
     crossword.updateDirectionButton();
   }
-});
 
-crossword.buildGrid();
+  crossword.checkButton = document.getElementById('check-answer');
+  if (crossword.checkButton) {
+    crossword.checkButton.addEventListener('click', () => crossword.checkAnswers());
+  }
 
-crossword.buildClues(crossword.puzzleData.cluesAcross, crossword.puzzleData.cluesDown);
+  const checkAcrossBtn = document.getElementById('check-current-across');
+  if (checkAcrossBtn) {
+    checkAcrossBtn.addEventListener('click', () => crossword.checkCurrentAnswer('across'));
+  }
 
-const loadedFromURL = crossword.loadStateFromURL();
-if (!loadedFromURL) {
-  crossword.loadStateFromLocalStorage();
-}
+  const checkDownBtn = document.getElementById('check-current-down');
+  if (checkDownBtn) {
+    checkDownBtn.addEventListener('click', () => crossword.checkCurrentAnswer('down'));
+  }
 
-const firstCell = document.querySelector('#grid .cell:not(.block)');
-if (firstCell) {
-  crossword.selectCell(firstCell);
-}
+  crossword.mobileInput = document.getElementById('mobile-input');
+  if (crossword.mobileInput) {
+    crossword.mobileInput.addEventListener('input', (e) => {
+      const letter = e.data || crossword.mobileInput.value.slice(-1);
+      crossword.mobileInput.value = '';
+      if (!letter) return;
+      if (/^[a-zA-Z]$/.test(letter) && crossword.selectedCell) {
+        crossword.selectedCell.style.color = '';
+        const letterEl = crossword.selectedCell.querySelector('.letter');
+        if (letterEl) letterEl.textContent = letter.toUpperCase();
+        crossword.autoAdvance();
+        crossword.saveStateToLocalStorage();
+      }
+    });
+    crossword.mobileInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        crossword.handleBackspace();
+      } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        crossword.moveSelection(e.key);
+      }
+    });
+  }
 
-crossword.copyLinkButton = document.getElementById('copy-link');
-if (crossword.copyLinkButton) {
-  crossword.copyLinkButton.addEventListener('click', () => {
-    const url = crossword.getShareableURL();
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url).then(() => {
-        crossword.copyLinkButton.textContent = 'Link Copied!';
-        setTimeout(() => crossword.copyLinkButton.textContent = 'Copy Share Link', 2000);
-      }).catch(err => console.error('Clipboard error', err));
-    } else {
-      console.warn('Clipboard API not available');
+  document.addEventListener('keydown', (e) => {
+    if (!crossword.selectedCell) return;
+    if (crossword.mobileInput && document.activeElement === crossword.mobileInput) {
+      return;
+    }
+    const key = e.key;
+    if (/^[a-zA-Z]$/.test(key)) {
+      crossword.selectedCell.style.color = '';
+      const letterEl = crossword.selectedCell.querySelector('.letter');
+      if (letterEl) letterEl.textContent = key.toUpperCase();
+      crossword.autoAdvance();
+      crossword.saveStateToLocalStorage();
+    } else if (key === 'Backspace') {
+      e.preventDefault();
+      crossword.handleBackspace();
+    } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+      crossword.moveSelection(key);
+      if (key === 'ArrowUp' || key === 'ArrowDown') {
+        crossword.currentDirection = 'down';
+      }
+      if (key === 'ArrowLeft' || key === 'ArrowRight') {
+        crossword.currentDirection = 'across';
+      }
+      crossword.updateDirectionButton();
     }
   });
+
+  crossword.buildGrid();
+
+  crossword.buildClues(crossword.puzzleData.cluesAcross, crossword.puzzleData.cluesDown);
+
+  const loadedFromURL = crossword.loadStateFromURL();
+  if (!loadedFromURL) {
+    crossword.loadStateFromLocalStorage();
+  }
+
+  const firstCell = document.querySelector('#grid .cell:not(.block)');
+  if (firstCell) {
+    crossword.selectCell(firstCell);
+  }
+
+  crossword.copyLinkButton = document.getElementById('copy-link');
+  if (crossword.copyLinkButton) {
+    crossword.copyLinkButton.addEventListener('click', () => {
+      const url = crossword.getShareableURL();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          crossword.copyLinkButton.textContent = 'Link Copied!';
+          setTimeout(() => crossword.copyLinkButton.textContent = 'Copy Share Link', 2000);
+        }).catch(err => console.error('Clipboard error', err));
+      } else {
+        console.warn('Clipboard API not available');
+      }
+    });
+  }
+
+  crossword.clearProgressButton = document.getElementById('clear-progress');
+  if (crossword.clearProgressButton) {
+    crossword.clearProgressButton.addEventListener('click', () => {
+      localStorage.removeItem('crosswordState');
+      crossword.applyGridState('');
+    });
+  }
+
+  if (TEST_MODE && crossword.mobileInput) {
+    crossword.mobileInput.addEventListener('focus', () => console.log('mobile-input focus', Date.now()));
+    crossword.mobileInput.addEventListener('blur', () => console.log('mobile-input blur', Date.now()));
+  }
+
+  if (TEST_MODE) {
+    document.querySelectorAll('#grid .cell').forEach(cell => {
+      ['pointerdown', 'pointerup', 'click'].forEach(ev =>
+        cell.addEventListener(ev, () =>
+          console.log(ev, cell.dataset.x, cell.dataset.y,
+            'active:', document.activeElement.id)));
+    });
+  }
+
+  console.log('Crossword Viewer: Ready');
+
+  window.testGridIsBuilt = crossword.testGridIsBuilt.bind(crossword);
+  window.testCluesPresent = crossword.testCluesPresent.bind(crossword);
+  window.logGridState = crossword.logGridState.bind(crossword);
+  window.getShareableURL = crossword.getShareableURL.bind(crossword);
+
+  window.crossword = crossword;
 }
 
-crossword.clearProgressButton = document.getElementById('clear-progress');
-if (crossword.clearProgressButton) {
-  crossword.clearProgressButton.addEventListener('click', () => {
-    localStorage.removeItem('crosswordState');
-    crossword.applyGridState('');
-  });
-}
+fetch('puzzle.xml')
+  .then(res => res.text())
+  .then(initCrossword)
+  .catch(err => console.error('Failed to load puzzle.xml', err));
 
-if (TEST_MODE && crossword.mobileInput) {
-  crossword.mobileInput.addEventListener('focus', () => console.log('mobile-input focus', Date.now()));
-  crossword.mobileInput.addEventListener('blur', () => console.log('mobile-input blur', Date.now()));
-}
-
-if (TEST_MODE) {
-  document.querySelectorAll('#grid .cell').forEach(cell => {
-    ['pointerdown', 'pointerup', 'click'].forEach(ev =>
-      cell.addEventListener(ev, () =>
-        console.log(ev, cell.dataset.x, cell.dataset.y,
-          'active:', document.activeElement.id)));
-  });
-}
-
-console.log('Crossword Viewer: Ready');
-
-window.testGridIsBuilt = crossword.testGridIsBuilt.bind(crossword);
-window.testCluesPresent = crossword.testCluesPresent.bind(crossword);
-window.logGridState = crossword.logGridState.bind(crossword);
-window.getShareableURL = crossword.getShareableURL.bind(crossword);
-
-window.crossword = crossword;
-export default crossword;
+export { crossword as default };

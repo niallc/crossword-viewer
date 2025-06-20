@@ -4,13 +4,14 @@ This project builds an interactive crossword viewer in Javascript + HTML.
 
 ## Goal
 
-Parse puzzle data from `Social_Deduction.js` and render an interactive crossword grid and clues.
+Parse puzzle data from `puzzle.xml` and render an interactive crossword grid and clues.
 
 ## Files
 
 - `index.html` — main page
 - `main.js` — JS logic (loaded as an ES module)
-- `Social_Deduction.js` — puzzle data as XML string
+- `Social_Deduction.js` — stub referencing the puzzle
+- `puzzle.xml` — puzzle data in XML format
 
 ## Features
 
