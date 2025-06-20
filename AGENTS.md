@@ -170,3 +170,10 @@ Grid numbers and letters now size proportionally to each cell. `.letter`
 elements use about 60% of the cell size while `.num` uses roughly 30%.
 This keeps text legible on desktop without overwhelming tiny cells on
 mobile devices.
+
+## Check Debugging (2025)
+
+When `TEST_MODE` is `true`, the `checkLetter()` and `checkWord()` methods log
+their comparisons to the console. Each log reports the cell coordinates, the
+expected solution letter, and the actual letter typed. This helps diagnose why a
+cell might not highlight when using the check buttons.

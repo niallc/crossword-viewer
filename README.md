@@ -64,6 +64,9 @@ and run the helper functions provided by `main.js`:
 - `testCluesPresent()` — returns `true` if clues are displayed.
 - `logGridState()` — logs the current cell contents.
 - `getShareableURL()` — returns a URL containing the current puzzle state.
+- When `TEST_MODE` is enabled, the check buttons log detailed information about
+  each cell they evaluate. Use the console logs to understand why a letter was
+  flagged (or not) by the check.
 
 ## Share Link Format
 

@@ -565,6 +565,9 @@ class Crossword {
     const expected = (data.solution || '').toUpperCase();
     const letterEl = this.selectedCell.querySelector('.letter');
     const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
+    if (TEST_MODE) {
+      console.log('checkLetter', { x, y, expected, actual });
+    }
     if (actual && actual !== expected) {
       this.selectedCell.style.color = 'red';
       this.feedbackCells.push(this.selectedCell);
@@ -579,6 +582,11 @@ class Crossword {
       const expected = (data.solution || '').toUpperCase();
       const letterEl = el.querySelector('.letter');
       const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
+      if (TEST_MODE) {
+        const x = parseInt(el.dataset.x, 10);
+        const y = parseInt(el.dataset.y, 10);
+        console.log('checkWord', { x, y, expected, actual });
+      }
       if (actual && actual !== expected) {
         el.style.color = 'red';
         this.feedbackCells.push(el);
