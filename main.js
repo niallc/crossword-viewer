@@ -16,6 +16,7 @@ let currentDirection = 'across';
 let directionButton = null;
 let checkButton = null;
 let mobileInput = null;
+let copyLinkButton = null;
 
 function parsePuzzleData(xmlString) {
   const parser = new DOMParser();
@@ -257,6 +258,58 @@ function logGridState() {
     console.log('Grid letters:', letters);
 }
 
+function serializeGridState() {
+    const letters = [];
+    document.querySelectorAll('#grid .cell').forEach(cell => {
+        const x = parseInt(cell.dataset.x, 10);
+        const y = parseInt(cell.dataset.y, 10);
+        const data = puzzleData.grid[y][x];
+        if (data.type === 'letter') {
+            letters.push(cell.textContent || ' ');
+        }
+    });
+    return letters.join('');
+}
+
+function applyGridState(serialized) {
+    const letters = serialized.split('');
+    let idx = 0;
+    document.querySelectorAll('#grid .cell').forEach(cell => {
+        const x = parseInt(cell.dataset.x, 10);
+        const y = parseInt(cell.dataset.y, 10);
+        const data = puzzleData.grid[y][x];
+        if (data.type === 'letter') {
+            const ch = letters[idx++] || ' ';
+            cell.textContent = ch === ' ' ? '' : ch;
+            cell.style.color = '';
+        }
+    });
+}
+
+function getShareableURL() {
+    const serialized = serializeGridState();
+    const encoded = btoa(serialized);
+    return location.origin + location.pathname + '#state=' + encoded;
+}
+
+function loadStateFromURL() {
+    let encoded = null;
+    if (location.hash.startsWith('#state=')) {
+        encoded = location.hash.slice(7);
+    } else {
+        const params = new URLSearchParams(location.search);
+        encoded = params.get('state');
+    }
+    if (encoded) {
+        try {
+            const serialized = atob(encoded);
+            applyGridState(serialized);
+        } catch (e) {
+            console.error('Failed to load state from URL', e);
+        }
+    }
+}
+
 function handleBackspace() {
     if (!selectedCell) return;
     if (selectedCell.textContent) {
@@ -460,6 +513,23 @@ buildGrid(puzzleData);
 
 buildClues(puzzleData.cluesAcross, puzzleData.cluesDown);
 
+loadStateFromURL();
+
+copyLinkButton = document.getElementById('copy-link');
+if (copyLinkButton) {
+    copyLinkButton.addEventListener('click', () => {
+        const url = getShareableURL();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(() => {
+                copyLinkButton.textContent = 'Link Copied!';
+                setTimeout(() => copyLinkButton.textContent = 'Copy Share Link', 2000);
+            }).catch(err => console.error('Clipboard error', err));
+        } else {
+            console.warn('Clipboard API not available');
+        }
+    });
+}
+
 // Debug output to trace focus and pointer events on mobile
 if (TEST_MODE && mobileInput) {
     mobileInput.addEventListener('focus', () =>
@@ -483,5 +553,6 @@ console.log('Crossword Viewer: Ready');
 window.testGridIsBuilt = testGridIsBuilt;
 window.testCluesPresent = testCluesPresent;
 window.logGridState = logGridState;
+window.getShareableURL = getShareableURL;
 
 })();
