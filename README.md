@@ -9,7 +9,7 @@ Parse puzzle data from `Social_Deduction.js` and render an interactive crossword
 ## Files
 
 - `index.html` — main page
-- `main.js` — JS logic
+- `main.js` — JS logic (loaded as an ES module)
 - `Social_Deduction.js` — puzzle data as XML string
 
 ## Features
@@ -25,6 +25,8 @@ Parse puzzle data from `Social_Deduction.js` and render an interactive crossword
 ## Running
 
 Open `index.html` in a modern browser.
+
+`main.js` exports a `crossword` instance and also attaches it to `window.crossword` for debugging from the console.
 
 Use the "Copy Share Link" button to copy a URL representing your current grid state.
 
