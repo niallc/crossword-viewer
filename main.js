@@ -13,6 +13,16 @@ function removeTextNodes(elem) {
   });
 }
 
+function getArrowForDirection(direction, forward = true) {
+  if (direction === 'across') {
+    return forward ? 'ArrowRight' : 'ArrowLeft';
+  }
+  if (direction === 'down') {
+    return forward ? 'ArrowDown' : 'ArrowUp';
+  }
+  return '';
+}
+
 class Crossword {
   constructor(xmlData) {
     console.log('Crossword Viewer: Starting');
@@ -299,19 +309,11 @@ class Crossword {
 
   autoAdvance() {
     let moved = false;
-    if (this.currentDirection === 'across') {
-      moved = this.moveSelection('ArrowRight');
-    } else if (this.currentDirection === 'down') {
-      moved = this.moveSelection('ArrowDown');
-    }
+    moved = this.moveSelection(getArrowForDirection(this.currentDirection, true));
     if (!moved) {
       this.currentDirection = this.currentDirection === 'across' ? 'down' : 'across';
       this.updateDirectionButton();
-      if (this.currentDirection === 'across') {
-        this.moveSelection('ArrowRight');
-      } else {
-        this.moveSelection('ArrowDown');
-      }
+      this.moveSelection(getArrowForDirection(this.currentDirection, true));
     }
   }
 
@@ -453,10 +455,10 @@ class Crossword {
     if (letterEl && letterEl.textContent) {
       letterEl.textContent = '';
       this.selectedCell.style.color = '';
-      const dir = this.currentDirection === 'across' ? 'ArrowLeft' : 'ArrowUp';
+      const dir = getArrowForDirection(this.currentDirection, false);
       this.moveSelection(dir);
     } else {
-      const dir = this.currentDirection === 'across' ? 'ArrowLeft' : 'ArrowUp';
+      const dir = getArrowForDirection(this.currentDirection, false);
       if (this.moveSelection(dir)) {
         const letterEl2 = this.selectedCell.querySelector('.letter');
         if (letterEl2) letterEl2.textContent = '';

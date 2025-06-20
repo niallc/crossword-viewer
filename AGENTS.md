@@ -197,3 +197,9 @@ before inserting letters.
 `Crossword.findFirstLetterCell()` scans the grid and returns the first cell
 that is not a block. `initCrossword` uses this helper to select the initial
 cell after loading the puzzle.
+
+## Directional Arrow Helper (2025)
+
+`getArrowForDirection(direction, forward = true)` returns the appropriate
+keyboard arrow key for the specified direction. It helps keep navigation
+logic consistent when moving the selection forward or backward.
