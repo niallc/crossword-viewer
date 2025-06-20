@@ -2,7 +2,7 @@
 
 This is a Javascript + HTML project to display an interactive crossword puzzle on the web.
 
-The puzzle data is provided in `Social_Deduction.js` as an XML string assigned to `CrosswordPuzzleData`.
+The puzzle data is stored in `puzzle.xml` and loaded via `fetch` in `main.js`.
 
 The project goal is to parse the puzzle data and render an interactive crossword viewer as a modern static web page.
 
@@ -78,10 +78,13 @@ container's Node environment. Use them from a browser console instead.
 
 ## Working with this Repository
 
+### Marked for Deletion
 - The puzzle data file `Social_Deduction.js` is one very long line (about 16k
   characters). Inspect it using `head -c`/`tail -c` or tools like `dd` to avoid
   overflowing the console. `wc -l` will report `0` because there are no newline
   characters.
+
+- New puzzle data file is `puzzle.xml` and is loaded via `fetch`.
 - There is no build system or dependency installation. Open `index.html` in a
   browser to run the viewer. The helper functions
   `testGridIsBuilt()` and `testCluesPresent()` are available from the
