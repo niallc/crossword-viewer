@@ -502,10 +502,9 @@ if (checkDownBtn) {
 mobileInput = document.getElementById('mobile-input');
 if (mobileInput) {
     mobileInput.addEventListener('input', (e) => {
-        const val = mobileInput.value;
-        if (!val) return;
-        const letter = val.slice(-1);
+        const letter = e.data || mobileInput.value.slice(-1);
         mobileInput.value = '';
+        if (!letter) return;
         if (/^[a-zA-Z]$/.test(letter) && selectedCell) {
             selectedCell.style.color = '';
             const letterEl = selectedCell.querySelector('.letter');
