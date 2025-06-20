@@ -214,3 +214,7 @@ logic consistent when moving the selection forward or backward.
 `getMoveBackDir(currentDirection)` returns `'ArrowLeft'` when the current
 direction is across and `'ArrowUp'` when it is down. Use this helper
 whenever navigation logic needs the key code for moving backward.
+
+## Clue Group Checker (2025)
+
+The helper method `checkClueGroup(selector, direction, starts)` updates clue list items by adding or removing the `complete` class based on whether their answer cells contain letters. `updateClueCompletion()` now delegates to this method for both across and down clues so they behave identically.
