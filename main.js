@@ -1,6 +1,6 @@
 // Crossword Viewer implementation using a class
 
-const TEST_MODE = false;
+const TEST_MODE = true;
 
 export let crossword;
 
@@ -547,10 +547,15 @@ class Crossword {
     }
   }
 
-  clearFeedback() {
+clearFeedback() {
     this.feedbackCells.forEach(c => {
-      c.style.color = '';
+      // Clear background from parent cell
       c.style.backgroundColor = '';
+      // Clear color from the inner letter element
+      const letterEl = c.querySelector('.letter');
+      if (letterEl) {
+        letterEl.style.color = '';
+      }
     });
     this.feedbackCells = [];
   }
@@ -568,8 +573,12 @@ class Crossword {
     if (TEST_MODE) {
       console.log('checkLetter', { x, y, expected, actual });
     }
-    if (actual && actual !== expected) {
-      this.selectedCell.style.color = 'red';
+    if (actual && letterEl) {
+      if (actual === expected) {
+        letterEl.style.color = 'green'; // Apply style to the .letter div
+      } else {
+        letterEl.style.color = 'red';
+      }
       this.feedbackCells.push(this.selectedCell);
     }
   }
@@ -587,8 +596,12 @@ class Crossword {
         const y = parseInt(el.dataset.y, 10);
         console.log('checkWord', { x, y, expected, actual });
       }
-      if (actual && actual !== expected) {
-        el.style.color = 'red';
+      if (actual && letterEl) {
+        if (actual === expected) {
+          letterEl.style.color = 'green'; // Apply style to the .letter div
+        } else {
+          letterEl.style.color = 'red';
+        }
         this.feedbackCells.push(el);
       }
     });
