@@ -30,12 +30,21 @@ Use the "Copy Share Link" button to copy a URL representing your current grid st
 
 ## Testing
 
-The following helper functions can be run from the browser console:
+To enable verbose diagnostic output while developing, open `main.js` and set the
+`TEST_MODE` constant near the top of the file to `true`:
 
-- `testGridIsBuilt()` — returns true if the grid has been created
-- `testCluesPresent()` — returns true if clues are displayed
-- `logGridState()` — logs current cell contents
-- `getShareableURL()` — returns a URL containing the current puzzle state
+```js
+const TEST_MODE = true;
+```
+
+Reload `index.html` in your browser after making this change. Open the browser's
+developer tools console (usually with <kbd>F12</kbd> or via "Inspect" → "Console" )
+and run the helper functions provided by `main.js`:
+
+- `testGridIsBuilt()` — returns `true` if the grid has been created.
+- `testCluesPresent()` — returns `true` if clues are displayed.
+- `logGridState()` — logs the current cell contents.
+- `getShareableURL()` — returns a URL containing the current puzzle state.
 
 ## Share Link Format
 
