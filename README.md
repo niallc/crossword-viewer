@@ -1,17 +1,21 @@
 # Crossword Viewer (Modern)
 
 This project builds an interactive crossword viewer in Javascript + HTML.
-The puzzle data lives in `puzzle.xml` and is fetched at runtime.
+The puzzle data lives in `social_deduction_ok.xml` and is fetched at runtime.
 
 ## Goal
 
-Parse puzzle data from `puzzle.xml` and render an interactive crossword grid and clues.
+Parse puzzle data from `social_deduction_ok.xml` and render an interactive crossword grid and clues.
 
 ## Files
 
 - `index.html` — main page
 - `main.js` — JS logic (loaded as an ES module)
-- `puzzle.xml` — puzzle data in XML format loaded at runtime via fetch
+- `social_deduction_ok.xml` — puzzle data in XML format loaded at runtime via fetch
+
+## Creating Your Own Puzzle
+
+See [COMPOSERS.md](COMPOSERS.md) for guidance on writing your own crossword file and replacing the provided puzzle.
 
 ## Features
 
@@ -24,7 +28,7 @@ Parse puzzle data from `puzzle.xml` and render an interactive crossword grid and
 - Diagnostic output in console
 - No server required — runs as static HTML/JS
 - Cells cached in memory for faster lookups
-- Clue enumerations shown using values from `puzzle.xml`
+- Clue enumerations shown using values from `social_deduction_ok.xml`
 - Responsive grid: cells scale with the viewport but never exceed 500&nbsp;px in total width; letter and clue number sizes scale with the cells
 - "Check Letter" and "Check Word" buttons highlight incorrect entries until you type again
 

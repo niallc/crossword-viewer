@@ -2,7 +2,7 @@
 
 This is a Javascript + HTML project to display an interactive crossword puzzle on the web.
 
-The puzzle data is stored in `puzzle.xml` and loaded via `fetch` in `main.js`.
+The puzzle data is stored in `social_deduction_ok.xml` and loaded via `fetch` in `main.js`.
 
 The project goal is to parse the puzzle data and render an interactive crossword viewer as a modern static web page.
 
@@ -79,8 +79,8 @@ container's Node environment. Use them from a browser console instead.
 ## Working with this Repository
 
 ### Marked for Deletion
-- Puzzle data lives in `puzzle.xml` and is fetched at runtime.
-- The obsolete `Social_Deduction.js` stub has been removed; puzzle data now loads exclusively from `puzzle.xml`.
+- Puzzle data lives in `social_deduction_ok.xml` and is fetched at runtime.
+- The obsolete `Social_Deduction.js` stub has been removed; puzzle data now loads exclusively from `social_deduction_ok.xml`.
 - There is no build system or dependency installation. Open `index.html` in a
   browser to run the viewer. The helper functions
   `testGridIsBuilt()` and `testCluesPresent()` are available from the
@@ -132,7 +132,7 @@ easily distinguish which clues remain unsolved.
 ## Clue Enumerations (2024)
 
 Clue text now includes enumeration strings pulled directly from the
-`format` attribute in `puzzle.xml`. These strings indicate letter grouping such
+`format` attribute in `social_deduction_ok.xml`. These strings indicate letter grouping such
 as `7,5` and are displayed in parentheses next to each clue.
 
 ## Responsive Grid Sizing (2024)
@@ -197,3 +197,9 @@ before inserting letters.
 `Crossword.findFirstLetterCell()` scans the grid and returns the first cell
 that is not a block. `initCrossword` uses this helper to select the initial
 cell after loading the puzzle.
+
+## Puzzle Filename (2025)
+
+The default puzzle file was renamed to `social_deduction_ok.xml` and is
+pretty‑printed for easier reading. Update the fetch path in `main.js` if you
+replace this puzzle with your own.

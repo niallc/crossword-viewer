@@ -766,9 +766,9 @@ function initCrossword(xmlData) {
   window.crossword = crossword;
 }
 
-fetch('puzzle.xml')
+fetch('social_deduction_ok.xml')
   .then(res => res.text())
   .then(initCrossword)
-  .catch(err => console.error('Failed to load puzzle.xml', err));
+  .catch(err => console.error('Failed to load social_deduction_ok.xml', err));
 
 export { crossword as default };
