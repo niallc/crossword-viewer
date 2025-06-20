@@ -88,3 +88,8 @@ container's Node environment. Use them from a browser console instead.
   developer console, but they require a browser environment and will not run
   in Node.
 
+## Notes on Module Structure
+
+`main.js` is loaded as an ES module and exports a `crossword` instance. Methods
+can be invoked via `window.crossword` for debugging.
+
