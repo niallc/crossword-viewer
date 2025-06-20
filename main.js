@@ -268,6 +268,19 @@ class Crossword {
     return false;
   }
 
+  setCellLetter(cell, letter) {
+    if (!cell) return;
+    Array.from(cell.childNodes).forEach(n => {
+      if (n.nodeType === Node.TEXT_NODE) {
+        cell.removeChild(n);
+      }
+    });
+    const letterEl = cell.querySelector('.letter');
+    if (letterEl) {
+      letterEl.textContent = letter.toUpperCase();
+    }
+  }
+
   autoAdvance() {
     let moved = false;
     if (this.currentDirection === 'across') {
@@ -444,8 +457,7 @@ class Crossword {
       e.preventDefault();
       this.clearFeedback();
       this.selectedCell.style.color = '';
-      const letterEl = this.selectedCell.querySelector('.letter');
-      if (letterEl) letterEl.textContent = key.toUpperCase();
+      this.setCellLetter(this.selectedCell, key);
       this.autoAdvance();
       this.saveStateToLocalStorage();
     } else if (key === 'Backspace') {
@@ -490,8 +502,7 @@ class Crossword {
     if (/^[a-zA-Z]$/.test(letter)) {
       this.clearFeedback();
       cell.style.color = '';
-      const letterEl = cell.querySelector('.letter');
-      if (letterEl) letterEl.textContent = letter.toUpperCase();
+      this.setCellLetter(cell, letter);
       this.autoAdvance();
       this.saveStateToLocalStorage();
     }

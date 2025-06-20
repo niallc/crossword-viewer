@@ -177,3 +177,10 @@ When `TEST_MODE` is `true`, the `checkLetter()` and `checkWord()` methods log
 their comparisons to the console. Each log reports the cell coordinates, the
 expected solution letter, and the actual letter typed. This helps diagnose why a
 cell might not highlight when using the check buttons.
+
+## Overwrite Input (2025)
+
+Typing a letter into a cell now replaces any existing letter in that cell
+automatically. This behavior works for both physical keyboards and mobile
+on-screen keyboards. The helper method `setCellLetter(cell, letter)` handles the
+DOM updates.
