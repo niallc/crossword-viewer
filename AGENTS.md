@@ -86,6 +86,7 @@ container's Node environment. Use them from a browser console instead.
   `testGridIsBuilt()` and `testCluesPresent()` are available from the
   developer console, but they require a browser environment and will not run
   in Node.
+- The old "Num Squares Wrong" button has been replaced by new checking controls.
 
 ## Notes on Module Structure
 
@@ -145,3 +146,14 @@ the viewport, improving mobile usability.
 `index.html` now includes an `#arrows` container with four buttons. Each button
 has a `data-dir` attribute like `ArrowUp`. In `initCrossword()` these buttons call
 `moveSelection()` so solvers can navigate without a physical keyboard.
+
+## Checking Entries (2024)
+
+Two new buttons allow solvers to verify their work:
+
+- **Check Letter** highlights the currently selected cell red if the typed letter
+  does not match the solution.
+- **Check Word** highlights any incorrect letters in the current across or down
+  entry.
+
+Feedback colors clear automatically when the user types again.
