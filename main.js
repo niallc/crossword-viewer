@@ -20,11 +20,18 @@ class Crossword {
     this.clearProgressButton = null;
     this.cellEls = [];
     this.puzzleData = this.parsePuzzleData(xmlData);
+    const base = this.puzzleData.title ?
+      this.puzzleData.title.replace(/\W+/g, '_') :
+      `${this.puzzleData.width}x${this.puzzleData.height}`;
+    this.storageKey = `crosswordState_${base}`;
   }
 
   parsePuzzleData(xmlString) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(xmlString, 'text/xml');
+
+    const titleNode = doc.querySelector('metadata > title');
+    const title = titleNode ? titleNode.textContent.trim() : '';
 
     const gridNode = doc.querySelector('grid');
     const width = parseInt(gridNode.getAttribute('width'), 10);
@@ -106,7 +113,7 @@ class Crossword {
       cl.length = downLengths[cl.number] || 0;
     });
 
-    return { width, height, grid, cluesAcross, cluesDown, acrossStarts, downStarts };
+    return { title, width, height, grid, cluesAcross, cluesDown, acrossStarts, downStarts };
   }
 
   createCellElement(cellData, x, y) {
@@ -302,7 +309,7 @@ class Crossword {
   saveStateToLocalStorage() {
     try {
       const serialized = this.serializeGridState();
-      localStorage.setItem('crosswordState', serialized);
+      localStorage.setItem(this.storageKey, serialized);
       this.updateClueCompletion();
     } catch (e) {
       console.error('Failed to save state to localStorage', e);
@@ -311,7 +318,7 @@ class Crossword {
 
   loadStateFromLocalStorage() {
     try {
-      const serialized = localStorage.getItem('crosswordState');
+      const serialized = localStorage.getItem(this.storageKey);
       if (serialized) {
         this.applyGridState(serialized);
         return true;
@@ -700,7 +707,7 @@ function initCrossword(xmlData) {
   crossword.clearProgressButton = document.getElementById('clear-progress');
   if (crossword.clearProgressButton) {
     crossword.clearProgressButton.addEventListener('click', () => {
-      localStorage.removeItem('crosswordState');
+      localStorage.removeItem(crossword.storageKey);
       crossword.applyGridState('');
     });
   }

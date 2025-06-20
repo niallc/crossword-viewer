@@ -170,3 +170,10 @@ Grid numbers and letters now size proportionally to each cell. `.letter`
 elements use about 60% of the cell size while `.num` uses roughly 30%.
 This keeps text legible on desktop without overwhelming tiny cells on
 mobile devices.
+
+## Puzzle-Specific Storage Keys (2025)
+
+Progress in the crossword is stored in `localStorage` under a key derived from
+the puzzle's title. This allows multiple puzzles on the same site to save their
+states independently. The "Clear Progress" button removes the entry using this
+key.

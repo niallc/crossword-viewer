@@ -19,6 +19,7 @@ Parse puzzle data from `puzzle.xml` and render an interactive crossword grid and
 - Clues display
 - User can type answers
 - Shareable URLs for puzzle state
+- Progress saved in `localStorage` using a key derived from the puzzle title
 - Basic test functions
 - Diagnostic output in console
 - No server required — runs as static HTML/JS
