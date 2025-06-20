@@ -17,6 +17,7 @@ Parse puzzle data from `Social_Deduction.js` and render an interactive crossword
 - Interactive grid
 - Clues display
 - User can type answers
+- Shareable URLs for puzzle state
 - Basic test functions
 - Diagnostic output in console
 - No server required — runs as static HTML/JS
@@ -25,6 +26,8 @@ Parse puzzle data from `Social_Deduction.js` and render an interactive crossword
 
 Open `index.html` in a modern browser.
 
+Use the "Copy Share Link" button to copy a URL representing your current grid state.
+
 ## Testing
 
 The following helper functions can be run from the browser console:
@@ -32,3 +35,4 @@ The following helper functions can be run from the browser console:
 - `testGridIsBuilt()` — returns true if the grid has been created
 - `testCluesPresent()` — returns true if clues are displayed
 - `logGridState()` — logs current cell contents
+- `getShareableURL()` — returns a URL containing the current puzzle state
