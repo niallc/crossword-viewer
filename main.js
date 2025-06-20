@@ -209,6 +209,17 @@ class Crossword {
     this.updateClueCompletion();
   }
 
+  findFirstLetterCell() {
+    for (let y = 0; y < this.puzzleData.height; y++) {
+      for (let x = 0; x < this.puzzleData.width; x++) {
+        if (this.puzzleData.grid[y][x].type !== 'block') {
+          return this.cellEls[y][x];
+        }
+      }
+    }
+    return null;
+  }
+
   selectCell(cell, shouldFocus = true) {
     if (cell.classList.contains('block')) {
       return;
@@ -704,15 +715,7 @@ function initCrossword(xmlData) {
     crossword.loadStateFromLocalStorage();
   }
 
-  let firstCell = null;
-  outer: for (let y = 0; y < crossword.puzzleData.height; y++) {
-    for (let x = 0; x < crossword.puzzleData.width; x++) {
-      if (crossword.puzzleData.grid[y][x].type !== 'block') {
-        firstCell = crossword.cellEls[y][x];
-        break outer;
-      }
-    }
-  }
+  const firstCell = crossword.findFirstLetterCell();
   if (firstCell) {
     crossword.selectCell(firstCell);
   }
