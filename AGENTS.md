@@ -184,3 +184,10 @@ Typing a letter into a cell now replaces any existing letter in that cell
 automatically. This behavior works for both physical keyboards and mobile
 on-screen keyboards. The helper method `setCellLetter(cell, letter)` handles the
 DOM updates.
+
+## Text Node Cleanup (2025)
+
+Stray text nodes sometimes accumulate inside grid cells due to user edits.
+The helper `removeTextNodes(elem)` removes all text node children from a
+given element. `setCellLetter()` and `handleInput()` now call this helper
+before inserting letters.
