@@ -16,6 +16,7 @@ let currentDirection = 'across';
 let directionButton = null;
 let checkButton = null;
 let mobileInput = null;
+let copyLinkButton = null;
 
 function parsePuzzleData(xmlString) {
   const parser = new DOMParser();
@@ -113,6 +114,9 @@ function createCellElement(cellData, x, y) {
       num.textContent = cellData.number;
       cell.appendChild(num);
     }
+    const letter = document.createElement('div');
+    letter.classList.add('letter');
+    cell.appendChild(letter);
     // use pointer events to handle both mouse and touch in one handler
     cell.addEventListener('pointerdown', (e) => {
       selectCell(cell);
@@ -253,21 +257,82 @@ function autoAdvance() {
 function logGridState() {
     const gridEl = document.getElementById('grid');
     const cells = gridEl.querySelectorAll('.cell');
-    const letters = Array.from(cells).map(c => c.textContent || ' ').join('');
+    const letters = Array.from(cells).map(c => {
+        const letterEl = c.querySelector('.letter');
+        return letterEl ? (letterEl.textContent || ' ') : ' ';
+    }).join('');
     console.log('Grid letters:', letters);
+}
+
+function serializeGridState() {
+    const letters = [];
+    document.querySelectorAll('#grid .cell').forEach(cell => {
+        const x = parseInt(cell.dataset.x, 10);
+        const y = parseInt(cell.dataset.y, 10);
+        const data = puzzleData.grid[y][x];
+        if (data.type === 'letter') {
+            const letterEl = cell.querySelector('.letter');
+            letters.push(letterEl && letterEl.textContent ? letterEl.textContent : ' ');
+        }
+    });
+    return letters.join('');
+}
+
+function applyGridState(serialized) {
+    const letters = serialized.split('');
+    let idx = 0;
+    document.querySelectorAll('#grid .cell').forEach(cell => {
+        const x = parseInt(cell.dataset.x, 10);
+        const y = parseInt(cell.dataset.y, 10);
+        const data = puzzleData.grid[y][x];
+        if (data.type === 'letter') {
+            const ch = letters[idx++] || ' ';
+            const letterEl = cell.querySelector('.letter');
+            if (letterEl) {
+                letterEl.textContent = ch === ' ' ? '' : ch;
+            }
+            cell.style.color = '';
+        }
+    });
+}
+
+function getShareableURL() {
+    const serialized = serializeGridState();
+    const encoded = btoa(serialized);
+    return location.origin + location.pathname + '#state=' + encoded;
+}
+
+function loadStateFromURL() {
+    let encoded = null;
+    if (location.hash.startsWith('#state=')) {
+        encoded = location.hash.slice(7);
+    } else {
+        const params = new URLSearchParams(location.search);
+        encoded = params.get('state');
+    }
+    if (encoded) {
+        try {
+            const serialized = atob(encoded);
+            applyGridState(serialized);
+        } catch (e) {
+            console.error('Failed to load state from URL', e);
+        }
+    }
 }
 
 function handleBackspace() {
     if (!selectedCell) return;
-    if (selectedCell.textContent) {
-        selectedCell.textContent = '';
+    const letterEl = selectedCell.querySelector('.letter');
+    if (letterEl && letterEl.textContent) {
+        letterEl.textContent = '';
         selectedCell.style.color = '';
         const dir = currentDirection === 'across' ? 'ArrowLeft' : 'ArrowUp';
         moveSelection(dir);
     } else {
         const dir = currentDirection === 'across' ? 'ArrowLeft' : 'ArrowUp';
         if (moveSelection(dir)) {
-            selectedCell.textContent = '';
+            const letterEl2 = selectedCell.querySelector('.letter');
+            if (letterEl2) letterEl2.textContent = '';
             selectedCell.style.color = '';
         }
     }
@@ -330,7 +395,8 @@ function checkCurrentAnswer(direction) {
     if (cells.length === 0) return;
     cells.forEach(({ el, data }) => {
         const expected = (data.solution || '').toUpperCase();
-        const actual = (el.textContent || '').trim().toUpperCase();
+        const letterEl = el.querySelector('.letter');
+        const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
         if (expected === actual) {
             el.style.color = 'green';
         } else {
@@ -347,7 +413,8 @@ function checkAnswers() {
         const data = puzzleData.grid[y][x];
         if (data.type === 'letter') {
             const expected = (data.solution || '').toUpperCase();
-            const actual = (cell.textContent || '').trim().toUpperCase();
+            const letterEl = cell.querySelector('.letter');
+            const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
             if (actual !== expected) wrong += 1;
         }
     });
@@ -415,7 +482,8 @@ if (mobileInput) {
         mobileInput.value = '';
         if (/^[a-zA-Z]$/.test(letter) && selectedCell) {
             selectedCell.style.color = '';
-            selectedCell.textContent = letter.toUpperCase();
+            const letterEl = selectedCell.querySelector('.letter');
+            if (letterEl) letterEl.textContent = letter.toUpperCase();
             autoAdvance();
         }
     });
@@ -439,7 +507,8 @@ document.addEventListener('keydown', (e) => {
     const key = e.key;
     if (/^[a-zA-Z]$/.test(key)) {
         selectedCell.style.color = '';
-        selectedCell.textContent = key.toUpperCase();
+        const letterEl = selectedCell.querySelector('.letter');
+        if (letterEl) letterEl.textContent = key.toUpperCase();
         autoAdvance();
     } else if (key === 'Backspace') {
         e.preventDefault();
@@ -459,6 +528,23 @@ document.addEventListener('keydown', (e) => {
 buildGrid(puzzleData);
 
 buildClues(puzzleData.cluesAcross, puzzleData.cluesDown);
+
+loadStateFromURL();
+
+copyLinkButton = document.getElementById('copy-link');
+if (copyLinkButton) {
+    copyLinkButton.addEventListener('click', () => {
+        const url = getShareableURL();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(() => {
+                copyLinkButton.textContent = 'Link Copied!';
+                setTimeout(() => copyLinkButton.textContent = 'Copy Share Link', 2000);
+            }).catch(err => console.error('Clipboard error', err));
+        } else {
+            console.warn('Clipboard API not available');
+        }
+    });
+}
 
 // Debug output to trace focus and pointer events on mobile
 if (TEST_MODE && mobileInput) {
@@ -483,5 +569,6 @@ console.log('Crossword Viewer: Ready');
 window.testGridIsBuilt = testGridIsBuilt;
 window.testCluesPresent = testCluesPresent;
 window.logGridState = logGridState;
+window.getShareableURL = getShareableURL;
 
 })();
