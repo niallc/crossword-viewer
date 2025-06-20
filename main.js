@@ -197,7 +197,7 @@ class Crossword {
     });
   }
 
-  selectCell(cell) {
+  selectCell(cell, shouldFocus = true) {
     if (cell.classList.contains('block')) {
       return;
     }
@@ -225,7 +225,7 @@ class Crossword {
       }
     }
     this.highlightWord(this.selectedCell);
-    if (this.selectedCell.focus) {
+    if (shouldFocus && this.selectedCell.focus) {
       try {
         this.selectedCell.focus({ preventScroll: true });
       } catch (e) {
@@ -546,7 +546,7 @@ class Crossword {
     if (cell) {
       this.currentDirection = direction;
       this.updateDirectionButton();
-      this.selectCell(cell);
+      this.selectCell(cell, false);
     }
   }
 
