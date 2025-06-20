@@ -372,7 +372,8 @@ function getShareableURL() {
     const serialized = serializeGridState();
     const compressed = rleEncode(serialized);
     const encoded = btoa(compressed);
-    return location.origin + location.pathname + '#state=' + encoded;
+    const urlEncoded = encodeURIComponent(encoded);
+    return location.origin + location.pathname + '#state=' + urlEncoded;
 }
 
 function loadStateFromURL() {
@@ -385,7 +386,8 @@ function loadStateFromURL() {
     }
     if (encoded) {
         try {
-            const compressed = atob(encoded);
+            const decoded = decodeURIComponent(encoded);
+            const compressed = atob(decoded);
             const serialized = rleDecode(compressed);
             applyGridState(serialized);
             return true;
