@@ -147,8 +147,10 @@ class Crossword {
     const data = this.puzzleData;
     const gridEl = document.getElementById('grid');
     gridEl.innerHTML = '';
-    const cellSize = `calc(80vmin / ${Math.max(data.width, data.height)})`;
-    gridEl.style.setProperty('--cell-size', cellSize);
+    const vmin = Math.min(window.innerWidth, window.innerHeight);
+    const maxSize = Math.min(vmin * 0.8, 500);
+    const cellSize = maxSize / Math.max(data.width, data.height);
+    gridEl.style.setProperty('--cell-size', cellSize + 'px');
     gridEl.style.gridTemplateColumns = `repeat(${data.width}, var(--cell-size))`;
     gridEl.style.gridTemplateRows = `repeat(${data.height}, var(--cell-size))`;
 
@@ -179,11 +181,7 @@ class Crossword {
       li.appendChild(num);
       const enumStr = cl.enumeration || cl.length;
       li.appendChild(document.createTextNode(cl.text + ' (' + enumStr + ')'));
-      li.addEventListener('pointerdown', (e) => {
-        if (li.classList.contains('complete')) return;
-        this.selectClue(cl.number, 'across');
-        e.preventDefault();
-      });
+      // clue clicks were removed to prevent unwanted scrolling on mobile
       acrossEl.appendChild(li);
     });
 
@@ -196,11 +194,7 @@ class Crossword {
       li.appendChild(num);
       const enumStr = cl.enumeration || cl.length;
       li.appendChild(document.createTextNode(cl.text + ' (' + enumStr + ')'));
-      li.addEventListener('pointerdown', (e) => {
-        if (li.classList.contains('complete')) return;
-        this.selectClue(cl.number, 'down');
-        e.preventDefault();
-      });
+      // clue clicks were removed to prevent unwanted scrolling on mobile
       downEl.appendChild(li);
     });
     this.updateClueCompletion();
@@ -571,6 +565,9 @@ class Crossword {
     const expected = (data.solution || '').toUpperCase();
     const letterEl = this.selectedCell.querySelector('.letter');
     const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
+    if (TEST_MODE) {
+      console.log('checkLetter', { x, y, expected, actual });
+    }
     if (actual && actual !== expected) {
       this.selectedCell.style.color = 'red';
       this.feedbackCells.push(this.selectedCell);
@@ -585,6 +582,11 @@ class Crossword {
       const expected = (data.solution || '').toUpperCase();
       const letterEl = el.querySelector('.letter');
       const actual = (letterEl && letterEl.textContent || '').trim().toUpperCase();
+      if (TEST_MODE) {
+        const x = parseInt(el.dataset.x, 10);
+        const y = parseInt(el.dataset.y, 10);
+        console.log('checkWord', { x, y, expected, actual });
+      }
       if (actual && actual !== expected) {
         el.style.color = 'red';
         this.feedbackCells.push(el);
@@ -711,21 +713,7 @@ function initCrossword(xmlData) {
     });
   }
 
-  const arrowContainer = document.getElementById('arrows');
-  if (arrowContainer) {
-    arrowContainer.querySelectorAll('button[data-dir]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const dir = btn.dataset.dir;
-        crossword.moveSelection(dir);
-        if (dir === 'ArrowUp' || dir === 'ArrowDown') {
-          crossword.currentDirection = 'down';
-        } else if (dir === 'ArrowLeft' || dir === 'ArrowRight') {
-          crossword.currentDirection = 'across';
-        }
-        crossword.updateDirectionButton();
-      });
-    });
-  }
+  // on-screen arrow navigation has been removed
 
 
   if (TEST_MODE) {
