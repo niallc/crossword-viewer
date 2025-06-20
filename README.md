@@ -33,6 +33,10 @@ Open `index.html` in a modern browser.
 
 Use the "Copy Share Link" button to copy a URL representing your current grid state.
 
+### Input handling
+
+Each grid cell is `contenteditable` so the on-screen keyboard appears on mobile devices. Key presses are captured from `keydown` events and handled programmatically. The event handler calls `preventDefault()` to avoid the browser inserting characters twice.
+
 ## Testing
 
 To enable verbose diagnostic output while developing, open `main.js` and set the

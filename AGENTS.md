@@ -97,3 +97,7 @@ The crossword grid stores its cell elements in `crossword.cellEls[y][x]` when
 `buildGrid()` runs. Use this array instead of repeatedly querying the DOM for
 cell elements. This improves performance and simplifies code.
 
+## Input Handling (2024)
+
+Grid cells are now `contenteditable` and keyboard input is captured from `keydown` events. The handler calls `preventDefault()` to avoid double entry. The previous invisible `mobile-input` element and associated conditionals can be deleted.
+

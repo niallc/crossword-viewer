@@ -30,6 +30,7 @@
             /* avoid double events and accidental text selection on mobile */
             touch-action: manipulation;
             user-select: none;
+            caret-color: transparent;
         }
 
         .cell.selected {
@@ -125,15 +126,6 @@
             flex: 1;
         }
 
-        #mobile-input {
-            position: fixed;
-            opacity: 0;
-            top: 0;
-            left: 0;
-            width: 1px;
-            height: 1px;
-            border: none;
-        }
 
         @media (max-width: 600px) {
             body {
