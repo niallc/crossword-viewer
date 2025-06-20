@@ -46,6 +46,7 @@ The following ideas may help the agent during development, and may be implemente
     - When a square is selected
     - When a letter is typed
 - Add a "test mode" toggle that enables verbose output for development
+- To enable verbose logging, set `TEST_MODE` to `true` in `main.js`.
 
 These are only suggestions — the agent may choose useful additional approaches for providing feedback, validating correctness, and facilitating agentic development.
 
