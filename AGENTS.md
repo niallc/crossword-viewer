@@ -80,6 +80,7 @@ container's Node environment. Use them from a browser console instead.
 
 ### Marked for Deletion
 - Puzzle data lives in `puzzle.xml` and is fetched at runtime.
+- The obsolete `Social_Deduction.js` stub has been removed; puzzle data now loads exclusively from `puzzle.xml`.
 - There is no build system or dependency installation. Open `index.html` in a
   browser to run the viewer. The helper functions
   `testGridIsBuilt()` and `testCluesPresent()` are available from the
