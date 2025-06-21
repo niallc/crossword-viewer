@@ -1,7 +1,7 @@
-// Crossword class module (v1.1)
+// Crossword class module (v1.2)
 import { parsePuzzle } from './puzzle-parser.js';
 
-export const TEST_MODE = false;
+export const TEST_MODE = true;
 
 function removeTextNodes(elem) {
   if (!elem) return;
@@ -42,11 +42,17 @@ export default class Crossword {
     this.cellEls = [];
     this.puzzleData = parsePuzzle(xmlData);
     this.debugEl = document.getElementById('debug-log');
-    this.debugLog('Crossword Initialized (v1.1). Logging is active.'); // Version number added
+    this.debugLog('Crossword Initialized (v1.2). Logging is active.');
   }
 
   debugLog(message) {
+    // Only log if test mode is enabled.
+    if (!TEST_MODE) {
+      if (this.debugEl) this.debugEl.style.display = 'none';
+      return;
+    }
     if (!this.debugEl) return;
+
     const timestamp = new Date().toLocaleTimeString();
     const newLog = `[${timestamp}] ${message}`;
     // Prepend new messages so they appear at the top
@@ -85,7 +91,7 @@ export default class Crossword {
         e.preventDefault();
       });
 
-      // We now only need the 'input' event listener for mobile.
+      // Unified input handler for both mobile and desktop.
       cell.addEventListener('input', (e) => this.handleInput(e));
     }
 
@@ -98,61 +104,46 @@ export default class Crossword {
     const cell = this.selectedCell;
 
     this.debugLog(`--- handleKeyDown --- Key: "${key}"`);
-    
-    // Handle navigation and backspace, which need to be controlled
+
+    // We only need to control navigation and deletion.
     if (key === 'Backspace' || key === 'Delete') {
       e.preventDefault();
       this.clearFeedback();
       this.handleBackspace();
       return;
     }
-    if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight') {
+    if (key.startsWith('Arrow')) {
       e.preventDefault();
       this.clearFeedback();
       this.moveSelection(key);
       return;
     }
 
-    // For desktop: handle letter input directly and prevent default
-    if (/^[a-zA-Z]$/.test(key)) {
-      e.preventDefault();
-      this.clearFeedback();
-      this.debugLog('handleKeyDown: Detected a desktop letter key.');
-      this.setCellLetter(this.selectedCell, key);
-      this.autoAdvance();
-      this.saveStateToLocalStorage();
-      return;
-    }
-
-    // For mobile: if we get an unidentified key, it's likely a character input.
-    // We will clear the cell's current letter to make way for the browser's default input action.
-    // This should then trigger the 'input' event listener.
-    if (key === 'Unidentified') {
-        this.debugLog('handleKeyDown: Unidentified key (mobile?). Clearing cell content to prepare for input event.');
+    // For any character input (e.g., "a", "A", or "Unidentified" on mobile),
+    // we clear the cell's letter to prepare for the 'input' event.
+    // We do NOT preventDefault(), so the browser's default action triggers 'input'.
+    if (key.length === 1 || key === 'Unidentified') {
+        this.debugLog('handleKeyDown: Character key detected. Clearing cell to prepare for input event.');
         const letterEl = cell.querySelector('.letter');
         if (letterEl) {
             letterEl.textContent = '';
         }
-        // DO NOT preventDefault(). Let the browser insert the character.
     }
   }
-  
+
   handleInput(e) {
     const cell = e.target.closest('.cell');
     if (!cell || cell.classList.contains('block')) return;
-    
+
     this.debugLog(`--- handleInput ---`);
     this.debugLog(`Type: ${e.inputType}, Data: "${e.data}"`);
     this.debugLog(`Cell textContent after browser input: "${cell.textContent.trim()}"`);
 
-    // The 'input' event fires *after* the browser has modified the DOM.
-    // Our job is to clean up the mess and formalize the state.
-    
-    // The letter we want is now in the textContent of the cell.
+    // The 'input' event fires after the browser has modified the DOM.
+    // Our job is to clean up and formalize the state.
     let letter = cell.textContent.trim();
     
-    // The cell might now contain stray text nodes outside our .letter div.
-    // Let's clean them up and put the letter where it belongs.
+    // Put the letter where it belongs and remove stray text nodes.
     removeTextNodes(cell); 
 
     if (letter) {
