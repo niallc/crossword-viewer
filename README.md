@@ -23,19 +23,11 @@ See [SETTERS.md](SETTERS.md) for guidance on writing your own crossword file and
 ## Features
 
 - Interactive grid
-- Clues display
-- User can type answers
-- Typing a new letter in a cell replaces any existing letter
 - Shareable URLs for puzzle state
 - Progress saved to `localStorage` and restored on reload
-- Basic test functions
 - "Show all available crosswords" button reveals a puzzle list below the clues
   and remains left-aligned rather than spanning the full width on larger screens
-- Credits the page author (Niall Cardin) and shows the crossword author's name if provided
-  - Diagnostic output in console
 - No server required — runs as static HTML/JS
-- Cells cached in memory for faster lookups
-- Puzzle data parsing split into helper functions (`parseGrid`, `parseClues`, `computeWordMetadata`) for readability
 - Clue enumerations shown using values from the loaded puzzle file
 - Responsive grid: cells scale with the viewport but never exceed 500&nbsp;px in total width; letter and clue number sizes scale with the cells
 - "Check Letter" and "Check Word" buttons highlight incorrect entries until you type again

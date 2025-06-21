@@ -48,7 +48,7 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
    puzzle file's `<metadata>` section and returns it as `author`. `index.js`
    shows "Crossword by ..." in the `#puzzle-author` element when a name is
    provided and hides the element if none is found. The page always displays
-   "Page by Niall Cardin" using the `#page-credit` element.
+   "Page by Niall C" using the `#page-credit` element.
 
 ## Repository Practices
 - Keep `AGENTS.md` concise; do not record a running change log here.
