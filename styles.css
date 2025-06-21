@@ -131,10 +131,6 @@
             margin-bottom: 1em;
         }
 
-        #puzzle-list {
-            margin-top: 1em;
-            display: none;
-        }
 
         #confirm-overlay {
             position: fixed;
@@ -164,6 +160,13 @@
         #show-puzzles {
             margin-top: 1em;
             align-self: flex-start;
+            width: 100%;
+        }
+
+        #puzzle-list {
+            margin-top: 1em;
+            display: none;
+            width: 100%;
         }
 
         #puzzle-links {
@@ -212,9 +215,6 @@
             }
             #grid {
                 margin-bottom: 1rem;
-            }
-            #show-puzzles {
-                width: 100%;
             }
         }
 
