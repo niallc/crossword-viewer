@@ -41,6 +41,20 @@ export default class Crossword {
     this.copyLinkButton = null;
     this.cellEls = [];
     this.puzzleData = parsePuzzle(xmlData);
+    this.debugEl = document.getElementById('debug-log');
+    this.debugLog('Crossword Initialized. Logging is active.');
+  }
+
+  debugLog(message) {
+    if (!this.debugEl) return;
+    const timestamp = new Date().toLocaleTimeString();
+    const newLog = `[${timestamp}] ${message}`;
+    // Prepend new messages so they appear at the top
+    this.debugEl.textContent = newLog + '\n' + this.debugEl.textContent;
+    const lines = this.debugEl.textContent.split('\n');
+    if (lines.length > 100) { // Keep the log to a reasonable size
+      this.debugEl.textContent = lines.slice(0, 100).join('\n');
+    }
   }
 
   createCellElement(cellData, x, y) {
@@ -70,7 +84,6 @@ export default class Crossword {
         this.selectCell(cell);
         e.preventDefault();
       });
-      // Key events are handled at the document level to avoid duplicates
     }
 
     return cell;
@@ -195,6 +208,7 @@ export default class Crossword {
 
   moveSelection(direction) {
     if (!this.selectedCell) return false;
+    this.debugLog(`moveSelection: Moving ${direction}`);
     const x = parseInt(this.selectedCell.dataset.x, 10);
     const y = parseInt(this.selectedCell.dataset.y, 10);
     let nx = x, ny = y;
@@ -210,22 +224,31 @@ export default class Crossword {
       this.selectCell(next);
       return true;
     }
+    this.debugLog(`moveSelection: Move failed (hit edge or block).`);
     return false;
   }
 
   setCellLetter(cell, letter) {
-    if (!cell) return;
+    if (!cell) {
+      this.debugLog('setCellLetter: FAILED - cell is null.');
+      return;
+    }
+    this.debugLog(`setCellLetter: Setting letter "${letter.toUpperCase()}" for cell (${cell.dataset.x}, ${cell.dataset.y})`);
     removeTextNodes(cell);
     const letterEl = cell.querySelector('.letter');
     if (letterEl) {
       letterEl.textContent = letter.toUpperCase();
+    } else {
+      this.debugLog(`setCellLetter: FAILED - .letter element not found in cell.`);
     }
   }
 
   autoAdvance() {
+    this.debugLog('autoAdvance: Attempting to advance selection.');
     let moved = false;
     moved = this.moveSelection(getArrowForDirection(this.currentDirection, true));
     if (!moved) {
+      this.debugLog('autoAdvance: Could not move in current direction. Toggling direction.');
       this.currentDirection = this.currentDirection === 'across' ? 'down' : 'across';
       this.updateDirectionButton();
       this.moveSelection(getArrowForDirection(this.currentDirection, true));
@@ -360,20 +383,26 @@ export default class Crossword {
   handleKeyDown(e) {
     if (!this.selectedCell) return;
     const key = e.key;
+
+    this.debugLog(`--- handleKeyDown --- Key: "${key}"`);
+    const cell = this.selectedCell;
+    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML before: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
+
     if (key === 'Backspace') {
+      e.preventDefault();
       this.clearFeedback();
       this.handleBackspace();
-      e.preventDefault();
       return;
     }
     if (key === 'Delete') {
+      e.preventDefault();
       this.clearFeedback();
       const letterEl = this.selectedCell.querySelector('.letter');
       if (letterEl) {
+        this.debugLog('handleKeyDown: Clearing cell with Delete key.');
         letterEl.textContent = '';
       }
       this.saveStateToLocalStorage();
-      e.preventDefault();
       return;
     }
     if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight') {
@@ -385,77 +414,33 @@ export default class Crossword {
       return;
     }
     if (/^[a-zA-Z]$/.test(key)) {
+      e.preventDefault();
       this.clearFeedback();
+      this.debugLog('handleKeyDown: Detected a letter key.');
       this.setCellLetter(this.selectedCell, key);
       this.autoAdvance();
       this.saveStateToLocalStorage();
-      e.preventDefault();
-      return;
     }
+    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML after: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
   }
 
-handleBeforeInput(e) {
+  handleBeforeInput(e) {
     const cell = e.target.closest('.cell');
     if (!cell || cell.classList.contains('block')) return;
-    
-    // Select the cell if it's not the currently active one
+
+    this.debugLog(`--- handleBeforeInput ---`);
+    this.debugLog(`Type: ${e.inputType}, Data: "${e.data}"`);
+    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML before: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
+
+    e.preventDefault();
+
     if (cell !== this.selectedCell) {
-      this.selectCell(cell);
-    }
-
-    // First, check if we're dealing with a deletion, which is straightforward.
-    if (e.inputType && e.inputType.startsWith('delete')) {
-      e.preventDefault(); // We can handle this, so prevent default.
-      this.clearFeedback();
-      this.handleBackspace();
-      return;
-    }
-
-    let letter = e.data;
-    
-    // Now, check if we have valid, handleable character data.
-    if (letter && /^[a-zA-Z]$/.test(letter.slice(-1))) {
-      e.preventDefault(); // ONLY prevent default if we know what to do.
-      
-      this.clearFeedback();
-      removeTextNodes(cell);
-      cell.style.color = '';
-      this.setCellLetter(cell, letter);
-      this.autoAdvance();
-      this.saveStateToLocalStorage();
-    }
-    
-    // If e.data is null or not a letter, we do nothing and call nothing.
-    // The browser will perform its default action, and the 'input' event will
-    // fire, allowing our more robust handleInput function to clean up.
-  }
-
-  handleBackspace() {
-    if (!this.selectedCell) return;
-    const letterEl = this.selectedCell.querySelector('.letter');
-    if (letterEl && letterEl.textContent) {
-      letterEl.textContent = '';
-      this.saveStateToLocalStorage();
-      return;
-    }
-    const moved = this.moveSelection(getMoveBackDir(this.currentDirection));
-    if (moved) {
-      const letterEl2 = this.selectedCell.querySelector('.letter');
-      if (letterEl2) {
-        letterEl2.textContent = '';
-      }
-      this.saveStateToLocalStorage();
-    }
-  }
-
-  handleInput(e) {
-    const cell = e.target.closest('.cell');
-    if (!cell || cell.classList.contains('block')) return;
-    if (cell !== this.selectedCell) {
+      this.debugLog(`handleBeforeInput: Cell is not the selected one. Selecting it now.`);
       this.selectCell(cell);
     }
 
     if (e.inputType && e.inputType.startsWith('delete')) {
+      this.debugLog(`handleBeforeInput: Detected delete operation.`);
       this.clearFeedback();
       this.handleBackspace();
       return;
@@ -463,16 +448,89 @@ handleBeforeInput(e) {
 
     let letter = e.data;
     if (!letter) {
+        this.debugLog(`handleBeforeInput: e.data is null or empty. ABORTING HANDLER.`);
+        return;
+    }
+    
+    letter = letter.slice(-1);
+    if (/^[a-zA-Z]$/.test(letter)) {
+      this.debugLog(`handleBeforeInput: Detected a letter: "${letter}"`);
+      this.clearFeedback();
+      removeTextNodes(cell);
+      cell.style.color = '';
+      this.setCellLetter(cell, letter);
+      this.autoAdvance();
+      this.saveStateToLocalStorage();
+    } else {
+        this.debugLog(`handleBeforeInput: Data is not a letter. Doing nothing.`);
+    }
+    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML after: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
+  }
+
+  handleInput(e) {
+    const cell = e.target.closest('.cell');
+    if (!cell || cell.classList.contains('block')) return;
+    
+    this.debugLog(`--- handleInput ---`);
+    this.debugLog(`Type: ${e.inputType}, Data: "${e.data}"`);
+    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) textContent before: "${cell.textContent.trim()}"`);
+    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML before: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
+
+
+    if (cell !== this.selectedCell) {
+      this.debugLog(`handleInput: Cell is not the selected one. Selecting it now.`);
+      this.selectCell(cell);
+    }
+
+    if (e.inputType && e.inputType.startsWith('delete')) {
+      this.debugLog(`handleInput: Detected delete operation.`);
+      this.clearFeedback();
+      this.handleBackspace();
+      return;
+    }
+
+    let letter = e.data;
+    if (!letter) {
+      this.debugLog(`handleInput: e.data is null. Reading from textContent: "${cell.textContent.trim()}"`);
       letter = cell.textContent.trim();
     }
     removeTextNodes(cell);
-    if (!letter) return;
+    if (!letter) {
+        this.debugLog('handleInput: No letter found in data or textContent. ABORTING HANDLER.');
+        return;
+    };
+    
     letter = letter.slice(-1);
+    this.debugLog(`handleInput: Final letter determined: "${letter}"`);
+
     if (/^[a-zA-Z]$/.test(letter)) {
       this.clearFeedback();
       cell.style.color = '';
       this.setCellLetter(cell, letter);
       this.autoAdvance();
+      this.saveStateToLocalStorage();
+    }
+    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML after: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
+  }
+
+  handleBackspace() {
+    if (!this.selectedCell) return;
+    this.debugLog(`handleBackspace: Triggered.`);
+    const letterEl = this.selectedCell.querySelector('.letter');
+    if (letterEl && letterEl.textContent) {
+      this.debugLog(`handleBackspace: Clearing current cell.`);
+      letterEl.textContent = '';
+      this.saveStateToLocalStorage();
+      return;
+    }
+    this.debugLog(`handleBackspace: Current cell empty. Moving back.`);
+    const moved = this.moveSelection(getMoveBackDir(this.currentDirection));
+    if (moved) {
+      const letterEl2 = this.selectedCell.querySelector('.letter');
+      if (letterEl2) {
+        this.debugLog(`handleBackspace: Clearing new selected cell.`);
+        letterEl2.textContent = '';
+      }
       this.saveStateToLocalStorage();
     }
   }
