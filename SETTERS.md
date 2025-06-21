@@ -12,7 +12,7 @@ The entire puzzle should be wrapped in `<rectangular-puzzle>` and `<crossword>` 
 <?xml version="1.0" encoding="UTF-8"?>
 <rectangular-puzzle xmlns="http://crossword.info/xml/rectangular-puzzle">
   <metadata>
-    <creator>OkeyDoke</creator>
+    <creator>AuthorName</creator>
   </metadata>
   <crossword>
     </crossword>
@@ -28,8 +28,8 @@ The viewer displays whichever value is found.
 ```xml
 <rectangular-puzzle xmlns="http://crossword.info/xml/rectangular-puzzle">
   <metadata>
-    <creator>OkeyDoke</creator>
-    <author>OkeyDoke</author>
+    <creator>AuthorName</creator>
+    <author>AuthorName</author>
   </metadata>
   <crossword>
     ...
@@ -104,7 +104,7 @@ Here is a simple 3x3 puzzle to demonstrate a complete file.
 <?xml version="1.0" encoding="UTF-8"?>
 <rectangular-puzzle xmlns="http://crossword.info/xml/rectangular-puzzle">
   <metadata>
-    <creator>OkeyDoke</creator>
+    <creator>AuthorName</creator>
   </metadata>
   <crossword>
     <grid width="3" height="3">

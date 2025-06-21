@@ -44,9 +44,11 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
   clues on mobile, and sits below the grid and clues on wider screens.
 - **Reveal features**: `revealCurrentClue()` and `revealGrid()` fill in answers
   after the user confirms via a custom overlay.
-- **Author metadata**: `parsePuzzle()` now reads `<creator>` or `<author>` from
-  the puzzle file's `<metadata>` section and returns it as `author`. `index.js`
-  writes this value into the `#puzzle-author` element if present.
+ - **Author metadata**: `parsePuzzle()` reads `<creator>` or `<author>` from the
+   puzzle file's `<metadata>` section and returns it as `author`. `index.js`
+   shows "Crossword by ..." in the `#puzzle-author` element when a name is
+   provided and hides the element if none is found. The page always displays
+   "Page by Niall Cardin" using the `#page-credit` element.
 
 ## Repository Practices
 - Keep `AGENTS.md` concise; do not record a running change log here.
