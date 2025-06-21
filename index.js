@@ -13,9 +13,7 @@ export function buildPuzzleLinks() {
   const listEl = document.querySelector('#puzzle-links');
   if (!listEl) return;
   listEl.innerHTML = '';
-  const current = getPuzzleFileFromURL();
   puzzles.forEach(p => {
-    if (p.file === current) return;
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.href = `?puzzle=${encodeURIComponent(p.file)}`;
@@ -106,6 +104,16 @@ function initCrossword(xmlData) {
 }
 
 buildPuzzleLinks();
+
+const showPuzzlesBtn = document.getElementById('show-puzzles');
+const puzzleList = document.getElementById('puzzle-list');
+if (showPuzzlesBtn && puzzleList) {
+  showPuzzlesBtn.addEventListener('click', () => {
+    const visible = puzzleList.style.display === 'block';
+    puzzleList.style.display = visible ? 'none' : 'block';
+    showPuzzlesBtn.textContent = visible ? 'Show Puzzles' : 'Hide Puzzles';
+  });
+}
 
 const puzzleFile = getPuzzleFileFromURL();
 fetch(puzzleFile)

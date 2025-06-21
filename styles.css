@@ -131,6 +131,11 @@
 
         #puzzle-list {
             margin-top: 1em;
+            display: none;
+        }
+
+        #show-puzzles {
+            margin-top: 1em;
         }
 
         #puzzle-links {
