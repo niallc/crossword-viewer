@@ -11,8 +11,8 @@ Parse puzzle data from the XML file specified in the URL (default `social_deduct
 ## Files
 
 - `index.html` — main page
-- `index.js` — JS logic (loaded as an ES module)
-- `crossword.js` — Crossword class implementation
+- `crossword.js` — Crossword class implementation and main logic (loaded as an ES module)
+- `index.js` — minimal entry script that creates a `Crossword` instance
 - `puzzle-parser.js` — puzzle parsing utilities
 - `social_deduction_ok.xml` — example puzzle data file loaded by default via fetch
 
@@ -40,7 +40,8 @@ See [CHANGELOG.md](CHANGELOG.md) for a summary of updates.
 
 Open `index.html` in a modern browser.
 
-`index.js` exports a `crossword` instance and also attaches it to `window.crossword` for debugging from the console.
+`crossword.js` defines the `Crossword` class. The entry script `index.js` creates
+an instance and attaches it to `window.crossword` for debugging from the console.
 
 Use the "Copy Share Link" button to copy a URL representing your current grid state.
 
@@ -68,7 +69,8 @@ const TEST_MODE = true;
 
 Reload `index.html` in your browser after making this change. Open the browser's
 developer tools console (usually with <kbd>F12</kbd> or via "Inspect" → "Console" )
-and run the helper functions provided by `index.js`:
+and run the helper functions provided by `crossword.js` (exposed via the
+`crossword` instance):
 
 - `testGridIsBuilt()` — returns `true` if the grid has been created.
 - `testCluesPresent()` — returns `true` if clues are displayed.
