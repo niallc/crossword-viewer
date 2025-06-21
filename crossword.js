@@ -1,7 +1,7 @@
-// Crossword class module
+// Crossword class module (v1.1)
 import { parsePuzzle } from './puzzle-parser.js';
 
-export const TEST_MODE = true;
+export const TEST_MODE = false;
 
 function removeTextNodes(elem) {
   if (!elem) return;
@@ -42,7 +42,7 @@ export default class Crossword {
     this.cellEls = [];
     this.puzzleData = parsePuzzle(xmlData);
     this.debugEl = document.getElementById('debug-log');
-    this.debugLog('Crossword Initialized. Logging is active.');
+    this.debugLog('Crossword Initialized (v1.1). Logging is active.'); // Version number added
   }
 
   debugLog(message) {
@@ -84,10 +84,99 @@ export default class Crossword {
         this.selectCell(cell);
         e.preventDefault();
       });
+
+      // We now only need the 'input' event listener for mobile.
+      cell.addEventListener('input', (e) => this.handleInput(e));
     }
 
     return cell;
   }
+
+  handleKeyDown(e) {
+    if (!this.selectedCell) return;
+    const key = e.key;
+    const cell = this.selectedCell;
+
+    this.debugLog(`--- handleKeyDown --- Key: "${key}"`);
+    
+    // Handle navigation and backspace, which need to be controlled
+    if (key === 'Backspace' || key === 'Delete') {
+      e.preventDefault();
+      this.clearFeedback();
+      this.handleBackspace();
+      return;
+    }
+    if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight') {
+      e.preventDefault();
+      this.clearFeedback();
+      this.moveSelection(key);
+      return;
+    }
+
+    // For desktop: handle letter input directly and prevent default
+    if (/^[a-zA-Z]$/.test(key)) {
+      e.preventDefault();
+      this.clearFeedback();
+      this.debugLog('handleKeyDown: Detected a desktop letter key.');
+      this.setCellLetter(this.selectedCell, key);
+      this.autoAdvance();
+      this.saveStateToLocalStorage();
+      return;
+    }
+
+    // For mobile: if we get an unidentified key, it's likely a character input.
+    // We will clear the cell's current letter to make way for the browser's default input action.
+    // This should then trigger the 'input' event listener.
+    if (key === 'Unidentified') {
+        this.debugLog('handleKeyDown: Unidentified key (mobile?). Clearing cell content to prepare for input event.');
+        const letterEl = cell.querySelector('.letter');
+        if (letterEl) {
+            letterEl.textContent = '';
+        }
+        // DO NOT preventDefault(). Let the browser insert the character.
+    }
+  }
+  
+  handleInput(e) {
+    const cell = e.target.closest('.cell');
+    if (!cell || cell.classList.contains('block')) return;
+    
+    this.debugLog(`--- handleInput ---`);
+    this.debugLog(`Type: ${e.inputType}, Data: "${e.data}"`);
+    this.debugLog(`Cell textContent after browser input: "${cell.textContent.trim()}"`);
+
+    // The 'input' event fires *after* the browser has modified the DOM.
+    // Our job is to clean up the mess and formalize the state.
+    
+    // The letter we want is now in the textContent of the cell.
+    let letter = cell.textContent.trim();
+    
+    // The cell might now contain stray text nodes outside our .letter div.
+    // Let's clean them up and put the letter where it belongs.
+    removeTextNodes(cell); 
+
+    if (letter) {
+      letter = letter.slice(-1).toUpperCase(); // Take the last character typed
+      if (/^[A-Z]$/.test(letter)) {
+        this.debugLog(`handleInput: Extracted letter "${letter}". Setting it correctly.`);
+        this.clearFeedback();
+        this.setCellLetter(cell, letter);
+        this.autoAdvance();
+        this.saveStateToLocalStorage();
+      } else {
+        this.debugLog(`handleInput: Extracted content is not a letter. Clearing cell.`);
+        this.setCellLetter(cell, ''); // Clear if not a valid letter
+      }
+    } else {
+        // This can happen if the input was a delete action that we didn't catch in keydown
+        this.debugLog(`handleInput: Cell textContent is empty. Assuming a deletion.`);
+        this.setCellLetter(cell, '');
+        this.saveStateToLocalStorage();
+    }
+  }
+
+  // The rest of the functions are unchanged.
+  // ... [buildGrid, buildClues, selectCell, etc.]
 
   buildGrid() {
     console.log('Building grid...');
@@ -378,139 +467,6 @@ export default class Crossword {
       console.error('Failed to load state from URL', e);
     }
     return false;
-  }
-
-  handleKeyDown(e) {
-    if (!this.selectedCell) return;
-    const key = e.key;
-
-    this.debugLog(`--- handleKeyDown --- Key: "${key}"`);
-    const cell = this.selectedCell;
-    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML before: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
-
-    if (key === 'Backspace') {
-      e.preventDefault();
-      this.clearFeedback();
-      this.handleBackspace();
-      return;
-    }
-    if (key === 'Delete') {
-      e.preventDefault();
-      this.clearFeedback();
-      const letterEl = this.selectedCell.querySelector('.letter');
-      if (letterEl) {
-        this.debugLog('handleKeyDown: Clearing cell with Delete key.');
-        letterEl.textContent = '';
-      }
-      this.saveStateToLocalStorage();
-      return;
-    }
-    if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight') {
-      this.clearFeedback();
-      const moved = this.moveSelection(key);
-      if (moved) {
-        e.preventDefault();
-      }
-      return;
-    }
-    if (/^[a-zA-Z]$/.test(key)) {
-      e.preventDefault();
-      this.clearFeedback();
-      this.debugLog('handleKeyDown: Detected a letter key.');
-      this.setCellLetter(this.selectedCell, key);
-      this.autoAdvance();
-      this.saveStateToLocalStorage();
-    }
-    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML after: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
-  }
-
-  handleBeforeInput(e) {
-    const cell = e.target.closest('.cell');
-    if (!cell || cell.classList.contains('block')) return;
-
-    this.debugLog(`--- handleBeforeInput ---`);
-    this.debugLog(`Type: ${e.inputType}, Data: "${e.data}"`);
-    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML before: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
-
-    e.preventDefault();
-
-    if (cell !== this.selectedCell) {
-      this.debugLog(`handleBeforeInput: Cell is not the selected one. Selecting it now.`);
-      this.selectCell(cell);
-    }
-
-    if (e.inputType && e.inputType.startsWith('delete')) {
-      this.debugLog(`handleBeforeInput: Detected delete operation.`);
-      this.clearFeedback();
-      this.handleBackspace();
-      return;
-    }
-
-    let letter = e.data;
-    if (!letter) {
-        this.debugLog(`handleBeforeInput: e.data is null or empty. ABORTING HANDLER.`);
-        return;
-    }
-    
-    letter = letter.slice(-1);
-    if (/^[a-zA-Z]$/.test(letter)) {
-      this.debugLog(`handleBeforeInput: Detected a letter: "${letter}"`);
-      this.clearFeedback();
-      removeTextNodes(cell);
-      cell.style.color = '';
-      this.setCellLetter(cell, letter);
-      this.autoAdvance();
-      this.saveStateToLocalStorage();
-    } else {
-        this.debugLog(`handleBeforeInput: Data is not a letter. Doing nothing.`);
-    }
-    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML after: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
-  }
-
-  handleInput(e) {
-    const cell = e.target.closest('.cell');
-    if (!cell || cell.classList.contains('block')) return;
-    
-    this.debugLog(`--- handleInput ---`);
-    this.debugLog(`Type: ${e.inputType}, Data: "${e.data}"`);
-    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) textContent before: "${cell.textContent.trim()}"`);
-    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML before: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
-
-
-    if (cell !== this.selectedCell) {
-      this.debugLog(`handleInput: Cell is not the selected one. Selecting it now.`);
-      this.selectCell(cell);
-    }
-
-    if (e.inputType && e.inputType.startsWith('delete')) {
-      this.debugLog(`handleInput: Detected delete operation.`);
-      this.clearFeedback();
-      this.handleBackspace();
-      return;
-    }
-
-    let letter = e.data;
-    if (!letter) {
-      this.debugLog(`handleInput: e.data is null. Reading from textContent: "${cell.textContent.trim()}"`);
-      letter = cell.textContent.trim();
-    }
-    removeTextNodes(cell);
-    if (!letter) {
-        this.debugLog('handleInput: No letter found in data or textContent. ABORTING HANDLER.');
-        return;
-    };
-    
-    letter = letter.slice(-1);
-    this.debugLog(`handleInput: Final letter determined: "${letter}"`);
-
-    if (/^[a-zA-Z]$/.test(letter)) {
-      this.clearFeedback();
-      cell.style.color = '';
-      this.setCellLetter(cell, letter);
-      this.autoAdvance();
-      this.saveStateToLocalStorage();
-    }
-    this.debugLog(`Cell (${cell.dataset.x},${cell.dataset.y}) innerHTML after: ${cell.innerHTML.replace(/\n/g, '').trim()}`);
   }
 
   handleBackspace() {

@@ -71,8 +71,8 @@ function initCrossword(xmlData) {
   }
 
   document.addEventListener('keydown', (e) => crossword.handleKeyDown(e));
-  document.addEventListener('beforeinput', (e) => crossword.handleBeforeInput(e));
-  document.addEventListener('input', (e) => crossword.handleInput(e));
+  // document.addEventListener('beforeinput', (e) => crossword.handleBeforeInput(e));
+  // document.addEventListener('input', (e) => crossword.handleInput(e));
 
   crossword.buildGrid();
   crossword.buildClues(crossword.puzzleData.cluesAcross, crossword.puzzleData.cluesDown);
