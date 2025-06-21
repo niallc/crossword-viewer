@@ -29,8 +29,8 @@ See [SETTERS.md](SETTERS.md) for guidance on writing your own crossword file and
 - Shareable URLs for puzzle state
 - Progress saved to `localStorage` and restored on reload
 - Basic test functions
-- "Show all available crosswords" button reveals a puzzle list after the clues 
-  (desktop layout places the button below the grid and clues)
+- "Show all available crosswords" button reveals a puzzle list after the clues
+  and now spans the full width below the grid and clues on larger screens
 - Diagnostic output in console
 - No server required — runs as static HTML/JS
 - Cells cached in memory for faster lookups

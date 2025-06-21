@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file.
 - Puzzle links now appear after the clues.
 - "Show all available crosswords" button toggles the puzzle list and now sits
   below the grid and clues on desktop.
+- Fixed layout so the button actually displays below the crossword on wider
+  screens.
 - Documented obsolete instruction about always loading
   `social_deduction_ok.xml`.
 - Keyboard input handled at the document level with `contenteditable`
