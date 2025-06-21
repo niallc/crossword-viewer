@@ -1,5 +1,12 @@
 // Crossword class module (v1.2)
 import { parsePuzzle } from './puzzle-parser.js';
+import { getWordCells } from './grid-utils.js';
+import {
+  serializeGridState,
+  applyGridState,
+  rleEncode,
+  rleDecode
+} from './state-utils.js';
 
 export const TEST_MODE = false;
 
@@ -234,16 +241,6 @@ export default class Crossword {
     this.updateClueCompletion();
   }
 
-  findFirstLetterCell() {
-    for (let y = 0; y < this.puzzleData.height; y++) {
-      for (let x = 0; x < this.puzzleData.width; x++) {
-        if (this.puzzleData.grid[y][x].type !== 'block') {
-          return this.cellEls[y][x];
-        }
-      }
-    }
-    return null;
-  }
 
   selectCell(cell, shouldFocus = true) {
     if (cell.classList.contains('block')) {
@@ -261,10 +258,10 @@ export default class Crossword {
     }
     this.selectedCell = cell;
     this.selectedCell.classList.add('selected');
-    let cells = this.getWordCells(this.selectedCell, this.currentDirection);
+    let cells = getWordCells(this.puzzleData, this.cellEls, this.selectedCell, this.currentDirection);
     if (cells.length <= 1) {
       const other = this.currentDirection === 'across' ? 'down' : 'across';
-      const otherCells = this.getWordCells(this.selectedCell, other);
+      const otherCells = getWordCells(this.puzzleData, this.cellEls, this.selectedCell, other);
       if (otherCells.length > cells.length) {
         this.currentDirection = other;
         cells = otherCells;
@@ -354,7 +351,7 @@ export default class Crossword {
 
   saveStateToLocalStorage() {
     try {
-      const serialized = this.serializeGridState();
+      const serialized = serializeGridState(this.puzzleData, this.cellEls);
       localStorage.setItem('crosswordState', serialized);
       this.updateClueCompletion();
     } catch (e) {
@@ -366,7 +363,7 @@ export default class Crossword {
     try {
       const serialized = localStorage.getItem('crosswordState');
       if (serialized) {
-        this.applyGridState(serialized);
+        applyGridState(this.puzzleData, this.cellEls, serialized);
         return true;
       }
     } catch (e) {
@@ -375,75 +372,10 @@ export default class Crossword {
     return false;
   }
 
-  serializeGridState() {
-    const letters = [];
-    for (let y = 0; y < this.puzzleData.height; y++) {
-      for (let x = 0; x < this.puzzleData.width; x++) {
-        const data = this.puzzleData.grid[y][x];
-        if (data.type === 'letter') {
-          const cell = this.cellEls[y][x];
-          const letterEl = cell.querySelector('.letter');
-          letters.push(letterEl && letterEl.textContent ? letterEl.textContent : ' ');
-        }
-      }
-    }
-    return letters.join('');
-  }
-
-  applyGridState(serialized) {
-    const letters = serialized.split('');
-    let idx = 0;
-    for (let y = 0; y < this.puzzleData.height; y++) {
-      for (let x = 0; x < this.puzzleData.width; x++) {
-        const data = this.puzzleData.grid[y][x];
-        if (data.type === 'letter') {
-          const ch = letters[idx++] || ' ';
-          const cell = this.cellEls[y][x];
-          const letterEl = cell.querySelector('.letter');
-          if (letterEl) {
-            letterEl.textContent = ch === ' ' ? '' : ch;
-          }
-          cell.style.color = '';
-        }
-      }
-    }
-    this.updateClueCompletion();
-  }
-
-  rleEncode(str) {
-    if (!str) return '';
-    let result = '';
-    let count = 1;
-    for (let i = 1; i <= str.length; i++) {
-      if (str[i] === str[i - 1]) {
-        count++;
-      } else {
-        result += (count > 1 ? count : '') + str[i - 1];
-        count = 1;
-      }
-    }
-    return result;
-  }
-
-  rleDecode(str) {
-    let result = '';
-    let countStr = '';
-    for (let i = 0; i < str.length; i++) {
-      const ch = str[i];
-      if (ch >= '0' && ch <= '9') {
-        countStr += ch;
-      } else {
-        const count = parseInt(countStr || '1', 10);
-        result += ch.repeat(count);
-        countStr = '';
-      }
-    }
-    return result;
-  }
 
   getShareableURL() {
-    const serialized = this.serializeGridState();
-    const compressed = this.rleEncode(serialized);
+    const serialized = serializeGridState(this.puzzleData, this.cellEls);
+    const compressed = rleEncode(serialized);
     const encoded = btoa(compressed);
     const url = new URL(window.location.href);
     url.hash = encoded;
@@ -455,8 +387,8 @@ export default class Crossword {
     if (!hash) return false;
     try {
       const compressed = atob(hash);
-      const serialized = this.rleDecode(compressed);
-      this.applyGridState(serialized);
+      const serialized = rleDecode(compressed);
+      applyGridState(this.puzzleData, this.cellEls, serialized);
       return true;
     } catch (e) {
       console.error('Failed to load state from URL', e);
@@ -486,38 +418,11 @@ export default class Crossword {
     }
   }
 
-  getWordCells(cell, direction) {
-    if (!cell) return [];
-    const x = parseInt(cell.dataset.x, 10);
-    const y = parseInt(cell.dataset.y, 10);
-    const cells = [];
-    if (this.puzzleData.grid[y][x].type === 'block') return cells;
-    if (direction === 'across') {
-      let sx = x;
-      while (sx > 0 && this.puzzleData.grid[y][sx - 1] && this.puzzleData.grid[y][sx - 1].type !== 'block') {
-        sx--;
-      }
-      for (let cx = sx; cx < this.puzzleData.width && this.puzzleData.grid[y][cx] && this.puzzleData.grid[y][cx].type !== 'block'; cx++) {
-        const el = this.cellEls[y][cx];
-        cells.push({ el, data: this.puzzleData.grid[y][cx] });
-      }
-    } else if (direction === 'down') {
-      let sy = y;
-      while (sy > 0 && this.puzzleData.grid[sy - 1][x] && this.puzzleData.grid[sy - 1][x].type !== 'block') {
-        sy--;
-      }
-      for (let cy = sy; cy < this.puzzleData.height && this.puzzleData.grid[cy][x] && this.puzzleData.grid[cy][x].type !== 'block'; cy++) {
-        const el = this.cellEls[cy][x];
-        cells.push({ el, data: this.puzzleData.grid[cy][x] });
-      }
-    }
-    return cells;
-  }
 
   highlightWord(cell) {
     this.highlightedCells.forEach(c => c.classList.remove('highlight'));
     this.highlightedCells = [];
-    const cells = this.getWordCells(cell, this.currentDirection);
+    const cells = getWordCells(this.puzzleData, this.cellEls, cell, this.currentDirection);
     cells.forEach(({ el }) => {
       el.classList.add('highlight');
       this.highlightedCells.push(el);
@@ -573,7 +478,7 @@ export default class Crossword {
   checkWord() {
     this.clearFeedback();
     if (!this.selectedCell) return;
-    const cells = this.getWordCells(this.selectedCell, this.currentDirection);
+    const cells = getWordCells(this.puzzleData, this.cellEls, this.selectedCell, this.currentDirection);
     cells.forEach(({ el, data }) => {
       const expected = (data.solution || '').toUpperCase();
       const letterEl = el.querySelector('.letter');
@@ -596,7 +501,7 @@ export default class Crossword {
 
   revealCurrentClue() {
     if (!this.selectedCell) return;
-    const cells = this.getWordCells(this.selectedCell, this.currentDirection);
+    const cells = getWordCells(this.puzzleData, this.cellEls, this.selectedCell, this.currentDirection);
     cells.forEach(({ el, data }) => {
       const letterEl = el.querySelector('.letter');
       if (letterEl) {
@@ -630,7 +535,7 @@ export default class Crossword {
       const pos = starts[num];
       if (!pos) return;
       const cell = this.cellEls[pos.y][pos.x];
-      const cells = this.getWordCells(cell, direction);
+      const cells = getWordCells(this.puzzleData, this.cellEls, cell, direction);
       const complete = cells.every(({ el }) => {
         const letterEl = el.querySelector('.letter');
         return letterEl && letterEl.textContent && letterEl.textContent.trim();

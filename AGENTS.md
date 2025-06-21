@@ -7,7 +7,10 @@ the small `index.js` entry module).
 
 Open `index.html` in a browser to run the viewer.
 
-Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parser.js` handles XML parsing.
+Major modules: `crossword.js` implements the `Crossword` class while
+`grid-utils.js` provides grid and clue helpers and `state-utils.js`
+contains serialization utilities. `puzzle-parser.js` still handles XML
+parsing.
 ## Agent Tasks
 - Maintain user input handling and diagnostic helpers.
 - Keep the code modular and readable. `crossword.js` defines the `Crossword`
@@ -45,9 +48,11 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
   Cells have a white background so the black grid lines don't obscure the grid.
 - **Puzzle parsing**: `parsePuzzle()` delegates to `parseGrid`, `parseClues`
   and `computeWordMetadata` helpers for clarity.
-- **State persistence**: progress is stored in `localStorage` under
-  `crosswordState` and can be shared via URLs using `getShareableURL()`
-  and `loadStateFromURL()`.
+- **Grid helpers**: `grid-utils.js` computes word spans and provides
+  `findFirstLetterCell` and `getWordCells` used by `Crossword`.
+- **State persistence**: handled by `state-utils.js`. Progress is stored in
+  `localStorage` under `crosswordState` and can be shared via URLs using
+  `getShareableURL()` and `loadStateFromURL()`.
 - **Puzzle links**: `buildPuzzleLinks()` populates a list of all puzzles from a
   static array of `{name, file}` objects. Links update the `puzzle` query
   parameter. A "Show all available crosswords" button toggles the list after the

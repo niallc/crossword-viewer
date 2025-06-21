@@ -1,4 +1,5 @@
 import Crossword, { TEST_MODE } from './crossword.js';
+import { findFirstLetterCell } from './grid-utils.js';
 
 const puzzles = [
   { name: 'Social Deduction', file: 'social_deduction_ok.xml' }
@@ -90,7 +91,7 @@ function initCrossword(xmlData) {
     crossword.loadStateFromLocalStorage();
   }
 
-  const firstCell = crossword.findFirstLetterCell();
+  const firstCell = findFirstLetterCell(crossword.puzzleData, crossword.cellEls);
   if (firstCell) {
     crossword.selectCell(firstCell);
   }
