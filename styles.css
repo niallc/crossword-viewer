@@ -189,6 +189,12 @@
             background-color: #d4d8ff;
         }
 
+        .puzzle-meta {
+            font-size: 0.8em;
+            color: #444;
+            margin-top: 0.5em;
+        }
+
 
 
         #clues {

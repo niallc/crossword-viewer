@@ -76,6 +76,11 @@ function initCrossword(xmlData) {
   crossword.buildGrid();
   crossword.buildClues(crossword.puzzleData.cluesAcross, crossword.puzzleData.cluesDown);
 
+  const authorEl = document.getElementById('puzzle-author');
+  if (authorEl && crossword.puzzleData.author) {
+    authorEl.textContent = 'Author: ' + crossword.puzzleData.author;
+  }
+
   const loadedFromURL = crossword.loadStateFromURL();
   if (!loadedFromURL) {
     crossword.loadStateFromLocalStorage();
