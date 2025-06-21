@@ -10,10 +10,12 @@ function getPuzzleFileFromURL() {
 }
 
 export function buildPuzzleLinks() {
-  const listEl = document.querySelector('#puzzle-links ul');
+  const listEl = document.querySelector('#puzzle-links');
   if (!listEl) return;
   listEl.innerHTML = '';
+  const current = getPuzzleFileFromURL();
   puzzles.forEach(p => {
+    if (p.file === current) return;
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.href = `?puzzle=${encodeURIComponent(p.file)}`;

@@ -31,6 +31,7 @@ See [COMPOSERS.md](COMPOSERS.md) for guidance on writing your own crossword file
 - Shareable URLs for puzzle state
 - Progress saved to `localStorage` and restored on reload
 - Basic test functions
+- Links to other puzzles after the clues
 - Diagnostic output in console
 - No server required — runs as static HTML/JS
 - Cells cached in memory for faster lookups

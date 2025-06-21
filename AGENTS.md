@@ -40,7 +40,7 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
   and `loadStateFromURL()`.
 - **Puzzle links**: `buildPuzzleLinks()` populates a list of available puzzles
   from a static array of `{name, file}` objects. Links update the `puzzle`
-  query parameter.
+  query parameter and are displayed in a list after the clues.
 
 ## Repository Practices
 - Keep `AGENTS.md` concise; do not record a running change log here.
