@@ -38,6 +38,8 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
   clickable.
 - **Responsive sizing**: grid dimensions are calculated using the CSS variable
   `--cell-size` based on the viewport so the puzzle fits on mobile and desktop.
+- **Grid lines**: `#grid` uses a 1px `gap` on a black background with borderless
+  cells so the dividing lines appear as thin black separators between squares.
 - **Puzzle parsing**: `parsePuzzle()` delegates to `parseGrid`, `parseClues`
   and `computeWordMetadata` helpers for clarity.
 - **State persistence**: progress is stored in `localStorage` under
