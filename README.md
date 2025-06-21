@@ -1,10 +1,8 @@
-# Crossword Viewer (Modern)
+# Crossword Viewer
 
 This project builds an interactive crossword viewer in Javascript + HTML.
 By default it loads `social_deduction_ok.xml`, but you can specify a different
 puzzle via the `?puzzle=` URL parameter.
-
-See [CHANGELOG.md](CHANGELOG.md) for a summary of updates.
 
 ## Goal
 
@@ -20,7 +18,7 @@ Parse puzzle data from the XML file specified in the URL (default `social_deduct
 
 ## Creating Your Own Puzzle
 
-See [COMPOSERS.md](COMPOSERS.md) for guidance on writing your own crossword file and replacing the provided puzzle.
+See [SETTERS.md](SETTERS.md) for guidance on writing your own crossword file and replacing the provided puzzle.
 
 ## Features
 
@@ -39,6 +37,8 @@ See [COMPOSERS.md](COMPOSERS.md) for guidance on writing your own crossword file
 - Clue enumerations shown using values from the loaded puzzle file
 - Responsive grid: cells scale with the viewport but never exceed 500&nbsp;px in total width; letter and clue number sizes scale with the cells
 - "Check Letter" and "Check Word" buttons highlight incorrect entries until you type again
+
+See [CHANGELOG.md](CHANGELOG.md) for a summary of updates.
 
 ## Running
 
