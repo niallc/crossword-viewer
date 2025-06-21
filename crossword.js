@@ -335,6 +335,29 @@ export default class Crossword {
     return result;
   }
 
+  getShareableURL() {
+    const serialized = this.serializeGridState();
+    const compressed = this.rleEncode(serialized);
+    const encoded = btoa(compressed);
+    const url = new URL(window.location.href);
+    url.hash = encoded;
+    return url.href;
+  }
+
+  loadStateFromURL() {
+    const hash = window.location.hash.slice(1);
+    if (!hash) return false;
+    try {
+      const compressed = atob(hash);
+      const serialized = this.rleDecode(compressed);
+      this.applyGridState(serialized);
+      return true;
+    } catch (e) {
+      console.error('Failed to load state from URL', e);
+    }
+    return false;
+  }
+
   handleKeyDown(e) {
     if (!this.selectedCell) return;
     const key = e.key;
