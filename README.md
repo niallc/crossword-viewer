@@ -31,7 +31,8 @@ See [SETTERS.md](SETTERS.md) for guidance on writing your own crossword file and
 - Basic test functions
 - "Show all available crosswords" button reveals a puzzle list below the clues
   and remains left-aligned rather than spanning the full width on larger screens
-- Diagnostic output in console
+- Displays the puzzle author's name if provided
+  - Diagnostic output in console
 - No server required — runs as static HTML/JS
 - Cells cached in memory for faster lookups
 - Puzzle data parsing split into helper functions (`parseGrid`, `parseClues`, `computeWordMetadata`) for readability

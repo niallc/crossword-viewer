@@ -91,6 +91,15 @@ export function parsePuzzle(xmlString) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlString, 'text/xml');
 
+  const meta = doc.querySelector('metadata');
+  let author = '';
+  if (meta) {
+    const authorNode = meta.querySelector('author');
+    const creatorNode = meta.querySelector('creator');
+    author = (authorNode && authorNode.textContent) ||
+             (creatorNode && creatorNode.textContent) || '';
+  }
+
   const { width, height, grid } = parseGrid(doc);
   const { cluesAcross, cluesDown } = parseClues(doc);
   const {
@@ -107,7 +116,7 @@ export function parsePuzzle(xmlString) {
     cl.length = downLengths[cl.number] || 0;
   });
 
-  return { width, height, grid, cluesAcross, cluesDown, acrossStarts, downStarts };
+  return { width, height, grid, cluesAcross, cluesDown, acrossStarts, downStarts, author };
 }
 
 export { parseGrid, parseClues, computeWordMetadata };

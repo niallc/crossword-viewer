@@ -11,8 +11,29 @@ The entire puzzle should be wrapped in `<rectangular-puzzle>` and `<crossword>` 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <rectangular-puzzle xmlns="http://crossword.info/xml/rectangular-puzzle">
+  <metadata>
+    <creator>OkeyDoke</creator>
+  </metadata>
   <crossword>
     </crossword>
+</rectangular-puzzle>
+```
+
+### Metadata
+
+Optionally include a `<metadata>` block before the `<crossword>` element.
+Provide a `<creator>` or `<author>` tag with the setter's preferred name.
+The viewer displays whichever value is found.
+
+```xml
+<rectangular-puzzle xmlns="http://crossword.info/xml/rectangular-puzzle">
+  <metadata>
+    <creator>OkeyDoke</creator>
+    <author>OkeyDoke</author>
+  </metadata>
+  <crossword>
+    ...
+  </crossword>
 </rectangular-puzzle>
 ```
 
@@ -82,6 +103,9 @@ Here is a simple 3x3 puzzle to demonstrate a complete file.
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <rectangular-puzzle xmlns="http://crossword.info/xml/rectangular-puzzle">
+  <metadata>
+    <creator>OkeyDoke</creator>
+  </metadata>
   <crossword>
     <grid width="3" height="3">
       <cell x="1" y="1" solution="C" number="1"/>
