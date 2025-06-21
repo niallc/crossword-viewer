@@ -25,4 +25,6 @@ All notable changes to this project will be documented in this file.
 - Clue enumeration strings displayed.
 - Responsive grid sizing via CSS variable `--cell-size`.
 - Added "Check Letter" and "Check Word" buttons.
+- Removed "Clear Progress" button.
+- Added "Reveal Clue" and "Reveal Grid" buttons with confirmation overlay.
 

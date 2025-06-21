@@ -24,6 +24,37 @@ export function buildPuzzleLinks() {
 }
 
 export let crossword;
+const confirmOverlay = document.getElementById('confirm-overlay');
+const confirmMessage = document.getElementById('confirm-message');
+const confirmYes = document.getElementById('confirm-yes');
+const confirmNo = document.getElementById('confirm-no');
+let confirmCallback = null;
+
+function showConfirm(message, cb) {
+  confirmMessage.textContent = message;
+  confirmCallback = cb;
+  if (confirmOverlay) {
+    confirmOverlay.style.display = 'flex';
+  }
+}
+
+function hideConfirm() {
+  if (confirmOverlay) {
+    confirmOverlay.style.display = 'none';
+  }
+  confirmCallback = null;
+}
+
+if (confirmYes) {
+  confirmYes.addEventListener('click', () => {
+    if (confirmCallback) confirmCallback();
+    hideConfirm();
+  });
+}
+
+if (confirmNo) {
+  confirmNo.addEventListener('click', hideConfirm);
+}
 
 function initCrossword(xmlData) {
   crossword = new Crossword(xmlData);
@@ -75,11 +106,17 @@ function initCrossword(xmlData) {
     });
   }
 
-  crossword.clearProgressButton = document.getElementById('clear-progress');
-  if (crossword.clearProgressButton) {
-    crossword.clearProgressButton.addEventListener('click', () => {
-      localStorage.removeItem('crosswordState');
-      crossword.applyGridState('');
+  const revealClueBtn = document.getElementById('reveal-clue');
+  if (revealClueBtn) {
+    revealClueBtn.addEventListener('click', () => {
+      showConfirm('Reveal the answer for this clue?', () => crossword.revealCurrentClue());
+    });
+  }
+
+  const revealGridBtn = document.getElementById('reveal-grid');
+  if (revealGridBtn) {
+    revealGridBtn.addEventListener('click', () => {
+      showConfirm('Reveal the entire grid?', () => crossword.revealGrid());
     });
   }
 
