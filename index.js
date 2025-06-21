@@ -59,11 +59,6 @@ if (confirmNo) {
 function initCrossword(xmlData) {
   crossword = new Crossword(xmlData);
 
-  crossword.directionButton = document.getElementById('toggle-direction');
-  if (crossword.directionButton) {
-    crossword.directionButton.addEventListener('click', () => crossword.toggleDirection());
-    crossword.updateDirectionButton();
-  }
 
   const checkLetterBtn = document.getElementById('check-letter');
   if (checkLetterBtn) {
