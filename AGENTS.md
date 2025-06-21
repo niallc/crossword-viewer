@@ -2,16 +2,17 @@
 
 This project displays an interactive crossword in modern JavaScript and HTML.
 Puzzle data is loaded from an XML file specified via the `puzzle` URL parameter
-(default `social_deduction_ok.xml`) and rendered by `index.js` (an ES module).
+(default `social_deduction_ok.xml`) and rendered by `crossword.js` (imported by
+the small `index.js` entry module).
 
 Open `index.html` in a browser to run the viewer.
 
 Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parser.js` handles XML parsing.
 ## Agent Tasks
 - Maintain user input handling and diagnostic helpers.
-- Keep the code modular and readable. `index.js` exports a `crossword` instance
-  that exposes helper methods such as `testGridIsBuilt()` and
-  `testCluesPresent()`.
+- Keep the code modular and readable. `crossword.js` defines the `Crossword`
+  class with helper methods such as `testGridIsBuilt()` and `testCluesPresent()`.
+  A single instance is created in `index.js` and exported for debugging.
 - Update this file when AGENT guidance changes and log notable updates in
   `CHANGELOG.md`.
 
@@ -54,9 +55,9 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
 - **Reveal features**: `revealCurrentClue()` and `revealGrid()` fill in answers
   after the user confirms via a custom overlay.
  - **Author metadata**: `parsePuzzle()` reads `<creator>` or `<author>` from the
-   puzzle file's `<metadata>` section and returns it as `author`. `index.js`
-   shows "Crossword by ..." in the `#puzzle-author` element when a name is
-   provided and hides the element if none is found. The page always displays
+   puzzle file's `<metadata>` section and returns it as `author`. `crossword.js`
+   exposes this value so the entry script can show "Crossword by ..." in the
+   `#puzzle-author` element when a name is provided. The page always displays
    "Page by Niall C" using the `#page-credit` element.
 
 ## Repository Practices
