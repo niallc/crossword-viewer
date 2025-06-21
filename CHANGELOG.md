@@ -29,7 +29,7 @@ All notable changes to this project will be documented in this file.
 - Responsive grid sizing via CSS variable `--cell-size`.
 - Added "Check Letter" and "Check Word" buttons.
 - Removed "Clear Progress" button.
-- Added "Reveal Clue" and "Reveal Grid" buttons with confirmation overlay.
+- Added "Reveal Word" and "Reveal Grid" buttons with confirmation overlay.
 - Credits now show "Page by Niall C" and hide the crossword author line
   when no author is provided.
 - Input handling improved for mobile: a `beforeinput` listener now

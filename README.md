@@ -31,7 +31,7 @@ See [SETTERS.md](SETTERS.md) for guidance on writing your own crossword file and
 - Clue enumerations shown using values from the loaded puzzle file
 - Responsive grid: cells scale with the viewport but never exceed 500&nbsp;px in total width; letter and clue number sizes scale with the cells
 - "Check Letter" and "Check Word" buttons highlight incorrect entries until you type again
-- "Reveal Clue" and "Reveal Grid" buttons fill answers after a confirmation prompt
+- "Reveal Word" and "Reveal Grid" buttons fill answers after a confirmation prompt
 
 See [CHANGELOG.md](CHANGELOG.md) for a summary of updates.
 
