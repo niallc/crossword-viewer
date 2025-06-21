@@ -1,8 +1,9 @@
 # Agent Guide
 
 This project displays an interactive crossword in modern JavaScript and HTML.
-Puzzle data is loaded from `social_deduction_ok.xml` at runtime and rendered by
-`index.js` (an ES module). Open `index.html` in a browser to run the viewer.
+Puzzle data is loaded from an XML file specified via the `puzzle` URL parameter
+(default `social_deduction_ok.xml`) and rendered by `index.js` (an ES module).
+Open `index.html` in a browser to run the viewer.
 
 Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parser.js` handles XML parsing.
 ## Agent Tasks
@@ -37,6 +38,9 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
 - **State persistence**: progress is stored in `localStorage` under
   `crosswordState` and can be shared via URLs using `getShareableURL()`
   and `loadStateFromURL()`.
+- **Puzzle links**: `buildPuzzleLinks()` populates a list of available puzzles
+  from a static array of `{name, file}` objects. Links update the `puzzle`
+  query parameter.
 
 ## Repository Practices
 - Keep `AGENTS.md` concise; do not record a running change log here.
