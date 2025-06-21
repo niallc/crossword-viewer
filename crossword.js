@@ -41,17 +41,27 @@ export default class Crossword {
     this.copyLinkButton = null;
     this.cellEls = [];
     this.puzzleData = parsePuzzle(xmlData);
-    this.debugEl = document.getElementById('debug-log');
-    this.debugLog('Crossword Initialized (v1.2). Logging is active.');
+    if (TEST_MODE) {
+      this.debugEl = document.createElement('pre');
+      this.debugEl.id = 'debug-log';
+      this.debugEl.style.width = '100%';
+      this.debugEl.style.height = '200px';
+      this.debugEl.style.overflowY = 'scroll';
+      this.debugEl.style.border = '1px solid #ccc';
+      this.debugEl.style.backgroundColor = '#f0f0f0';
+      this.debugEl.style.padding = '5px';
+      this.debugEl.style.fontSize = '10px';
+      document.body.appendChild(this.debugEl);
+      this.debugLog('Crossword Initialized (v1.2). Logging is active.');
+    } else {
+      this.debugEl = null;
+    }
   }
 
   debugLog(message) {
-    // Only log if test mode is enabled.
-    if (!TEST_MODE) {
-      if (this.debugEl) this.debugEl.style.display = 'none';
+    if (!TEST_MODE || !this.debugEl) {
       return;
     }
-    if (!this.debugEl) return;
 
     const timestamp = new Date().toLocaleTimeString();
     const newLog = `[${timestamp}] ${message}`;
