@@ -36,7 +36,6 @@ export default class Crossword {
     this.selectedCell = null;
     this.highlightedCells = [];
     this.currentDirection = 'across';
-    this.directionButton = null;
     this.feedbackCells = [];
     this.copyLinkButton = null;
     this.cellEls = [];
@@ -176,8 +175,6 @@ export default class Crossword {
     }
   }
 
-  // The rest of the functions are unchanged.
-  // ... [buildGrid, buildClues, selectCell, etc.]
 
   buildGrid() {
     console.log('Building grid...');
@@ -256,7 +253,6 @@ export default class Crossword {
     if (this.selectedCell === cell) {
       this.currentDirection = this.currentDirection === 'across' ? 'down' : 'across';
       this.highlightWord(cell);
-      this.updateDirectionButton();
       return;
     }
 
@@ -272,7 +268,6 @@ export default class Crossword {
       if (otherCells.length > cells.length) {
         this.currentDirection = other;
         cells = otherCells;
-        this.updateDirectionButton();
       }
     }
     this.highlightWord(this.selectedCell);
@@ -340,7 +335,6 @@ export default class Crossword {
     if (!moved) {
       this.debugLog('autoAdvance: Could not move in current direction. Toggling direction.');
       this.currentDirection = this.currentDirection === 'across' ? 'down' : 'across';
-      this.updateDirectionButton();
       this.moveSelection(getArrowForDirection(this.currentDirection, true));
     }
   }
@@ -661,22 +655,8 @@ export default class Crossword {
     const cell = this.cellEls[pos.y] && this.cellEls[pos.y][pos.x];
     if (cell) {
       this.currentDirection = direction;
-      this.updateDirectionButton();
       this.selectCell(cell, false);
     }
   }
 
-  updateDirectionButton() {
-    if (this.directionButton) {
-      this.directionButton.textContent = 'Mode: ' + (this.currentDirection === 'across' ? 'Across' : 'Down');
-    }
-  }
-
-  toggleDirection() {
-    this.currentDirection = this.currentDirection === 'across' ? 'down' : 'across';
-    this.updateDirectionButton();
-    if (this.selectedCell) {
-      this.highlightWord(this.selectedCell);
-    }
-  }
 }

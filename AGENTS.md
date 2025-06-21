@@ -19,7 +19,7 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
 - Use modern ES6+ JavaScript and plain HTML/CSS.
 - No server-side code or external dependencies.
 - Add helpful console output for debugging. Enable verbose diagnostics by setting
-  `TEST_MODE` to `true` near the top of `index.js`.
+  `TEST_MODE` to `true` near the top of `crossword.js`.
   When enabled, `crossword.js` creates a `<pre id="debug-log">` element and
   appends it to the page to record debug messages.
 
@@ -28,8 +28,9 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
   `crossword.cellEls[y][x]` for quick access.
 - **Input handling**: keyboard events are attached at the document level while
     each grid cell is `contenteditable` so mobile keyboards work. `keydown` events
-    call `preventDefault()` to avoid duplicate letters. `beforeinput` and `input`
-    events update letters on mobile without leaving stray DOM nodes.
+    call `preventDefault()` to avoid duplicate letters. Each cell listens for the
+    `input` event so mobile browsers update letters correctly without leaving stray
+    DOM nodes.
  - **Cell selection**: `.cell` elements now allow text selection (`user-select:
    text`) which avoids overwriting issues while keeping the caret hidden via
    `caret-color: transparent`.
@@ -59,8 +60,8 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
    "Page by Niall C" using the `#page-credit` element.
 
 ## Repository Practices
-- Keep `AGENTS.md` concise; do not record a running change log here.
-  Use `CHANGELOG.md` for notable updates.
+- Keep `AGENTS.md` concise. Only record guidance that future agents must know.
+  Use `CHANGELOG.md` for notable updates instead of documenting minor tweaks.
 - Remove any obsolete sections once the related code is gone.
 - Run the simple browser-based tests when relevant:
   - `testGridIsBuilt()`
