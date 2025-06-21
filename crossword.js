@@ -394,6 +394,33 @@ export default class Crossword {
     }
   }
 
+  handleBeforeInput(e) {
+    const cell = e.target.closest('.cell');
+    if (!cell || cell.classList.contains('block')) return;
+    e.preventDefault();
+    if (cell !== this.selectedCell) {
+      this.selectCell(cell);
+    }
+
+    if (e.inputType && e.inputType.startsWith('delete')) {
+      this.clearFeedback();
+      this.handleBackspace();
+      return;
+    }
+
+    let letter = e.data;
+    if (!letter) return;
+    letter = letter.slice(-1);
+    if (/^[a-zA-Z]$/.test(letter)) {
+      this.clearFeedback();
+      removeTextNodes(cell);
+      cell.style.color = '';
+      this.setCellLetter(cell, letter);
+      this.autoAdvance();
+      this.saveStateToLocalStorage();
+    }
+  }
+
   handleBackspace() {
     if (!this.selectedCell) return;
     const letterEl = this.selectedCell.querySelector('.letter');

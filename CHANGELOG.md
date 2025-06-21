@@ -32,4 +32,7 @@ All notable changes to this project will be documented in this file.
 - Added "Reveal Clue" and "Reveal Grid" buttons with confirmation overlay.
 - Credits now show "Page by Niall C" and hide the crossword author line
   when no author is provided.
+- Input handling improved for mobile: a `beforeinput` listener now
+  prevents stray nodes and ensures `autoAdvance()` works with
+  on-screen keyboards.
 

@@ -25,9 +25,9 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
 - **DOM caching**: `buildGrid()` stores cell elements in
   `crossword.cellEls[y][x]` for quick access.
 - **Input handling**: keyboard events are attached at the document level while
-  each grid cell is `contenteditable` so mobile keyboards work. `keydown` events
-  call `preventDefault()` to avoid duplicate letters and `input` events handle
-  mobile browsers.
+    each grid cell is `contenteditable` so mobile keyboards work. `keydown` events
+    call `preventDefault()` to avoid duplicate letters. `beforeinput` and `input`
+    events update letters on mobile without leaving stray DOM nodes.
 - **Completed clues**: the viewer adds the `complete` class when a clue is fully
   answered. Completed clues are styled faint with a strike-through and are not
   clickable.
