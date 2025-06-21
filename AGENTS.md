@@ -38,9 +38,10 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
 - **State persistence**: progress is stored in `localStorage` under
   `crosswordState` and can be shared via URLs using `getShareableURL()`
   and `loadStateFromURL()`.
-- **Puzzle links**: `buildPuzzleLinks()` populates a list of available puzzles
-  from a static array of `{name, file}` objects. Links update the `puzzle`
-  query parameter and are displayed in a list after the clues.
+- **Puzzle links**: `buildPuzzleLinks()` populates a list of all puzzles from a
+  static array of `{name, file}` objects. Links update the `puzzle` query
+  parameter. A "Show Puzzles" button toggles the list after the clues so it's
+  out of the way.
 
 ## Repository Practices
 - Keep `AGENTS.md` concise; do not record a running change log here.
