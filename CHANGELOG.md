@@ -38,3 +38,5 @@ All notable changes to this project will be documented in this file.
 
 - Cells allow text selection to avoid overwrite issues.
 - Debug log element created only when `TEST_MODE` is true.
+- Grid uses thin black dividing lines with 1px gaps; cells now have white
+  backgrounds so the grid doesn't appear solid black.
