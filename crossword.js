@@ -39,7 +39,6 @@ export default class Crossword {
     this.directionButton = null;
     this.feedbackCells = [];
     this.copyLinkButton = null;
-    this.clearProgressButton = null;
     this.cellEls = [];
     this.puzzleData = parsePuzzle(xmlData);
   }
@@ -548,6 +547,36 @@ export default class Crossword {
         this.feedbackCells.push(el);
       }
     });
+  }
+
+  revealCurrentClue() {
+    if (!this.selectedCell) return;
+    const cells = this.getWordCells(this.selectedCell, this.currentDirection);
+    cells.forEach(({ el, data }) => {
+      const letterEl = el.querySelector('.letter');
+      if (letterEl) {
+        letterEl.textContent = (data.solution || '').toUpperCase();
+      }
+    });
+    this.saveStateToLocalStorage();
+    this.updateClueCompletion();
+  }
+
+  revealGrid() {
+    for (let y = 0; y < this.puzzleData.height; y++) {
+      for (let x = 0; x < this.puzzleData.width; x++) {
+        const data = this.puzzleData.grid[y][x];
+        if (data.type === 'letter') {
+          const el = this.cellEls[y][x];
+          const letterEl = el.querySelector('.letter');
+          if (letterEl) {
+            letterEl.textContent = (data.solution || '').toUpperCase();
+          }
+        }
+      }
+    }
+    this.saveStateToLocalStorage();
+    this.updateClueCompletion();
   }
 
   checkClueGroup(selector, direction, starts) {
