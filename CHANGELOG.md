@@ -15,7 +15,8 @@ All notable changes to this project will be documented in this file.
 - Puzzle file can now be selected via `?puzzle=` parameter and
   `buildPuzzleLinks()` populates a list of available puzzles.
 - Puzzle links now appear after the clues.
-- "Show Puzzles" button toggles the list and the current puzzle is included.
+- "Show all available crosswords" button toggles the puzzle list and now sits
+  below the grid and clues on desktop.
 - Documented obsolete instruction about always loading
   `social_deduction_ok.xml`.
 - Keyboard input handled at the document level with `contenteditable`

@@ -40,8 +40,8 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
   and `loadStateFromURL()`.
 - **Puzzle links**: `buildPuzzleLinks()` populates a list of all puzzles from a
   static array of `{name, file}` objects. Links update the `puzzle` query
-  parameter. A "Show Puzzles" button toggles the list after the clues so it's
-  out of the way.
+  parameter. A "Show all available crosswords" button toggles the list after the
+  clues on mobile, and sits below the grid and clues on wider screens.
 - **Reveal features**: `revealCurrentClue()` and `revealGrid()` fill in answers
   after the user confirms via a custom overlay.
 

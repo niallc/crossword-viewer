@@ -7,6 +7,8 @@
             margin: 2rem;
             display: flex;
             flex-direction: row;
+            flex-wrap: wrap;
+            align-items: flex-start;
             gap: 2rem;
             background-color: #eef6ff; /* pastel blue background */
         }
@@ -161,6 +163,8 @@
 
         #show-puzzles {
             margin-top: 1em;
+            flex-basis: 100%;
+            align-self: flex-start;
         }
 
         #puzzle-links {
