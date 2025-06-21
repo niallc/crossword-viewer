@@ -14,6 +14,8 @@ Parse puzzle data from the XML file specified in the URL (default `social_deduct
 - `crossword.js` — Crossword class implementation and main logic (loaded as an ES module)
 - `index.js` — minimal entry script that creates a `Crossword` instance
 - `puzzle-parser.js` — puzzle parsing utilities
+- `grid-utils.js` — helpers for computing word spans and locating cells
+- `state-utils.js` — serialization helpers used for saving progress
 - `social_deduction_ok.xml` — example puzzle data file loaded by default via fetch
 
 ## Creating Your Own Puzzle
