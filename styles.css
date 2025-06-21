@@ -32,9 +32,9 @@
             line-height: var(--cell-size);
             cursor: pointer;
             position: relative;
-            /* avoid double events and accidental text selection on mobile */
+            /* avoid double events on mobile; allow text selection */
             touch-action: manipulation;
-            user-select: none;
+            user-select: text;
             caret-color: transparent;
         }
 

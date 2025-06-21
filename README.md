@@ -46,6 +46,7 @@ Use the "Copy Share Link" button to copy a URL representing your current grid st
 ### Input handling
 
 Each grid cell is `contenteditable` so the on-screen keyboard appears on mobile devices. Keyboard events are attached at the document level: `keydown` covers desktop input while `input` and `beforeinput` events ensure mobile browsers work correctly. The handler calls `preventDefault()` on `keydown` so characters are not inserted twice, and `beforeinput` prevents stray DOM changes when using mobile keyboards.
+Cells may be selected normally so you can highlight a letter before typing to replace it.
 
 ### Clue clicking
 
