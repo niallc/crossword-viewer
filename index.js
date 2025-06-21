@@ -77,8 +77,13 @@ function initCrossword(xmlData) {
   crossword.buildClues(crossword.puzzleData.cluesAcross, crossword.puzzleData.cluesDown);
 
   const authorEl = document.getElementById('puzzle-author');
-  if (authorEl && crossword.puzzleData.author) {
-    authorEl.textContent = 'Author: ' + crossword.puzzleData.author;
+  if (authorEl) {
+    if (crossword.puzzleData.author) {
+      authorEl.textContent = 'Crossword by ' + crossword.puzzleData.author;
+      authorEl.style.display = 'block';
+    } else {
+      authorEl.style.display = 'none';
+    }
   }
 
   const loadedFromURL = crossword.loadStateFromURL();

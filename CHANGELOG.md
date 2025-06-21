@@ -30,4 +30,6 @@ All notable changes to this project will be documented in this file.
 - Added "Check Letter" and "Check Word" buttons.
 - Removed "Clear Progress" button.
 - Added "Reveal Clue" and "Reveal Grid" buttons with confirmation overlay.
+- Credits now show "Page by Niall Cardin" and hide the crossword author line
+  when no author is provided.
 
