@@ -3,6 +3,11 @@
 This project displays an interactive crossword in modern JavaScript and HTML.
 Puzzle data is loaded from an XML file specified via the `puzzle` URL parameter
 (default `social_deduction_ok.xml`) and rendered by `index.js` (an ES module).
+
+### Marked for Deletion
+- The puzzle used to be loaded exclusively from `social_deduction_ok.xml`. This
+  is outdated now that the viewer supports loading any puzzle file via URL
+  parameters.
 Open `index.html` in a browser to run the viewer.
 
 Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parser.js` handles XML parsing.

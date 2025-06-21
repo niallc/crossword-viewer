@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 - Puzzle file can now be selected via `?puzzle=` parameter and
   `buildPuzzleLinks()` populates a list of available puzzles.
 - Puzzle links now appear after the clues and omit the current puzzle.
+- Documented obsolete instruction about always loading
+  `social_deduction_ok.xml`.
 
 ## 2024
 - Keyboard input handled at the document level with `contenteditable`
