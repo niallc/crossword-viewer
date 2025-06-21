@@ -1,7 +1,7 @@
 // Crossword class module (v1.2)
 import { parsePuzzle } from './puzzle-parser.js';
 
-export const TEST_MODE = true;
+export const TEST_MODE = false;
 
 function removeTextNodes(elem) {
   if (!elem) return;
