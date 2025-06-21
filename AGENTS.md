@@ -28,6 +28,9 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
     each grid cell is `contenteditable` so mobile keyboards work. `keydown` events
     call `preventDefault()` to avoid duplicate letters. `beforeinput` and `input`
     events update letters on mobile without leaving stray DOM nodes.
+ - **Cell selection**: `.cell` elements now allow text selection (`user-select:
+   text`) which avoids overwriting issues while keeping the caret hidden via
+   `caret-color: transparent`.
 - **Completed clues**: the viewer adds the `complete` class when a clue is fully
   answered. Completed clues are styled faint with a strike-through and are not
   clickable.

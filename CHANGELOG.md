@@ -36,3 +36,4 @@ All notable changes to this project will be documented in this file.
   prevents stray nodes and ensures `autoAdvance()` works with
   on-screen keyboards.
 
+- Cells allow text selection to avoid overwrite issues.
