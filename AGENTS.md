@@ -27,44 +27,6 @@ parsing.
   When enabled, `crossword.js` creates a `<pre id="debug-log">` element and
   appends it to the page to record debug messages.
 
-## Design Notes
-- **DOM caching**: `buildGrid()` stores cell elements in
-  `crossword.cellEls[y][x]` for quick access.
-- **Input handling**: keyboard events are attached at the document level while
-    each grid cell is `contenteditable` so mobile keyboards work. `keydown` events
-    call `preventDefault()` to avoid duplicate letters. Each cell listens for the
-    `input` event so mobile browsers update letters correctly without leaving stray
-    DOM nodes.
- - **Cell selection**: `.cell` elements now allow text selection (`user-select:
-   text`) which avoids overwriting issues while keeping the caret hidden via
-   `caret-color: transparent`.
-- **Completed clues**: the viewer adds the `complete` class when a clue is fully
-  answered. Completed clues are styled faint with a strike-through and are not
-  clickable.
-- **Responsive sizing**: grid dimensions are calculated using the CSS variable
-  `--cell-size` based on the viewport so the puzzle fits on mobile and desktop.
-- **Grid lines**: `#grid` uses a 1px `gap` on a black background with borderless
-  cells so the dividing lines appear as thin black separators between squares.
-  Cells have a white background so the black grid lines don't obscure the grid.
-- **Puzzle parsing**: `parsePuzzle()` delegates to `parseGrid`, `parseClues`
-  and `computeWordMetadata` helpers for clarity.
-- **Grid helpers**: `grid-utils.js` computes word spans and provides
-  `findFirstLetterCell` and `getWordCells` used by `Crossword`.
-- **State persistence**: handled by `state-utils.js`. Progress is stored in
-  `localStorage` under `crosswordState` and can be shared via URLs using
-  `getShareableURL()` and `loadStateFromURL()`.
-- **Puzzle links**: `buildPuzzleLinks()` populates a list of all puzzles from a
-  static array of `{name, file}` objects. Links update the `puzzle` query
-  parameter. A "Show all available crosswords" button toggles the list after the
-  clues on mobile, and sits below the grid and clues on wider screens.
-- **Reveal features**: `revealCurrentClue()` and `revealGrid()` fill in answers
-  after the user confirms via a custom overlay.
- - **Author metadata**: `parsePuzzle()` reads `<creator>` or `<author>` from the
-   puzzle file's `<metadata>` section and returns it as `author`. `crossword.js`
-   exposes this value so the entry script can show "Crossword by ..." in the
-   `#puzzle-author` element when a name is provided. The page always displays
-   "Page by Niall C" using the `#page-credit` element.
-
 ## Repository Practices
 - Keep `AGENTS.md` concise. Only record guidance that future agents must know.
   Use `CHANGELOG.md` for notable updates instead of documenting minor tweaks.
