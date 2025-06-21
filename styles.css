@@ -129,11 +129,11 @@
             margin-bottom: 1em;
         }
 
-        #puzzle-links {
-            margin-bottom: 1em;
+        #puzzle-list {
+            margin-top: 1em;
         }
 
-        #puzzle-links ul {
+        #puzzle-links {
             list-style: none;
             padding-left: 0;
             margin: 0;
