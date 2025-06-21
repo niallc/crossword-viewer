@@ -76,6 +76,8 @@ and run the helper functions provided by `index.js`:
 - When `TEST_MODE` is enabled, the check buttons log detailed information about
   each cell they evaluate. Use the console logs to understand why a letter was
   flagged (or not) by the check.
+- When `TEST_MODE` is enabled, a debug log appears at the bottom of the page
+  showing internal events from `crossword.js`.
 
 ## Share Link Format
 

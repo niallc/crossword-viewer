@@ -20,6 +20,8 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
 - No server-side code or external dependencies.
 - Add helpful console output for debugging. Enable verbose diagnostics by setting
   `TEST_MODE` to `true` near the top of `index.js`.
+  When enabled, `crossword.js` creates a `<pre id="debug-log">` element and
+  appends it to the page to record debug messages.
 
 ## Design Notes
 - **DOM caching**: `buildGrid()` stores cell elements in

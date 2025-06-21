@@ -37,3 +37,4 @@ All notable changes to this project will be documented in this file.
   on-screen keyboards.
 
 - Cells allow text selection to avoid overwrite issues.
+- Debug log element created only when `TEST_MODE` is true.
