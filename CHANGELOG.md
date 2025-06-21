@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
   `getMoveBackDir`, `checkClueGroup`, and puzzle parsing helpers
   (`parseGrid`, `parseClues`, `computeWordMetadata`).
 - Puzzle file renamed to `social_deduction_ok.xml`.
+- Puzzle file can now be selected via `?puzzle=` parameter and
+  `buildPuzzleLinks()` populates a list of available puzzles.
 
 ## 2024
 - Keyboard input handled at the document level with `contenteditable`

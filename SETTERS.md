@@ -112,11 +112,14 @@ Here is a simple 3x3 puzzle to demonstrate a complete file.
 
 ### Using Your Puzzle
 
-Once you have created your `.xml` file, save it in the project directory. To make the viewer load your puzzle, you must update the filename inside `main.js`:
+Once you have created your `.xml` file, save it in the project directory. The
+viewer loads `social_deduction_ok.xml` by default, but you can specify your file
+via the `?puzzle=` URL parameter or by editing the fetch call in `index.js`:
 
 ```javascript
-// In main.js, find this line and change the filename:
-fetch('your-puzzle-filename.xml')
+// In index.js, find this line and change the filename if you prefer a fixed file
+const puzzleFile = getPuzzleFileFromURL();
+fetch(puzzleFile)
   .then(res => res.text())
   // ...
 ```

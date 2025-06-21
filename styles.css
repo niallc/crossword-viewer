@@ -129,6 +129,30 @@
             margin-bottom: 1em;
         }
 
+        #puzzle-links {
+            margin-bottom: 1em;
+        }
+
+        #puzzle-links ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+            display: flex;
+            gap: 0.5em;
+        }
+
+        #puzzle-links a {
+            text-decoration: none;
+            padding: 0.2em 0.5em;
+            background-color: #e6eaff;
+            border: 1px solid #888;
+            border-radius: 4px;
+        }
+
+        #puzzle-links a:hover {
+            background-color: #d4d8ff;
+        }
+
 
 
         #clues {

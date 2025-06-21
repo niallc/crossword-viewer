@@ -1,5 +1,28 @@
 import Crossword, { TEST_MODE } from './crossword.js';
 
+const puzzles = [
+  { name: 'Social Deduction', file: 'social_deduction_ok.xml' }
+];
+
+function getPuzzleFileFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('puzzle') || 'social_deduction_ok.xml';
+}
+
+export function buildPuzzleLinks() {
+  const listEl = document.querySelector('#puzzle-links ul');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  puzzles.forEach(p => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = `?puzzle=${encodeURIComponent(p.file)}`;
+    a.textContent = p.name;
+    li.appendChild(a);
+    listEl.appendChild(li);
+  });
+}
+
 export let crossword;
 
 function initCrossword(xmlData) {
@@ -80,9 +103,12 @@ function initCrossword(xmlData) {
   window.crossword = crossword;
 }
 
-fetch('social_deduction_ok.xml')
+buildPuzzleLinks();
+
+const puzzleFile = getPuzzleFileFromURL();
+fetch(puzzleFile)
   .then(res => res.text())
   .then(initCrossword)
-  .catch(err => console.error('Failed to load social_deduction_ok.xml', err));
+  .catch(err => console.error('Failed to load', puzzleFile, err));
 
 export { crossword as default };
