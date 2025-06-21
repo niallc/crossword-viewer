@@ -218,3 +218,13 @@ whenever navigation logic needs the key code for moving backward.
 ## Clue Group Checker (2025)
 
 The helper method `checkClueGroup(selector, direction, starts)` updates clue list items by adding or removing the `complete` class based on whether their answer cells contain letters. `updateClueCompletion()` now delegates to this method for both across and down clues so they behave identically.
+
+## Puzzle Data Helpers (2025)
+
+Puzzle XML parsing is modularized into three helpers:
+
+- `parseGrid(doc)` builds the grid array from the `<grid>` and `<cell>` elements.
+- `parseClues(doc)` returns arrays for across and down clues.
+- `computeWordMetadata(grid)` computes starting positions and lengths for each word.
+
+`parsePuzzleData()` uses these helpers and still returns `{ width, height, grid, cluesAcross, cluesDown, acrossStarts, downStarts }`.

@@ -28,6 +28,7 @@ See [COMPOSERS.md](COMPOSERS.md) for guidance on writing your own crossword file
 - Diagnostic output in console
 - No server required — runs as static HTML/JS
 - Cells cached in memory for faster lookups
+- Puzzle data parsing split into helper functions (`parseGrid`, `parseClues`, `computeWordMetadata`) for readability
 - Clue enumerations shown using values from `social_deduction_ok.xml`
 - Responsive grid: cells scale with the viewport but never exceed 500&nbsp;px in total width; letter and clue number sizes scale with the cells
 - "Check Letter" and "Check Word" buttons highlight incorrect entries until you type again
