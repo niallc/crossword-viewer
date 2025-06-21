@@ -148,7 +148,8 @@ if (showPuzzlesBtn && puzzleList) {
   showPuzzlesBtn.addEventListener('click', () => {
     const visible = puzzleList.style.display === 'block';
     puzzleList.style.display = visible ? 'none' : 'block';
-    showPuzzlesBtn.textContent = visible ? 'Show Puzzles' : 'Hide Puzzles';
+    showPuzzlesBtn.textContent = visible ?
+      'Show all available crosswords' : 'Hide crosswords';
   });
 }
 
