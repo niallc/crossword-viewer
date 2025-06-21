@@ -394,24 +394,29 @@ export default class Crossword {
     }
   }
 
-  handleBeforeInput(e) {
+handleBeforeInput(e) {
     const cell = e.target.closest('.cell');
     if (!cell || cell.classList.contains('block')) return;
-    e.preventDefault();
+    
+    // Select the cell if it's not the currently active one
     if (cell !== this.selectedCell) {
       this.selectCell(cell);
     }
 
+    // First, check if we're dealing with a deletion, which is straightforward.
     if (e.inputType && e.inputType.startsWith('delete')) {
+      e.preventDefault(); // We can handle this, so prevent default.
       this.clearFeedback();
       this.handleBackspace();
       return;
     }
 
     let letter = e.data;
-    if (!letter) return;
-    letter = letter.slice(-1);
-    if (/^[a-zA-Z]$/.test(letter)) {
+    
+    // Now, check if we have valid, handleable character data.
+    if (letter && /^[a-zA-Z]$/.test(letter.slice(-1))) {
+      e.preventDefault(); // ONLY prevent default if we know what to do.
+      
       this.clearFeedback();
       removeTextNodes(cell);
       cell.style.color = '';
@@ -419,6 +424,10 @@ export default class Crossword {
       this.autoAdvance();
       this.saveStateToLocalStorage();
     }
+    
+    // If e.data is null or not a letter, we do nothing and call nothing.
+    // The browser will perform its default action, and the 'input' event will
+    // fire, allowing our more robust handleInput function to clean up.
   }
 
   handleBackspace() {
