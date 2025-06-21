@@ -12,7 +12,9 @@ Parse puzzle data from `social_deduction_ok.xml` and render an interactive cross
 ## Files
 
 - `index.html` — main page
-- `main.js` — JS logic (loaded as an ES module)
+- `index.js` — JS logic (loaded as an ES module)
+- `crossword.js` — Crossword class implementation
+- `puzzle-parser.js` — puzzle parsing utilities
 - `social_deduction_ok.xml` — puzzle data in XML format loaded at runtime via fetch
 
 ## Creating Your Own Puzzle
@@ -39,7 +41,7 @@ See [COMPOSERS.md](COMPOSERS.md) for guidance on writing your own crossword file
 
 Open `index.html` in a modern browser.
 
-`main.js` exports a `crossword` instance and also attaches it to `window.crossword` for debugging from the console.
+`index.js` exports a `crossword` instance and also attaches it to `window.crossword` for debugging from the console.
 
 Use the "Copy Share Link" button to copy a URL representing your current grid state.
 
@@ -57,7 +59,7 @@ When all letters for a clue are filled in the clue becomes faint and now shows a
 
 ## Testing
 
-To enable verbose diagnostic output while developing, open `main.js` and set the
+To enable verbose diagnostic output while developing, open `index.js` and set the
 `TEST_MODE` constant near the top of the file to `true`:
 
 ```js
@@ -66,7 +68,7 @@ const TEST_MODE = true;
 
 Reload `index.html` in your browser after making this change. Open the browser's
 developer tools console (usually with <kbd>F12</kbd> or via "Inspect" → "Console" )
-and run the helper functions provided by `main.js`:
+and run the helper functions provided by `index.js`:
 
 - `testGridIsBuilt()` — returns `true` if the grid has been created.
 - `testCluesPresent()` — returns `true` if clues are displayed.

@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2025
 - Clue clicking removed to prevent accidental scrolling.
+- Refactored into modules: `crossword.js` for the class, `puzzle-parser.js` for XML parsing, and entry script renamed to `index.js`.
 - Font sizes scale relative to each cell.
 - Debug logging for check helpers when `TEST_MODE` is true.
 - Letters overwrite existing input and stray text nodes are removed.
