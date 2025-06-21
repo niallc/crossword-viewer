@@ -15,17 +15,17 @@
 
         #grid {
             display: grid;
-            gap: 2px;
+            gap: 1px; /* thin grid lines */
             border: 1px solid #000;
             position: relative;
-            background-color: #ffffff; /* keep grid white */
+            background-color: #000; /* lines rendered via grid background */
             margin-top: 15px; /* spacing from buttons */
         }
 
         .cell {
             width: var(--cell-size);
             height: var(--cell-size);
-            border: 1px solid #ccc;
+            border: none;
             text-align: center;
             vertical-align: middle;
             font-size: calc(var(--cell-size) * 0.6);
