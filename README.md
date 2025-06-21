@@ -3,6 +3,8 @@
 This project builds an interactive crossword viewer in Javascript + HTML.
 The puzzle data lives in `social_deduction_ok.xml` and is fetched at runtime.
 
+See [CHANGELOG.md](CHANGELOG.md) for a summary of updates.
+
 ## Goal
 
 Parse puzzle data from `social_deduction_ok.xml` and render an interactive crossword grid and clues.
