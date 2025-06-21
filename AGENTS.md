@@ -34,6 +34,9 @@ Major modules: `crossword.js` implements the `Crossword` class and `puzzle-parse
   `--cell-size` based on the viewport so the puzzle fits on mobile and desktop.
 - **Puzzle parsing**: `parsePuzzle()` delegates to `parseGrid`, `parseClues`
   and `computeWordMetadata` helpers for clarity.
+- **State persistence**: progress is stored in `localStorage` under
+  `crosswordState` and can be shared via URLs using `getShareableURL()`
+  and `loadStateFromURL()`.
 
 ## Repository Practices
 - Keep `AGENTS.md` concise; do not record a running change log here.

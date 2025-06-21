@@ -28,6 +28,7 @@ See [COMPOSERS.md](COMPOSERS.md) for guidance on writing your own crossword file
 - User can type answers
 - Typing a new letter in a cell replaces any existing letter
 - Shareable URLs for puzzle state
+- Progress saved to `localStorage` and restored on reload
 - Basic test functions
 - Diagnostic output in console
 - No server required — runs as static HTML/JS
