@@ -1,8 +1,7 @@
-// Crossword Viewer implementation using a class
+// Crossword class module
+import { parsePuzzle } from './puzzle-parser.js';
 
-const TEST_MODE = true;
-
-export let crossword;
+export const TEST_MODE = true;
 
 function removeTextNodes(elem) {
   if (!elem) return;
@@ -27,94 +26,7 @@ function getMoveBackDir(currentDirection) {
   return currentDirection === 'across' ? 'ArrowLeft' : 'ArrowUp';
 }
 
-function parseGrid(doc) {
-  const gridNode = doc.querySelector('grid');
-  const width = parseInt(gridNode.getAttribute('width'), 10);
-  const height = parseInt(gridNode.getAttribute('height'), 10);
-  const grid = Array.from({ length: height }, () => Array(width).fill(null));
-
-  doc.querySelectorAll('cell').forEach(cell => {
-    const x = parseInt(cell.getAttribute('x'), 10) - 1;
-    const y = parseInt(cell.getAttribute('y'), 10) - 1;
-    const type = cell.getAttribute('type');
-    if (type === 'block') {
-      grid[y][x] = { type: 'block' };
-    } else {
-      grid[y][x] = {
-        type: 'letter',
-        solution: cell.getAttribute('solution') || '',
-        number: cell.getAttribute('number') || ''
-      };
-    }
-  });
-
-  return { width, height, grid };
-}
-
-function parseClues(doc) {
-  const clueSections = doc.querySelectorAll('clues[ordering="normal"]');
-  const cluesAcross = [];
-  const cluesDown = [];
-  if (clueSections[0]) {
-    clueSections[0].querySelectorAll('clue').forEach(cl => {
-      cluesAcross.push({
-        number: cl.getAttribute('number'),
-        text: cl.textContent,
-        enumeration: cl.getAttribute('format') || ''
-      });
-    });
-  }
-  if (clueSections[1]) {
-    clueSections[1].querySelectorAll('clue').forEach(cl => {
-      cluesDown.push({
-        number: cl.getAttribute('number'),
-        text: cl.textContent,
-        enumeration: cl.getAttribute('format') || ''
-      });
-    });
-  }
-  return { cluesAcross, cluesDown };
-}
-
-function computeWordMetadata(grid) {
-  const height = grid.length;
-  const width = grid[0].length;
-  const acrossLengths = {};
-  const downLengths = {};
-  const acrossStarts = {};
-  const downStarts = {};
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const cell = grid[y][x];
-      if (!cell || cell.type === 'block' || !cell.number) continue;
-      if (x === 0 || grid[y][x - 1].type === 'block') {
-        let len = 0;
-        let cx = x;
-        while (cx < width && grid[y][cx].type !== 'block') {
-          len++;
-          cx++;
-        }
-        acrossLengths[cell.number] = len;
-        acrossStarts[cell.number] = { x, y };
-      }
-      if (y === 0 || grid[y - 1][x].type === 'block') {
-        let len = 0;
-        let cy = y;
-        while (cy < height && grid[cy][x].type !== 'block') {
-          len++;
-          cy++;
-        }
-        downLengths[cell.number] = len;
-        downStarts[cell.number] = { x, y };
-      }
-    }
-  }
-
-  return { acrossStarts, downStarts, acrossLengths, downLengths };
-}
-
-class Crossword {
+export default class Crossword {
   constructor(xmlData) {
     console.log('Crossword Viewer: Starting');
     if (typeof xmlData === 'undefined') {
@@ -129,30 +41,7 @@ class Crossword {
     this.copyLinkButton = null;
     this.clearProgressButton = null;
     this.cellEls = [];
-    this.puzzleData = this.parsePuzzleData(xmlData);
-  }
-
-  parsePuzzleData(xmlString) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xmlString, 'text/xml');
-
-    const { width, height, grid } = parseGrid(doc);
-    const { cluesAcross, cluesDown } = parseClues(doc);
-    const {
-      acrossStarts,
-      downStarts,
-      acrossLengths,
-      downLengths
-    } = computeWordMetadata(grid);
-
-    cluesAcross.forEach(cl => {
-      cl.length = acrossLengths[cl.number] || 0;
-    });
-    cluesDown.forEach(cl => {
-      cl.length = downLengths[cl.number] || 0;
-    });
-
-    return { width, height, grid, cluesAcross, cluesDown, acrossStarts, downStarts };
+    this.puzzleData = parsePuzzle(xmlData);
   }
 
   createCellElement(cellData, x, y) {
@@ -438,7 +327,7 @@ class Crossword {
       if (ch >= '0' && ch <= '9') {
         countStr += ch;
       } else {
-        const count = countStr ? parseInt(countStr, 10) : 1;
+        const count = parseInt(countStr || '1', 10);
         result += ch.repeat(count);
         countStr = '';
       }
@@ -446,77 +335,58 @@ class Crossword {
     return result;
   }
 
-  getShareableURL() {
-    const serialized = this.serializeGridState();
-    const compressed = this.rleEncode(serialized);
-    const encoded = btoa(compressed);
-    const urlEncoded = encodeURIComponent(encoded);
-    return location.origin + location.pathname + '#state=' + urlEncoded;
-  }
-
-  loadStateFromURL() {
-    let encoded = null;
-    if (location.hash.startsWith('#state=')) {
-      encoded = location.hash.slice(7);
-    } else {
-      const params = new URLSearchParams(location.search);
-      encoded = params.get('state');
+  handleKeyDown(e) {
+    if (!this.selectedCell) return;
+    const key = e.key;
+    if (key === 'Backspace') {
+      this.clearFeedback();
+      this.handleBackspace();
+      e.preventDefault();
+      return;
     }
-    if (encoded) {
-      try {
-        const decoded = decodeURIComponent(encoded);
-        const compressed = atob(decoded);
-        const serialized = this.rleDecode(compressed);
-        this.applyGridState(serialized);
-        return true;
-      } catch (e) {
-        console.error('Failed to load state from URL', e);
+    if (key === 'Delete') {
+      this.clearFeedback();
+      const letterEl = this.selectedCell.querySelector('.letter');
+      if (letterEl) {
+        letterEl.textContent = '';
       }
+      this.saveStateToLocalStorage();
+      e.preventDefault();
+      return;
     }
-    return false;
+    if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight') {
+      this.clearFeedback();
+      const moved = this.moveSelection(key);
+      if (moved) {
+        e.preventDefault();
+      }
+      return;
+    }
+    if (/^[a-zA-Z]$/.test(key)) {
+      this.clearFeedback();
+      this.setCellLetter(this.selectedCell, key);
+      this.autoAdvance();
+      this.saveStateToLocalStorage();
+      e.preventDefault();
+      return;
+    }
   }
 
   handleBackspace() {
     if (!this.selectedCell) return;
-    const backDir = getMoveBackDir(this.currentDirection);
-    let cell = this.selectedCell;
-    const letterEl = cell.querySelector('.letter');
+    const letterEl = this.selectedCell.querySelector('.letter');
     if (letterEl && letterEl.textContent) {
       letterEl.textContent = '';
-      this.moveSelection(backDir);
-    } else if (this.moveSelection(backDir)) {
-      cell = this.selectedCell;
-      const letterEl2 = cell.querySelector('.letter');
-      if (letterEl2) letterEl2.textContent = '';
-    }
-    cell.style.color = '';
-    this.saveStateToLocalStorage();
-  }
-
-  handleKeyDown(e) {
-    if (!this.selectedCell) return;
-    const key = e.key;
-    if (/^[a-zA-Z]$/.test(key)) {
-      e.preventDefault();
-      this.clearFeedback();
-      this.selectedCell.style.color = '';
-      this.setCellLetter(this.selectedCell, key);
-      this.autoAdvance();
       this.saveStateToLocalStorage();
-    } else if (key === 'Backspace') {
-      e.preventDefault();
-      this.clearFeedback();
-      this.handleBackspace();
-    } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
-      e.preventDefault();
-      this.moveSelection(key);
-      if (key === 'ArrowUp' || key === 'ArrowDown') {
-        this.currentDirection = 'down';
+      return;
+    }
+    const moved = this.moveSelection(getMoveBackDir(this.currentDirection));
+    if (moved) {
+      const letterEl2 = this.selectedCell.querySelector('.letter');
+      if (letterEl2) {
+        letterEl2.textContent = '';
       }
-      if (key === 'ArrowLeft' || key === 'ArrowRight') {
-        this.currentDirection = 'across';
-      }
-      this.updateDirectionButton();
+      this.saveStateToLocalStorage();
     }
   }
 
@@ -599,11 +469,9 @@ class Crossword {
     }
   }
 
-clearFeedback() {
+  clearFeedback() {
     this.feedbackCells.forEach(c => {
-      // Clear background from parent cell
       c.style.backgroundColor = '';
-      // Clear color from the inner letter element
       const letterEl = c.querySelector('.letter');
       if (letterEl) {
         letterEl.style.color = '';
@@ -627,7 +495,7 @@ clearFeedback() {
     }
     if (actual && letterEl) {
       if (actual === expected) {
-        letterEl.style.color = 'green'; // Apply style to the .letter div
+        letterEl.style.color = 'green';
       } else {
         letterEl.style.color = 'red';
       }
@@ -650,7 +518,7 @@ clearFeedback() {
       }
       if (actual && letterEl) {
         if (actual === expected) {
-          letterEl.style.color = 'green'; // Apply style to the .letter div
+          letterEl.style.color = 'green';
         } else {
           letterEl.style.color = 'red';
         }
@@ -695,7 +563,6 @@ clearFeedback() {
     }
   }
 
-
   updateDirectionButton() {
     if (this.directionButton) {
       this.directionButton.textContent = 'Mode: ' + (this.currentDirection === 'across' ? 'Across' : 'Down');
@@ -710,93 +577,3 @@ clearFeedback() {
     }
   }
 }
-
-function initCrossword(xmlData) {
-  crossword = new Crossword(xmlData);
-
-  crossword.directionButton = document.getElementById('toggle-direction');
-  if (crossword.directionButton) {
-    crossword.directionButton.addEventListener('click', () => crossword.toggleDirection());
-    crossword.updateDirectionButton();
-  }
-
-  const checkLetterBtn = document.getElementById('check-letter');
-  if (checkLetterBtn) {
-    checkLetterBtn.addEventListener('click', () => crossword.checkLetter());
-  }
-
-  const checkWordBtn = document.getElementById('check-word');
-  if (checkWordBtn) {
-    checkWordBtn.addEventListener('click', () => crossword.checkWord());
-  }
-
-
-  document.addEventListener('keydown', (e) => crossword.handleKeyDown(e));
-  document.addEventListener('input', (e) => crossword.handleInput(e));
-
-  crossword.buildGrid();
-
-  crossword.buildClues(crossword.puzzleData.cluesAcross, crossword.puzzleData.cluesDown);
-
-  const loadedFromURL = crossword.loadStateFromURL();
-  if (!loadedFromURL) {
-    crossword.loadStateFromLocalStorage();
-  }
-
-  const firstCell = crossword.findFirstLetterCell();
-  if (firstCell) {
-    crossword.selectCell(firstCell);
-  }
-
-  crossword.copyLinkButton = document.getElementById('copy-link');
-  if (crossword.copyLinkButton) {
-    crossword.copyLinkButton.addEventListener('click', () => {
-      const url = crossword.getShareableURL();
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(() => {
-          crossword.copyLinkButton.textContent = 'Link Copied!';
-          setTimeout(() => crossword.copyLinkButton.textContent = 'Copy Share Link', 2000);
-        }).catch(err => console.error('Clipboard error', err));
-      } else {
-        console.warn('Clipboard API not available');
-      }
-    });
-  }
-
-  crossword.clearProgressButton = document.getElementById('clear-progress');
-  if (crossword.clearProgressButton) {
-    crossword.clearProgressButton.addEventListener('click', () => {
-      localStorage.removeItem('crosswordState');
-      crossword.applyGridState('');
-    });
-  }
-
-  // on-screen arrow navigation has been removed
-
-
-  if (TEST_MODE) {
-    crossword.cellEls.flat().forEach(cell => {
-      if (!cell) return;
-      ['pointerdown', 'pointerup', 'click'].forEach(ev =>
-        cell.addEventListener(ev, () =>
-          console.log(ev, cell.dataset.x, cell.dataset.y,
-            'active:', document.activeElement.id)));
-    });
-  }
-
-  console.log('Crossword Viewer: Ready');
-
-  window.testGridIsBuilt = crossword.testGridIsBuilt.bind(crossword);
-  window.testCluesPresent = crossword.testCluesPresent.bind(crossword);
-  window.logGridState = crossword.logGridState.bind(crossword);
-  window.getShareableURL = crossword.getShareableURL.bind(crossword);
-
-  window.crossword = crossword;
-}
-
-fetch('social_deduction_ok.xml')
-  .then(res => res.text())
-  .then(initCrossword)
-  .catch(err => console.error('Failed to load social_deduction_ok.xml', err));
-
-export { crossword as default };
