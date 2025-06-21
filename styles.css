@@ -163,7 +163,6 @@
 
         #show-puzzles {
             margin-top: 1em;
-            flex-basis: 100%;
             align-self: flex-start;
         }
 
@@ -213,6 +212,9 @@
             }
             #grid {
                 margin-bottom: 1rem;
+            }
+            #show-puzzles {
+                width: 100%;
             }
         }
 
