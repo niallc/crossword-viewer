@@ -25,6 +25,7 @@
         .cell {
             width: var(--cell-size);
             height: var(--cell-size);
+            background-color: #fff;
             border: none;
             text-align: center;
             vertical-align: middle;

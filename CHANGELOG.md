@@ -38,3 +38,4 @@ All notable changes to this project will be documented in this file.
 
 - Cells allow text selection to avoid overwrite issues.
 - Debug log element created only when `TEST_MODE` is true.
+- Cells now default to a white background so 1px black grid lines show correctly

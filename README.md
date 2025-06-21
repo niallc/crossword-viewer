@@ -30,6 +30,7 @@ See [SETTERS.md](SETTERS.md) for guidance on writing your own crossword file and
 - No server required — runs as static HTML/JS
 - Clue enumerations shown using values from the loaded puzzle file
 - Responsive grid: cells scale with the viewport but never exceed 500&nbsp;px in total width; letter and clue number sizes scale with the cells
+- Thin black lines separate each cell using a 1px grid gap
 - "Check Letter" and "Check Word" buttons highlight incorrect entries until you type again
 - "Reveal Word" and "Reveal Grid" buttons fill answers after a confirmation prompt
 
