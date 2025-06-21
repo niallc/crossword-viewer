@@ -160,7 +160,7 @@
         #show-puzzles {
             margin-top: 1em;
             align-self: flex-start;
-            width: 100%;
+            width: auto;
         }
 
         #puzzle-list {
