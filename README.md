@@ -36,6 +36,7 @@ See [SETTERS.md](SETTERS.md) for guidance on writing your own crossword file and
 - "Check Letter" and "Check Word" buttons highlight incorrect entries until you type again
 - "Reveal Word" and "Reveal Grid" buttons fill answers after a confirmation prompt
 - The currently selected clue appears above and below the grid
+- Tap any clue to select it and scroll the grid into view
 
 See [CHANGELOG.md](CHANGELOG.md) for a summary of updates.
 
@@ -52,10 +53,11 @@ Use the "Copy Share Link" button to copy a URL representing your current grid st
 
 Each grid cell is `contenteditable` so the on-screen keyboard appears on mobile devices. Keyboard events are attached at the document level: `keydown` covers desktop input while each cell listens for the `input` event so mobile browsers work correctly. The handler calls `preventDefault()` on `keydown` so characters are not inserted twice.
 Cells may be selected normally so you can highlight a letter before typing to replace it.
+Tapping a clue is the normal way to jump to its answer and the grid will scroll into view.
 
 ### Solved clues
 
-When all letters for a clue are filled in the clue becomes faint and now shows a light strike-through. Clicking a solved clue no longer jumps to that answer.
+When all letters for a clue are filled in, the clue becomes faint and shows a light strike-through. You can still tap a solved clue to highlight its answer.
 
 ## Testing
 
