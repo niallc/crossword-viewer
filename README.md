@@ -35,6 +35,7 @@ See [SETTERS.md](SETTERS.md) for guidance on writing your own crossword file and
 - Thin black lines separate each cell using a 1px grid gap
 - "Check Letter" and "Check Word" buttons highlight incorrect entries until you type again
 - "Reveal Word" and "Reveal Grid" buttons fill answers after a confirmation prompt
+- The currently selected clue appears above and below the grid
 
 See [CHANGELOG.md](CHANGELOG.md) for a summary of updates.
 

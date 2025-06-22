@@ -439,6 +439,42 @@ export default class Crossword {
         clueEl.classList.add('highlight');
       }
     }
+
+    this.updateCurrentClue();
+  }
+
+  updateCurrentClue() {
+    const topEl = document.getElementById('active-clue-top');
+    const bottomEl = document.getElementById('active-clue-bottom');
+    if (!topEl && !bottomEl) return;
+
+    if (!this.selectedCell) {
+      if (topEl) topEl.textContent = '';
+      if (bottomEl) bottomEl.textContent = '';
+      return;
+    }
+
+    const cells = getWordCells(this.puzzleData, this.cellEls, this.selectedCell, this.currentDirection);
+    if (cells.length === 0) {
+      if (topEl) topEl.textContent = '';
+      if (bottomEl) bottomEl.textContent = '';
+      return;
+    }
+
+    const clueNumber = cells[0].data.number;
+    const clues = this.currentDirection === 'across'
+      ? this.puzzleData.cluesAcross
+      : this.puzzleData.cluesDown;
+    const clue = clues.find(cl => cl.number === clueNumber);
+    if (!clue) {
+      if (topEl) topEl.textContent = '';
+      if (bottomEl) bottomEl.textContent = '';
+      return;
+    }
+    const enumStr = clue.enumeration || clue.length;
+    const text = `${clue.number}. ${clue.text} (${enumStr})`;
+    if (topEl) topEl.textContent = text;
+    if (bottomEl) bottomEl.textContent = text;
   }
 
   clearFeedback() {
