@@ -245,7 +245,33 @@ export default class Crossword {
       li.appendChild(num);
       const enumStr = cl.enumeration || cl.length;
       li.appendChild(document.createTextNode(cl.text + ' (' + enumStr + ')'));
-      // clue clicks were removed to prevent unwanted scrolling on mobile
+      li.addEventListener('pointerdown', (e) => {
+        this.pointerInfo = {
+          element: li,
+          pointerId: e.pointerId,
+          x: e.clientX,
+          y: e.clientY
+        };
+      });
+      li.addEventListener('pointerup', (e) => {
+        if (!this.pointerInfo || this.pointerInfo.pointerId !== e.pointerId) {
+          this.pointerInfo = null;
+          return;
+        }
+        const dx = e.clientX - this.pointerInfo.x;
+        const dy = e.clientY - this.pointerInfo.y;
+        const dist = Math.hypot(dx, dy);
+        const sameEl = this.pointerInfo.element === li;
+        this.pointerInfo = null;
+        if (sameEl && dist < 10) {
+          this.selectClue(cl.number, 'across');
+          document.getElementById('grid')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          e.preventDefault();
+        }
+      });
+      li.addEventListener('pointercancel', () => {
+        this.pointerInfo = null;
+      });
       acrossEl.appendChild(li);
     });
 
@@ -258,7 +284,33 @@ export default class Crossword {
       li.appendChild(num);
       const enumStr = cl.enumeration || cl.length;
       li.appendChild(document.createTextNode(cl.text + ' (' + enumStr + ')'));
-      // clue clicks were removed to prevent unwanted scrolling on mobile
+      li.addEventListener('pointerdown', (e) => {
+        this.pointerInfo = {
+          element: li,
+          pointerId: e.pointerId,
+          x: e.clientX,
+          y: e.clientY
+        };
+      });
+      li.addEventListener('pointerup', (e) => {
+        if (!this.pointerInfo || this.pointerInfo.pointerId !== e.pointerId) {
+          this.pointerInfo = null;
+          return;
+        }
+        const dx = e.clientX - this.pointerInfo.x;
+        const dy = e.clientY - this.pointerInfo.y;
+        const dist = Math.hypot(dx, dy);
+        const sameEl = this.pointerInfo.element === li;
+        this.pointerInfo = null;
+        if (sameEl && dist < 10) {
+          this.selectClue(cl.number, 'down');
+          document.getElementById('grid')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          e.preventDefault();
+        }
+      });
+      li.addEventListener('pointercancel', () => {
+        this.pointerInfo = null;
+      });
       downEl.appendChild(li);
     });
     this.updateClueCompletion();
