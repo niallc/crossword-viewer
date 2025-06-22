@@ -137,6 +137,10 @@
             margin: 0.25em 0;
         }
 
+        #active-clue-bottom {
+            margin-bottom: clamp(0.5rem, 3vw, 1rem);
+        }
+
 
         #confirm-overlay {
             position: fixed;
@@ -226,7 +230,7 @@
                 max-width: none;
             }
             #grid {
-                margin-bottom: 1rem; /* space before clue list when stacked */
+                margin-bottom: 0; /* margin handled by bottom clue */
             }
         }
 

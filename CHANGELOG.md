@@ -35,3 +35,4 @@ All notable changes to this project will be documented in this file.
 - Active clue text now displays above and below the grid
 - Cell selection now happens on pointerup with a small-movement check so scrolling works on touch devices. README updated accordingly.
 - Clue tapping restored; selecting a clue scrolls the grid into view
+- Clue spacing refined with CSS `clamp()`; grid margin removed so active clues sit closer
