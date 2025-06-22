@@ -46,6 +46,7 @@ export default class Crossword {
     this.feedbackCells = [];
     this.copyLinkButton = null;
     this.cellEls = [];
+    this.pointerInfo = null;
     this.puzzleData = parsePuzzle(xmlData);
     if (TEST_MODE) {
       this.debugEl = document.createElement('pre');
@@ -103,8 +104,30 @@ export default class Crossword {
       cell.setAttribute('inputmode', 'text');
       cell.tabIndex = 0;
       cell.addEventListener('pointerdown', (e) => {
-        this.selectCell(cell);
-        e.preventDefault();
+        this.pointerInfo = {
+          cell,
+          pointerId: e.pointerId,
+          x: e.clientX,
+          y: e.clientY
+        };
+      });
+      cell.addEventListener('pointerup', (e) => {
+        if (!this.pointerInfo || this.pointerInfo.pointerId !== e.pointerId) {
+          this.pointerInfo = null;
+          return;
+        }
+        const dx = e.clientX - this.pointerInfo.x;
+        const dy = e.clientY - this.pointerInfo.y;
+        const dist = Math.hypot(dx, dy);
+        const sameCell = this.pointerInfo.cell === cell;
+        this.pointerInfo = null;
+        if (sameCell && dist < 10) {
+          this.selectCell(cell);
+          e.preventDefault();
+        }
+      });
+      cell.addEventListener('pointercancel', () => {
+        this.pointerInfo = null;
       });
 
       // Unified input handler for both mobile and desktop.

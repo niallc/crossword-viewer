@@ -53,10 +53,6 @@ Use the "Copy Share Link" button to copy a URL representing your current grid st
 Each grid cell is `contenteditable` so the on-screen keyboard appears on mobile devices. Keyboard events are attached at the document level: `keydown` covers desktop input while each cell listens for the `input` event so mobile browsers work correctly. The handler calls `preventDefault()` on `keydown` so characters are not inserted twice.
 Cells may be selected normally so you can highlight a letter before typing to replace it.
 
-### Clue clicking
-
-Clues are no longer clickable to prevent accidental scrolling on mobile devices. The helper method `selectClue()` remains for debugging but is not bound to the interface.
-
 ### Solved clues
 
 When all letters for a clue are filled in the clue becomes faint and now shows a light strike-through. Clicking a solved clue no longer jumps to that answer.
