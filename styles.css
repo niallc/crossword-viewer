@@ -9,7 +9,7 @@
             flex-direction: row;
             flex-wrap: wrap;
             align-items: flex-start;
-            gap: 2rem;
+            gap: clamp(0.5rem, 3vw, 2rem);
             background-color: #eef6ff; /* pastel blue background */
         }
 
@@ -19,7 +19,6 @@
             border: 1px solid #000;
             position: relative;
             background-color: #000; /* lines rendered via grid background */
-            margin-top: 15px; /* spacing from buttons */
         }
 
         .cell {
@@ -138,6 +137,10 @@
             margin: 0.25em 0;
         }
 
+        #active-clue-bottom {
+            margin-bottom: clamp(0.5rem, 3vw, 1rem);
+        }
+
 
         #confirm-overlay {
             position: fixed;
@@ -206,7 +209,7 @@
 
         #clues {
             display: flex;
-            gap: 2rem;
+            gap: clamp(0.5rem, 2vw, 2rem);
             max-width: 600px;
         }
 
@@ -227,7 +230,7 @@
                 max-width: none;
             }
             #grid {
-                margin-bottom: 1rem;
+                margin-bottom: 0; /* margin handled by bottom clue */
             }
         }
 
