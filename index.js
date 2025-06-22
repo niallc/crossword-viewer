@@ -94,6 +94,7 @@ function initCrossword(xmlData) {
   const firstCell = findFirstLetterCell(crossword.puzzleData, crossword.cellEls);
   if (firstCell) {
     crossword.selectCell(firstCell);
+    crossword.updateCurrentClue();
   }
 
   crossword.copyLinkButton = document.getElementById('copy-link');
