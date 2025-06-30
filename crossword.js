@@ -1,4 +1,4 @@
-// Crossword class module (v2.4 - Added architectural documentation)
+// Crossword class module (v2.5 - Added architectural documentation)
 import { parsePuzzle } from './puzzle-parser.js';
 import { getWordCells } from './grid-utils.js';
 import {

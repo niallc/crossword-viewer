@@ -1,4 +1,4 @@
-// state-utils.js v1.2
+// state-utils.js v1.3
 // This module contains utility functions for managing the state of the crossword grid.
 // It handles serializing the grid's letter data into a compact string for saving,
 // applying that string back to the grid, and compressing/decompressing the state
