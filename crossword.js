@@ -339,6 +339,7 @@ export default class Crossword {
       }
       if (serialized) {
         applyGridState(this.puzzleData, this.cellEls, serialized);
+        this.updateClueCompletion();
         return true;
       }
     } catch (e) {
@@ -363,6 +364,7 @@ export default class Crossword {
       const compressed = atob(hash);
       const serialized = rleDecode(compressed);
       applyGridState(this.puzzleData, this.cellEls, serialized);
+      this.updateClueCompletion();
       return true;
     } catch (e) {
       console.error('Failed to load state from URL', e);
