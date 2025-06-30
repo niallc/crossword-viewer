@@ -3,7 +3,7 @@ import { findFirstLetterCell } from './grid-utils.js';
 
 const puzzles = [
   { name: 'Social Deduction', file: 'social_deduction_ok.xml' },
-  { name: 'OkeyDoke Crossword 1', file: 'okeydoke_puzzle1.xml' }
+  { name: 'Oliver\'s Crossword', file: 'okeydoke_puzzle1.xml' }
 ];
 
 function getPuzzleFileFromURL() {
@@ -58,8 +58,8 @@ if (confirmNo) {
   confirmNo.addEventListener('click', hideConfirm);
 }
 
-function initCrossword(xmlData) {
-  crossword = new Crossword(xmlData);
+function initCrossword(xmlData, puzzleFile) {
+  crossword = new Crossword(xmlData, puzzleFile);
 
 
   const checkLetterBtn = document.getElementById('check-letter');
@@ -163,7 +163,7 @@ if (showPuzzlesBtn && puzzleList) {
 const puzzleFile = getPuzzleFileFromURL();
 fetch(puzzleFile)
   .then(res => res.text())
-  .then(initCrossword)
+  .then(xmlData => initCrossword(xmlData, puzzleFile))
   .catch(err => console.error('Failed to load', puzzleFile, err));
 
 export { crossword as default };

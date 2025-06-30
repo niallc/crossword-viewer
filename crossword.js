@@ -1,4 +1,4 @@
-// Crossword class module (v1.2)
+// Crossword class module (v1.3)
 import { parsePuzzle } from './puzzle-parser.js';
 import { getWordCells } from './grid-utils.js';
 import {
@@ -34,7 +34,7 @@ function getMoveBackDir(currentDirection) {
 }
 
 export default class Crossword {
-  constructor(xmlData) {
+  constructor(xmlData, puzzleId) {
     console.log('Crossword Viewer: Starting');
     if (typeof xmlData === 'undefined') {
       console.error('ERROR: CrosswordPuzzleData not found.');
@@ -47,6 +47,7 @@ export default class Crossword {
     this.copyLinkButton = null;
     this.cellEls = [];
     this.pointerInfo = null;
+    this.puzzleId = puzzleId; // ID for localStorage
     this.puzzleData = parsePuzzle(xmlData);
     if (TEST_MODE) {
       this.debugEl = document.createElement('pre');
@@ -59,7 +60,7 @@ export default class Crossword {
       this.debugEl.style.padding = '5px';
       this.debugEl.style.fontSize = '10px';
       document.body.appendChild(this.debugEl);
-      this.debugLog('Crossword Initialized (v1.2). Logging is active.');
+      this.debugLog('Crossword Initialized (v1.3). Logging is active.');
     } else {
       this.debugEl = null;
     }
@@ -78,6 +79,12 @@ export default class Crossword {
     if (lines.length > 100) { // Keep the log to a reasonable size
       this.debugEl.textContent = lines.slice(0, 100).join('\n');
     }
+  }
+
+  getStorageKey() {
+    // Create a safe key from the puzzle filename.
+    const safeId = this.puzzleId.replace(/[^a-zA-Z0-9]/g, '_');
+    return `crosswordState_${safeId}`;
   }
 
   createCellElement(cellData, x, y) {
@@ -430,7 +437,7 @@ export default class Crossword {
   saveStateToLocalStorage() {
     try {
       const serialized = serializeGridState(this.puzzleData, this.cellEls);
-      localStorage.setItem('crosswordState', serialized);
+      localStorage.setItem(this.getStorageKey(), serialized);
       this.updateClueCompletion();
     } catch (e) {
       console.error('Failed to save state to localStorage', e);
@@ -439,7 +446,23 @@ export default class Crossword {
 
   loadStateFromLocalStorage() {
     try {
-      const serialized = localStorage.getItem('crosswordState');
+      let serialized = localStorage.getItem(this.getStorageKey());
+
+      // Migration logic for the original puzzle
+      if (!serialized && this.puzzleId === 'social_deduction_ok.xml') {
+        console.log("Checking for legacy 'crosswordState' to migrate...");
+        const oldState = localStorage.getItem('crosswordState');
+        if (oldState) {
+          console.log("Found legacy state. Migrating...");
+          serialized = oldState;
+          applyGridState(this.puzzleData, this.cellEls, serialized);
+          this.saveStateToLocalStorage(); // This saves it to the new key
+          localStorage.removeItem('crosswordState'); // Clean up old key
+          console.log("Migration complete.");
+          return true;
+        }
+      }
+
       if (serialized) {
         applyGridState(this.puzzleData, this.cellEls, serialized);
         return true;
