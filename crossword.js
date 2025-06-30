@@ -1,4 +1,4 @@
-// Crossword class module (v1.4)
+// Crossword class module (v1.5)
 import { parsePuzzle } from './puzzle-parser.js';
 import { getWordCells } from './grid-utils.js';
 import {
@@ -60,7 +60,7 @@ export default class Crossword {
       this.debugEl.style.padding = '5px';
       this.debugEl.style.fontSize = '10px';
       document.body.appendChild(this.debugEl);
-      this.debugLog('Crossword Initialized (v1.4). Logging is active.');
+      this.debugLog('Crossword Initialized (v1.5). Logging is active.');
     } else {
       this.debugEl = null;
     }
@@ -106,8 +106,13 @@ export default class Crossword {
       letter.classList.add('letter');
       cell.appendChild(letter);
       
-      // No longer contenteditable, as we handle all input via keydown
-      cell.tabIndex = 0; 
+      // contenteditable is needed for mobile keyboards to appear.
+      // inputmode hints at the type of keyboard.
+      cell.setAttribute('contenteditable', 'true');
+      cell.setAttribute('inputmode', 'text');
+
+      // The 'input' event handles mobile virtual keyboards.
+      cell.addEventListener('input', (e) => this.handleInput(e));
 
       cell.addEventListener('pointerdown', (e) => {
         this.pointerInfo = {
@@ -158,7 +163,9 @@ export default class Crossword {
       return;
     }
 
-    // Handle character input directly
+    // Handle character input directly for physical keyboards.
+    // This provides a reliable experience on desktop (especially Firefox)
+    // and prevents the 'input' event from firing, avoiding double-handling.
     if (key.length === 1 && key.match(/^[a-zA-Z]$/)) {
         e.preventDefault();
         this.clearFeedback();
@@ -166,6 +173,36 @@ export default class Crossword {
         this.autoAdvance();
         this.saveStateToLocalStorage();
         return;
+    }
+  }
+
+  handleInput(e) {
+    const cell = e.target.closest('.cell');
+    if (!cell || cell.classList.contains('block')) return;
+
+    // This handler is primarily for mobile virtual keyboards. The browser modifies 
+    // the DOM first, and we clean it up to formalize the state.
+    let letter = cell.textContent.trim();
+    
+    // After the browser inserts text, we clean up any stray text nodes.
+    removeTextNodes(cell); 
+
+    if (letter) {
+      // Take the last character typed, in case of auto-correct or pasting.
+      letter = letter.slice(-1).toUpperCase(); 
+      if (/^[A-Z]$/.test(letter)) {
+        this.clearFeedback();
+        this.setCellLetter(cell, letter);
+        this.autoAdvance();
+        this.saveStateToLocalStorage();
+      } else {
+        // Clear the cell if the input was not a letter (e.g., a symbol).
+        this.setCellLetter(cell, ''); 
+      }
+    } else {
+        // This can happen if the input was a delete action.
+        this.setCellLetter(cell, '');
+        this.saveStateToLocalStorage();
     }
   }
 
