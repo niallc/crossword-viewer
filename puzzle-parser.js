@@ -1,4 +1,4 @@
-// Puzzle parsing utilities
+// Puzzle parsing utilities (v1.2)
 
 function parseGrid(doc) {
   const gridNode = doc.querySelector('grid');
@@ -17,7 +17,6 @@ function parseGrid(doc) {
     const x = parseInt(cell.getAttribute('x'), 10) - 1;
     const y = parseInt(cell.getAttribute('y'), 10) - 1;
 
-    // Basic bounds check
     if (x < 0 || x >= width || y < 0 || y >= height) {
         console.warn(`[Parser] Cell at (${x+1}, ${y+1}) is outside the defined grid dimensions (${width}x${height}). Skipping.`);
         return;
@@ -27,21 +26,21 @@ function parseGrid(doc) {
     if (type === 'block') {
       grid[y][x] = { type: 'block' };
     } else {
+      // We ignore the 'number' attribute from the XML as it can be incorrect.
+      // Numbers will be calculated based on grid position.
       grid[y][x] = {
         type: 'letter',
         solution: cell.getAttribute('solution') || '',
-        number: cell.getAttribute('number') || ''
+        number: '' // Initially blank
       };
     }
   });
 
-  // Check for any cells that were not defined in the XML
   let undefinedCells = 0;
   for(let r=0; r < height; r++) {
       for(let c=0; c < width; c++) {
           if(grid[r][c] === null) {
               undefinedCells++;
-              // Default to a block cell to prevent errors down the line
               grid[r][c] = { type: 'block' };
           }
       }
@@ -54,7 +53,6 @@ function parseGrid(doc) {
 }
 
 function parseClues(doc) {
-  // Be more lenient with the selector. Most formats have two <clues> blocks inside <crossword>.
   const clueSections = doc.querySelectorAll('crossword > clues');
   console.log(`[Parser] Found ${clueSections.length} <clues> sections.`);
 
@@ -66,7 +64,6 @@ function parseClues(doc) {
       return { cluesAcross, cluesDown };
   }
 
-  // Heuristic: The first block is 'Across', the second is 'Down'.
   if (clueSections[0]) {
     const acrossNodes = clueSections[0].querySelectorAll('clue');
     console.log(`[Parser] Found ${acrossNodes.length} 'Across' clue nodes.`);
@@ -100,41 +97,63 @@ function parseClues(doc) {
   return { cluesAcross, cluesDown };
 }
 
-function computeWordMetadata(grid) {
+function generateGridMetadataAndNumbers(grid) {
+  if (grid.length === 0 || grid[0].length === 0) {
+    return { acrossStarts: {}, downStarts: {}, acrossLengths: {}, downLengths: {} };
+  }
   const height = grid.length;
   const width = grid[0].length;
-  const acrossLengths = {};
-  const downLengths = {};
   const acrossStarts = {};
   const downStarts = {};
+  const acrossLengths = {};
+  const downLengths = {};
+  let clueNumber = 1;
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const cell = grid[y][x];
-      if (!cell || cell.type === 'block' || !cell.number) continue;
-      if (x === 0 || grid[y][x - 1].type === 'block') {
-        let len = 0;
-        let cx = x;
-        while (cx < width && grid[y][cx].type !== 'block') {
-          len++;
-          cx++;
-        }
-        acrossLengths[cell.number] = len;
-        acrossStarts[cell.number] = { x, y };
+      if (!cell || cell.type === 'block') {
+        continue;
       }
-      if (y === 0 || grid[y - 1][x].type === 'block') {
-        let len = 0;
-        let cy = y;
-        while (cy < height && grid[cy][x].type !== 'block') {
-          len++;
-          cy++;
+
+      const isAfterLeftEdgeOrBlock = (x === 0 || grid[y][x - 1].type === 'block');
+      const isAfterTopEdgeOrBlock = (y === 0 || grid[y - 1][x].type === 'block');
+      
+      // Check if it's a valid start for an across word (length >= 2)
+      const startsAcrossWord = isAfterLeftEdgeOrBlock && x + 1 < width && grid[y][x + 1].type !== 'block';
+      
+      // Check if it's a valid start for a down word (length >= 2)
+      const startsDownWord = isAfterTopEdgeOrBlock && y + 1 < height && grid[y + 1][x].type !== 'block';
+
+      if (startsAcrossWord || startsDownWord) {
+        cell.number = String(clueNumber);
+
+        if (startsAcrossWord) {
+          let len = 0;
+          let cx = x;
+          while (cx < width && grid[y][cx].type !== 'block') {
+            len++;
+            cx++;
+          }
+          acrossLengths[clueNumber] = len;
+          acrossStarts[clueNumber] = { x, y };
         }
-        downLengths[cell.number] = len;
-        downStarts[cell.number] = { x, y };
+
+        if (startsDownWord) {
+          let len = 0;
+          let cy = y;
+          while (cy < height && grid[cy][x].type !== 'block') {
+            len++;
+            cy++;
+          }
+          downLengths[clueNumber] = len;
+          downStarts[clueNumber] = { x, y };
+        }
+        
+        clueNumber++;
       }
     }
   }
-
   return { acrossStarts, downStarts, acrossLengths, downLengths };
 }
 
@@ -153,12 +172,14 @@ export function parsePuzzle(xmlString) {
 
   const { width, height, grid } = parseGrid(doc);
   const { cluesAcross, cluesDown } = parseClues(doc);
+
+  // This function now generates numbers and attaches them to the grid object.
   const {
     acrossStarts,
     downStarts,
     acrossLengths,
     downLengths
-  } = computeWordMetadata(grid);
+  } = generateGridMetadataAndNumbers(grid);
 
   cluesAcross.forEach(cl => {
     cl.length = acrossLengths[cl.number] || 0;
@@ -169,5 +190,3 @@ export function parsePuzzle(xmlString) {
 
   return { width, height, grid, cluesAcross, cluesDown, acrossStarts, downStarts, author };
 }
-
-export { parseGrid, parseClues, computeWordMetadata };
