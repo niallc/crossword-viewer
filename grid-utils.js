@@ -1,3 +1,4 @@
+// grid-utils.js v1.1
 export function findFirstLetterCell(puzzleData, cellEls) {
   for (let y = 0; y < puzzleData.height; y++) {
     for (let x = 0; x < puzzleData.width; x++) {

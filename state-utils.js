@@ -1,3 +1,4 @@
+// state-utils.js v1.1
 export function serializeGridState(puzzleData, cellEls) {
   const letters = [];
   for (let y = 0; y < puzzleData.height; y++) {

@@ -1,4 +1,4 @@
-// Crossword class module (v2.2 - Hidden Input Architecture)
+// Crossword class module (v2.3 - Mobile keyboard focus fix)
 import { parsePuzzle } from './puzzle-parser.js';
 import { getWordCells } from './grid-utils.js';
 import {
@@ -24,7 +24,7 @@ function getMoveBackDir(currentDirection) {
 
 export default class Crossword {
   constructor(xmlData, puzzleId) {
-    console.log('Crossword Viewer: Starting v2.2');
+    console.log('Crossword Viewer: Starting v2.3');
     if (typeof xmlData === 'undefined') {
       console.error('ERROR: CrosswordPuzzleData not found.');
       return;
@@ -211,8 +211,12 @@ export default class Crossword {
     }
     this.highlightWord(this.selectedCell);
     
-    // Always focus the hidden input when a cell is selected.
-    this.hiddenInput.focus();
+    // Defer focusing the hidden input to prevent mobile keyboards from immediately hiding.
+    setTimeout(() => {
+        if (this.hiddenInput) {
+            this.hiddenInput.focus();
+        }
+    }, 0);
   }
 
   moveSelection(direction) {
