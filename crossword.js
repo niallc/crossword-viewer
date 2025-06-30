@@ -1,4 +1,4 @@
-// Crossword class module (v2.1 - Hidden Input Architecture)
+// Crossword class module (v2.2 - Hidden Input Architecture)
 import { parsePuzzle } from './puzzle-parser.js';
 import { getWordCells } from './grid-utils.js';
 import {
@@ -24,7 +24,7 @@ function getMoveBackDir(currentDirection) {
 
 export default class Crossword {
   constructor(xmlData, puzzleId) {
-    console.log('Crossword Viewer: Starting v2.1');
+    console.log('Crossword Viewer: Starting v2.2');
     if (typeof xmlData === 'undefined') {
       console.error('ERROR: CrosswordPuzzleData not found.');
       return;

@@ -1,9 +1,25 @@
-// Puzzle parsing utilities (v1.2)
+// Puzzle parsing utilities (v1.3 - More robust selectors)
+
+/**
+ * Checks if the parsed XML document contains a parser error.
+ * @param {Document} doc The parsed XML document.
+ * @returns {boolean} True if a parser error is found.
+ */
+function hasParserError(doc) {
+  // Most browsers insert a <parsererror> element on failure.
+  const errorNode = doc.querySelector('parsererror');
+  if (errorNode) {
+    console.error("[Parser] XML parsing error:", errorNode.textContent);
+    return true;
+  }
+  return false;
+}
 
 function parseGrid(doc) {
-  const gridNode = doc.querySelector('grid');
+  // Use a more specific selector to find the grid within the XML structure.
+  const gridNode = doc.querySelector('rectangular-puzzle > crossword > grid');
   if (!gridNode) {
-    console.error("[Parser] Could not find <grid> element in XML.");
+    console.error("[Parser] Could not find <grid> element in XML. Check selector and XML structure.");
     return { width: 0, height: 0, grid: [] };
   }
   const width = parseInt(gridNode.getAttribute('width'), 10);
@@ -53,14 +69,15 @@ function parseGrid(doc) {
 }
 
 function parseClues(doc) {
-  const clueSections = doc.querySelectorAll('crossword > clues');
+  // Use a more specific selector for the clue sections.
+  const clueSections = doc.querySelectorAll('rectangular-puzzle > crossword > clues');
   console.log(`[Parser] Found ${clueSections.length} <clues> sections.`);
 
   const cluesAcross = [];
   const cluesDown = [];
 
   if (clueSections.length === 0) {
-      console.error("[Parser] No <clues> sections found. Check the XML structure.");
+      console.error("[Parser] No <clues> sections found. Check the XML structure and selector.");
       return { cluesAcross, cluesDown };
   }
 
@@ -119,10 +136,8 @@ function generateGridMetadataAndNumbers(grid) {
       const isAfterLeftEdgeOrBlock = (x === 0 || grid[y][x - 1].type === 'block');
       const isAfterTopEdgeOrBlock = (y === 0 || grid[y - 1][x].type === 'block');
       
-      // Check if it's a valid start for an across word (length >= 2)
       const startsAcrossWord = isAfterLeftEdgeOrBlock && x + 1 < width && grid[y][x + 1].type !== 'block';
       
-      // Check if it's a valid start for a down word (length >= 2)
       const startsDownWord = isAfterTopEdgeOrBlock && y + 1 < height && grid[y + 1][x].type !== 'block';
 
       if (startsAcrossWord || startsDownWord) {
@@ -161,7 +176,14 @@ export function parsePuzzle(xmlString) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlString, 'text/xml');
 
-  const meta = doc.querySelector('metadata');
+  // Check for a top-level parsing error first.
+  if (hasParserError(doc)) {
+    // Return a default empty structure to prevent crashes downstream.
+    return { width: 0, height: 0, grid: [], cluesAcross: [], cluesDown: [], acrossStarts: {}, downStarts: {}, author: '' };
+  }
+
+  // Use a more specific selector for metadata.
+  const meta = doc.querySelector('rectangular-puzzle > metadata');
   let author = '';
   if (meta) {
     const authorNode = meta.querySelector('author');
@@ -173,7 +195,6 @@ export function parsePuzzle(xmlString) {
   const { width, height, grid } = parseGrid(doc);
   const { cluesAcross, cluesDown } = parseClues(doc);
 
-  // This function now generates numbers and attaches them to the grid object.
   const {
     acrossStarts,
     downStarts,
