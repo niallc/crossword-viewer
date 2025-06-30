@@ -1,4 +1,4 @@
-import Crossword, { TEST_MODE } from './crossword.js';
+import Crossword from './crossword.js';
 import { findFirstLetterCell } from './grid-utils.js';
 
 const puzzles = [
@@ -61,7 +61,6 @@ if (confirmNo) {
 function initCrossword(xmlData, puzzleFile) {
   crossword = new Crossword(xmlData, puzzleFile);
 
-
   const checkLetterBtn = document.getElementById('check-letter');
   if (checkLetterBtn) {
     checkLetterBtn.addEventListener('click', () => crossword.checkLetter());
@@ -71,8 +70,6 @@ function initCrossword(xmlData, puzzleFile) {
   if (checkWordBtn) {
     checkWordBtn.addEventListener('click', () => crossword.checkWord());
   }
-
-  document.addEventListener('keydown', (e) => crossword.handleKeyDown(e));
 
   crossword.buildGrid();
   crossword.buildClues(crossword.puzzleData.cluesAcross, crossword.puzzleData.cluesDown);
@@ -95,7 +92,6 @@ function initCrossword(xmlData, puzzleFile) {
   const firstCell = findFirstLetterCell(crossword.puzzleData, crossword.cellEls);
   if (firstCell) {
     crossword.selectCell(firstCell);
-    crossword.updateCurrentClue();
   }
 
   crossword.copyLinkButton = document.getElementById('copy-link');
@@ -126,24 +122,8 @@ function initCrossword(xmlData, puzzleFile) {
       showConfirm('Reveal the entire grid?', () => crossword.revealGrid());
     });
   }
-
-  if (TEST_MODE) {
-    crossword.cellEls.flat().forEach(cell => {
-      if (!cell) return;
-      ['pointerdown', 'pointerup', 'click'].forEach(ev =>
-        cell.addEventListener(ev, () =>
-          console.log(ev, cell.dataset.x, cell.dataset.y,
-            'active:', document.activeElement.id)));
-    });
-  }
-
+  
   console.log('Crossword Viewer: Ready');
-
-  window.testGridIsBuilt = crossword.testGridIsBuilt.bind(crossword);
-  window.testCluesPresent = crossword.testCluesPresent.bind(crossword);
-  window.logGridState = crossword.logGridState.bind(crossword);
-  window.getShareableURL = crossword.getShareableURL.bind(crossword);
-
   window.crossword = crossword;
 }
 

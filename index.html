@@ -6,6 +6,17 @@
     <title>Crossword Viewer (Modernized)</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* Style to hide the input element used for keyboard capture */
+        #hidden-input {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            opacity: 0;
+            /* A font-size of 16px or greater prevents iOS from zooming on focus */
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
 
@@ -35,7 +46,7 @@
     <button id="show-puzzles">Show all available crosswords</button>
     <div id="puzzle-list"><ul id="puzzle-links"></ul></div>
     <p id="puzzle-author" class="puzzle-meta"></p>
-    <!-- <p id="page-credit" class="puzzle-meta">Page by Niall C</p> -->
+    
     <div id="confirm-overlay">
         <div id="confirm-box">
             <p id="confirm-message"></p>
@@ -43,7 +54,10 @@
             <button id="confirm-no">Cancel</button>
         </div>
     </div>
+
+    <!-- The single, hidden input that will capture all keyboard events -->
+    <input type="text" id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
     <script type="module" src="index.js"></script>
 </body>
 </html>
-
