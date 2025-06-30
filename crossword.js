@@ -1,4 +1,4 @@
-// Crossword class module (v1.3)
+// Crossword class module (v1.4)
 import { parsePuzzle } from './puzzle-parser.js';
 import { getWordCells } from './grid-utils.js';
 import {
@@ -60,7 +60,7 @@ export default class Crossword {
       this.debugEl.style.padding = '5px';
       this.debugEl.style.fontSize = '10px';
       document.body.appendChild(this.debugEl);
-      this.debugLog('Crossword Initialized (v1.3). Logging is active.');
+      this.debugLog('Crossword Initialized (v1.4). Logging is active.');
     } else {
       this.debugEl = null;
     }
@@ -100,16 +100,15 @@ export default class Crossword {
         const num = document.createElement('div');
         num.classList.add('num');
         num.textContent = cellData.number;
-        num.setAttribute('contenteditable', 'false');
         cell.appendChild(num);
       }
       const letter = document.createElement('div');
       letter.classList.add('letter');
-      letter.setAttribute('contenteditable', 'false');
       cell.appendChild(letter);
-      cell.setAttribute('contenteditable', 'true');
-      cell.setAttribute('inputmode', 'text');
-      cell.tabIndex = 0;
+      
+      // No longer contenteditable, as we handle all input via keydown
+      cell.tabIndex = 0; 
+
       cell.addEventListener('pointerdown', (e) => {
         this.pointerInfo = {
           cell,
@@ -136,9 +135,6 @@ export default class Crossword {
       cell.addEventListener('pointercancel', () => {
         this.pointerInfo = null;
       });
-
-      // Unified input handler for both mobile and desktop.
-      cell.addEventListener('input', (e) => this.handleInput(e));
     }
 
     return cell;
@@ -147,11 +143,8 @@ export default class Crossword {
   handleKeyDown(e) {
     if (!this.selectedCell) return;
     const key = e.key;
-    const cell = this.selectedCell;
 
-    this.debugLog(`--- handleKeyDown --- Key: "${key}"`);
-
-    // We only need to control navigation and deletion.
+    // Handle navigation and deletion
     if (key === 'Backspace' || key === 'Delete') {
       e.preventDefault();
       this.clearFeedback();
@@ -165,53 +158,16 @@ export default class Crossword {
       return;
     }
 
-    // For any character input (e.g., "a", "A", or "Unidentified" on mobile),
-    // we clear the cell's letter to prepare for the 'input' event.
-    // We do NOT preventDefault(), so the browser's default action triggers 'input'.
-    if (key.length === 1 || key === 'Unidentified') {
-        this.debugLog('handleKeyDown: Character key detected. Clearing cell to prepare for input event.');
-        const letterEl = cell.querySelector('.letter');
-        if (letterEl) {
-            letterEl.textContent = '';
-        }
-    }
-  }
-
-  handleInput(e) {
-    const cell = e.target.closest('.cell');
-    if (!cell || cell.classList.contains('block')) return;
-
-    this.debugLog(`--- handleInput ---`);
-    this.debugLog(`Type: ${e.inputType}, Data: "${e.data}"`);
-    this.debugLog(`Cell textContent after browser input: "${cell.textContent.trim()}"`);
-
-    // The 'input' event fires after the browser has modified the DOM.
-    // Our job is to clean up and formalize the state.
-    let letter = cell.textContent.trim();
-    
-    // Put the letter where it belongs and remove stray text nodes.
-    removeTextNodes(cell); 
-
-    if (letter) {
-      letter = letter.slice(-1).toUpperCase(); // Take the last character typed
-      if (/^[A-Z]$/.test(letter)) {
-        this.debugLog(`handleInput: Extracted letter "${letter}". Setting it correctly.`);
+    // Handle character input directly
+    if (key.length === 1 && key.match(/^[a-zA-Z]$/)) {
+        e.preventDefault();
         this.clearFeedback();
-        this.setCellLetter(cell, letter);
+        this.setCellLetter(this.selectedCell, key);
         this.autoAdvance();
         this.saveStateToLocalStorage();
-      } else {
-        this.debugLog(`handleInput: Extracted content is not a letter. Clearing cell.`);
-        this.setCellLetter(cell, ''); // Clear if not a valid letter
-      }
-    } else {
-        // This can happen if the input was a delete action that we didn't catch in keydown
-        this.debugLog(`handleInput: Cell textContent is empty. Assuming a deletion.`);
-        this.setCellLetter(cell, '');
-        this.saveStateToLocalStorage();
+        return;
     }
   }
-
 
   buildGrid() {
     console.log('Building grid...');
@@ -362,20 +318,8 @@ export default class Crossword {
     }
   }
 
-  testGridIsBuilt() {
-    return this.cellEls.length > 0 && this.cellEls[0].length > 0;
-  }
-
-  testCluesPresent() {
-    return (
-      document.querySelectorAll('#clues-across li').length > 0 &&
-      document.querySelectorAll('#clues-down li').length > 0
-    );
-  }
-
   moveSelection(direction) {
     if (!this.selectedCell) return false;
-    this.debugLog(`moveSelection: Moving ${direction}`);
     const x = parseInt(this.selectedCell.dataset.x, 10);
     const y = parseInt(this.selectedCell.dataset.y, 10);
     let nx = x, ny = y;
@@ -391,47 +335,26 @@ export default class Crossword {
       this.selectCell(next);
       return true;
     }
-    this.debugLog(`moveSelection: Move failed (hit edge or block).`);
     return false;
   }
 
   setCellLetter(cell, letter) {
     if (!cell) {
-      this.debugLog('setCellLetter: FAILED - cell is null.');
       return;
     }
-    this.debugLog(`setCellLetter: Setting letter "${letter.toUpperCase()}" for cell (${cell.dataset.x}, ${cell.dataset.y})`);
-    removeTextNodes(cell);
     const letterEl = cell.querySelector('.letter');
     if (letterEl) {
       letterEl.textContent = letter.toUpperCase();
-    } else {
-      this.debugLog(`setCellLetter: FAILED - .letter element not found in cell.`);
     }
   }
 
   autoAdvance() {
-    this.debugLog('autoAdvance: Attempting to advance selection.');
     let moved = false;
     moved = this.moveSelection(getArrowForDirection(this.currentDirection, true));
     if (!moved) {
-      this.debugLog('autoAdvance: Could not move in current direction. Toggling direction.');
       this.currentDirection = this.currentDirection === 'across' ? 'down' : 'across';
       this.moveSelection(getArrowForDirection(this.currentDirection, true));
     }
-  }
-
-  logGridState() {
-    const letters = [];
-    this.cellEls.forEach(row => {
-      row.forEach(cell => {
-        if (!cell) return;
-        const letterEl = cell.querySelector('.letter');
-        letters.push(letterEl ? (letterEl.textContent || ' ') : ' ');
-      });
-    });
-    const str = letters.join('');
-    console.log('Grid letters:', str);
   }
 
   saveStateToLocalStorage() {
@@ -448,7 +371,6 @@ export default class Crossword {
     try {
       let serialized = localStorage.getItem(this.getStorageKey());
 
-      // Migration logic for the original puzzle
       if (!serialized && this.puzzleId === 'social_deduction_ok.xml') {
         console.log("Checking for legacy 'crosswordState' to migrate...");
         const oldState = localStorage.getItem('crosswordState');
@@ -456,8 +378,8 @@ export default class Crossword {
           console.log("Found legacy state. Migrating...");
           serialized = oldState;
           applyGridState(this.puzzleData, this.cellEls, serialized);
-          this.saveStateToLocalStorage(); // This saves it to the new key
-          localStorage.removeItem('crosswordState'); // Clean up old key
+          this.saveStateToLocalStorage(); 
+          localStorage.removeItem('crosswordState');
           console.log("Migration complete.");
           return true;
         }
@@ -499,20 +421,16 @@ export default class Crossword {
 
   handleBackspace() {
     if (!this.selectedCell) return;
-    this.debugLog(`handleBackspace: Triggered.`);
     const letterEl = this.selectedCell.querySelector('.letter');
     if (letterEl && letterEl.textContent) {
-      this.debugLog(`handleBackspace: Clearing current cell.`);
       letterEl.textContent = '';
       this.saveStateToLocalStorage();
       return;
     }
-    this.debugLog(`handleBackspace: Current cell empty. Moving back.`);
     const moved = this.moveSelection(getMoveBackDir(this.currentDirection));
     if (moved) {
       const letterEl2 = this.selectedCell.querySelector('.letter');
       if (letterEl2) {
-        this.debugLog(`handleBackspace: Clearing new selected cell.`);
         letterEl2.textContent = '';
       }
       this.saveStateToLocalStorage();
