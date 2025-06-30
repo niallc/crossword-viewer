@@ -230,7 +230,10 @@ export default class Crossword {
   }
 
   buildClues(across, down) {
-    console.log('Building clues...');
+    console.log(`Building clues... (Across: ${across.length}, Down: ${down.length})`);
+    if (across.length === 0 && down.length === 0) {
+        console.error("CRITICAL: No clues were provided to buildClues. The clue lists will be empty.");
+    }
     const acrossEl = document.querySelector('#clues-across ul');
     const downEl = document.querySelector('#clues-down ul');
     acrossEl.innerHTML = '';

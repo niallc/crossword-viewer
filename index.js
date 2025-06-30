@@ -2,12 +2,13 @@ import Crossword, { TEST_MODE } from './crossword.js';
 import { findFirstLetterCell } from './grid-utils.js';
 
 const puzzles = [
-  { name: 'Social Deduction', file: 'social_deduction_ok.xml' }
+  { name: 'Social Deduction', file: 'social_deduction_ok.xml' },
+  { name: 'OkeyDoke Crossword 1', file: 'okeydoke_puzzle1.xml' }
 ];
 
 function getPuzzleFileFromURL() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('puzzle') || 'social_deduction_ok.xml';
+  return params.get('puzzle') || puzzles[0].file;
 }
 
 export function buildPuzzleLinks() {

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<crossword-compiler-applet xmlns="http://crossword.info/xml/crossword-compiler-applet">
+  <applet-settings width="800" height="600" cursor-color="#FFFF00" selected-cells-color="#C0C0C0" hide-numbers="false">
+    <clues layout="right" font-family="SansSerif" font-size="12" width="350" gutter="10" selection-color="#FF0000" bold-numbers="true" right-align-numbers="true" period-with-numbers="false"/>
+    <actions buttons-layout="left" wide-buttons="true" graphical-buttons="false">
+      <reveal-word label="Reveal Word"/>
+      <check label="Check"/>
+      <solution label="Solution"/>
+      <reveal-letter label="Reveal Letter"/>
+    </actions>
+    <completion friendly-submit="false" only-if-correct="false">Congratulations, you have completed the puzzle!</completion>
+  </applet-settings>
+  <rectangular-puzzle xmlns="http://crossword.info/xml/rectangular-puzzle" alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ">
+    <metadata>
+      <title>Oliver's Crossword</title>
+      <creator>OkeyDoke</creator>
+      <author>OkeyDoke</author>
+      <copyright/>
+      <description/>
+    </metadata>
+    <crossword>
+      <grid width="15" height="15">
+        <grid-look numbering-scheme="normal" cell-size-in-pixels="26" clue-square-divider-width="0.7"/>
+        <cell x="1" y="1" solution="X" number="1"/>
+        <cell x="2" y="1" solution="X"/>
+        <cell x="3" y="1" solution="X"/>
+        <cell x="4" y="1" solution="X"/>
+        <cell x="5" y="1" solution="X"/>
+        <cell x="6" y="1" solution="X"/>
+        <cell x="7" y="1" solution="X"/>
+        <cell x="8" y="1" solution="X"/>
+        <cell x="9" y="1" solution="X"/>
+        <cell x="10" y="1" solution="X"/>
+        <cell x="11" y="1" solution="X"/>
+        <cell x="12" y="1" solution="X"/>
+        <cell x="13" y="1" solution="X"/>
+        <cell x="14" y="1" type="block"/>
+        <cell x="15" y="1" type="block"/>
+        <cell x="1" y="2" solution="X" number="8"/>
+        <cell x="2" y="2" type="block"/>
+        <cell x="3" y="2" solution="X" number="9"/>
+        <cell x="4" y="2" type="block"/>
+        <cell x="5" y="2" solution="X" number="10"/>
+        <cell x="6" y="2" type="block"/>
+        <cell x="7" y="2" solution="X"/>
+        <cell x="8" y="2" type="block"/>
+        <cell x="9" y="2" solution="X"/>
+        <cell x="10" y="2" type="block"/>
+        <cell x="11" y="2" solution="X"/>
+        <cell x="12" y="2" type="block"/>
+        <cell x="13" y="2" solution="X"/>
+        <cell x="14" y="2" type="block"/>
+        <cell x="15" y="2" type="block"/>
+        <cell x="1" y="3" solution="X" number="11"/>
+        <cell x="2" y="3" solution="X"/>
+        <cell x="3" y="3" solution="X"/>
+        <cell x="4" y="3" solution="X"/>
+        <cell x="5" y="3" solution="X"/>
+        <cell x="6" y="3" type="block"/>
+        <cell x="7" y="3" solution="X"/>
+        <cell x="8" y="3" solution="X"/>
+        <cell x="9" y="3" solution="X"/>
+        <cell x="10" y="3" solution="X"/>
+        <cell x="11" y="3" solution="X"/>
+        <cell x="12" y="3" solution="X"/>
+        <cell x="13" y="3" solution="X"/>
+        <cell x="14" y="3" solution="X" number="12"/>
+        <cell x="15" y="3" solution="X"/>
+        <cell x="1" y="4" solution="X" number="13"/>
+        <cell x="2" y="4" type="block"/>
+        <cell x="3" y="4" type="block"/>
+        <cell x="4" y="4" type="block"/>
+        <cell x="5" y="4" solution="X" number="14"/>
+        <cell x="6" y="4" type="block"/>
+        <cell x="7" y="4" solution="X" number="15"/>
+        <cell x="8" y="4" type="block"/>
+        <cell x="9" y="4" solution="X" number="16"/>
+        <cell x="10" y="4" type="block"/>
+        <cell x="11" y="4" solution="X" number="17"/>
+        <cell x="12" y="4" type="block"/>
+        <cell x="13" y="4" solution="X" number="18"/>
+        <cell x="14" y="4" type="block"/>
+        <cell x="15" y="4" solution="X"/>
+        <cell x="1" y="5" solution="X" number="19"/>
+        <cell x="2" y="5" solution="X"/>
+        <cell x="3" y="5" solution="X"/>
+        <cell x="4" y="5" solution="X"/>
+        <cell x="5" y="5" solution="X"/>
+        <cell x="6" y="5" solution="X"/>
+        <cell x="7" y="5" solution="X"/>
+        <cell x="8" y="5" solution="X"/>
+        <cell x="9" y="5" solution="X"/>
+        <cell x="10" y="5" solution="X"/>
+        <cell x="11" y="5" solution="X"/>
+        <cell x="12" y="5" solution="X"/>
+        <cell x="13" y="5" solution="X"/>
+        <cell x="14" y="5" solution="X"/>
+        <cell x="15" y="5" solution="X"/>
+        <cell x="1" y="6" type="block"/>
+        <cell x="2" y="6" type="block"/>
+        <cell x="3" y="6" solution="X" number="20"/>
+        <cell x="4" y="6" type="block"/>
+        <cell x="5" y="6" type="block"/>
+        <cell x="6" y="6" solution="X" number="21"/>
+        <cell x="7" y="6" type="block"/>
+        <cell x="8" y="6" solution="X" number="22"/>
+        <cell x="9" y="6" type="block"/>
+        <cell x="10" y="6" solution="X" number="23"/>
+        <cell x="11" y="6" type="block"/>
+        <cell x="12" y="6" solution="X" number="24"/>
+        <cell x="13" y="6" type="block"/>
+        <cell x="14" y="6" type="block"/>
+        <cell x="15" y="6" solution="X"/>
+        <cell x="1" y="7" solution="X" number="25"/>
+        <cell x="2" y="7" solution="X"/>
+        <cell x="3" y="7" solution="X"/>
+        <cell x="4" y="7" solution="X"/>
+        <cell x="5" y="7" solution="X"/>
+        <cell x="6" y="7" solution="X"/>
+        <cell x="7" y="7" type="block"/>
+        <cell x="8" y="7" solution="X"/>
+        <cell x="9" y="7" solution="X"/>
+        <cell x="10" y="7" solution="X"/>
+        <cell x="11" y="7" solution="X"/>
+        <cell x="12" y="7" solution="X"/>
+        <cell x="13" y="7" solution="X"/>
+        <cell x="14" y="7" solution="X"/>
+        <cell x="15" y="7" solution="X"/>
+        <cell x="1" y="8" type="block"/>
+        <cell x="2" y="8" solution="X" number="26"/>
+        <cell x="3" y="8" type="block"/>
+        <cell x="4" y="8" solution="X" number="27"/>
+        <cell x="5" y="8" type="block"/>
+        <cell x="6" y="8" solution="X" number="28"/>
+        <cell x="7" y="8" type="block"/>
+        <cell x="8" y="8" solution="X" number="29"/>
+        <cell x="9" y="8" type="block"/>
+        <cell x="10" y="8" solution="X" number="30"/>
+        <cell x="11" y="8" type="block"/>
+        <cell x="12" y="8" solution="X" number="31"/>
+        <cell x="13" y="8" type="block"/>
+        <cell x="14" y="8" solution="X" number="32"/>
+        <cell x="15" y="8" type="block"/>
+        <cell x="1" y="9" solution="X" number="33"/>
+        <cell x="2" y="9" solution="X"/>
+        <cell x="3" y="9" solution="X"/>
+        <cell x="4" y="9" solution="X"/>
+        <cell x="5" y="9" solution="X"/>
+        <cell x="6" y="9" solution="X"/>
+        <cell x="7" y="9" solution="X"/>
+        <cell x="8" y="9" solution="X"/>
+        <cell x="9" y="9" type="block"/>
+        <cell x="10" y="9" solution="X"/>
+        <cell x="11" y="9" solution="X"/>
+        <cell x="12" y="9" solution="X"/>
+        <cell x="13" y="9" solution="X"/>
+        <cell x="14" y="9" solution="X"/>
+        <cell x="15" y="9" solution="X"/>
+        <cell x="1" y="10" solution="X"/>
+        <cell x="2" y="10" type="block"/>
+        <cell x="3" y="10" type="block"/>
+        <cell x="4" y="10" solution="X"/>
+        <cell x="5" y="10" type="block"/>
+        <cell x="6" y="10" solution="X"/>
+        <cell x="7" y="10" type="block"/>
+        <cell x="8" y="10" solution="X"/>
+        <cell x="9" y="10" type="block"/>
+        <cell x="10" y="10" solution="X"/>
+        <cell x="11" y="10" type="block"/>
+        <cell x="12" y="10" type="block"/>
+        <cell x="13" y="10" solution="X"/>
+        <cell x="14" y="10" type="block"/>
+        <cell x="15" y="10" type="block"/>
+        <cell x="1" y="11" solution="X" number="34"/>
+        <cell x="2" y="11" solution="X"/>
+        <cell x="3" y="11" solution="X"/>
+        <cell x="4" y="11" solution="X"/>
+        <cell x="5" y="11" solution="X"/>
+        <cell x="6" y="11" solution="X"/>
+        <cell x="7" y="11" solution="X"/>
+        <cell x="8" y="11" solution="X"/>
+        <cell x="9" y="11" solution="X"/>
+        <cell x="10" y="11" solution="X"/>
+        <cell x="11" y="11" solution="X"/>
+        <cell x="12" y="11" solution="X"/>
+        <cell x="13" y="11" solution="X"/>
+        <cell x="14" y="11" solution="X"/>
+        <cell x="15" y="11" solution="X"/>
+        <cell x="1" y="12" solution="X"/>
+        <cell x="2" y="12" type="block"/>
+        <cell x="3" y="12" solution="X"/>
+        <cell x="4" y="12" type="block"/>
+        <cell x="5" y="12" solution="X"/>
+        <cell x="6" y="12" type="block"/>
+        <cell x="7" y="12" solution="X"/>
+        <cell x="8" y="12" type="block"/>
+        <cell x="9" y="12" solution="X"/>
+        <cell x="10" y="12" type="block"/>
+        <cell x="11" y="12" solution="X"/>
+        <cell x="12" y="12" type="block"/>
+        <cell x="13" y="12" type="block"/>
+        <cell x="14" y="12" type="block"/>
+        <cell x="15" y="12" solution="X"/>
+        <cell x="1" y="13" solution="X" number="35"/>
+        <cell x="2" y="13" solution="X"/>
+        <cell x="3" y="13" solution="X"/>
+        <cell x="4" y="13" solution="X"/>
+        <cell x="5" y="13" solution="X"/>
+        <cell x="6" y="13" solution="X"/>
+        <cell x="7" y="13" solution="X"/>
+        <cell x="8" y="13" solution="X"/>
+        <cell x="9" y="13" solution="X"/>
+        <cell x="10" y="13" type="block"/>
+        <cell x="11" y="13" solution="X"/>
+        <cell x="12" y="13" solution="X"/>
+        <cell x="13" y="13" solution="X"/>
+        <cell x="14" y="13" solution="X"/>
+        <cell x="15" y="13" solution="X"/>
+        <cell x="1" y="14" type="block"/>
+        <cell x="2" y="14" type="block"/>
+        <cell x="3" y="14" solution="X"/>
+        <cell x="4" y="14" type="block"/>
+        <cell x="5" y="14" solution="X"/>
+        <cell x="6" y="14" type="block"/>
+        <cell x="7" y="14" solution="X"/>
+        <cell x="8" y="14" type="block"/>
+        <cell x="9" y="14" solution="X"/>
+        <cell x="10" y="14" type="block"/>
+        <cell x="11" y="14" solution="X"/>
+        <cell x="12" y="14" type="block"/>
+        <cell x="13" y="14" solution="X"/>
+        <cell x="14" y="14" type="block"/>
+        <cell x="15" y="14" solution="X"/>
+        <cell x="1" y="15" type="block"/>
+        <cell x="2" y="15" type="block"/>
+        <cell x="3" y="15" solution="X"/>
+        <cell x="4" y="15" solution="X"/>
+        <cell x="5" y="15" solution="X"/>
+        <cell x="6" y="15" solution="X"/>
+        <cell x="7" y="15" solution="X"/>
+        <cell x="8" y="15" solution="X"/>
+        <cell x="9" y="15" solution="X"/>
+        <cell x="10" y="15" solution="X"/>
+        <cell x="11" y="15" solution="X"/>
+        <cell x="12" y="15" solution="X"/>
+        <cell x="13" y="15" solution="X"/>
+        <cell x="14" y="15" solution="X"/>
+        <cell x="15" y="15" solution="X"/>
+      </grid>
+      <clues>
+        <title><b>Across</b></title>
+        <clue number="1" format="13" solution="XXXXXXXXXXXXX">Wins back gay orphan after scrapping disguise in plain view</clue>
+        <clue number="8" format="5" solution="XXXXX">Detective is humourless, missing nothing</clue>
+        <clue number="9" format="9" solution="XXXXXXXXX">Periods in which mains supply is restricted by closures of electrical network</clue>
+        <clue number="11" format="6,9" solution="XXXXXX,XXXXXXXXX">Troubles with grub - get in a tagine, maybe?</clue>
+        <clue number="19" format="15" solution="XXXXXXXXXXXXXXX">Contemporary appliances leaving current models behind</clue>
+        <clue number="21" format="3" solution="XXX">Gracious horse charge</clue>
+        <clue number="25" format="6" solution="XXXXXX">Buffet staff hired dispatcher</clue>
+        <clue number="26" format="5" solution="XXXXX">Peacekeepers applaud when novice goes to remove top</clue>
+        <clue number="29" format="5" solution="XXXXX">Attractive woman pursuing rocky relationships with hearty men</clue>
+        <clue number="33" format="15" solution="XXXXXXXXXXXXXXX">Bagpiper's beginning last superb opus, oddly clothed in reddish browns and greens</clue>
+        <clue number="34" format="15" solution="XXXXXXXXXXXXXXX">"Torture the thing in this position," said Cockney con artist</clue>
+        <clue number="35" format="13" solution="XXXXXXXXXXXXX">Miraculous translator disinterred by gifted individual</clue>
+      </clues>
+      <clues>
+        <title><b>Down</b></title>
+        <clue number="1" format="5" solution="XXXXX">Symbols used in bosom measurement are bloody offensive!</clue>
+        <clue number="2" format="3" solution="XXX">Corny part might have spectacular support role</clue>
+        <clue number="3" format="3,2" solution="XXX,XX">Agreed to eschew indulgent Nando's starters?</clue>
+        <clue number="4" format="5" solution="XXXXX">Where to rest after surgical theatre round</clue>
+        <clue number="5" format="5" solution="XXXXX">Rambles in endless way on paper</clue>
+        <clue number="6" format="5" solution="XXXXX">Fine lining for each coal worker</clue>
+        <clue number="7" format="5" solution="XXXXX">Many puzzlers from Scotland in northern outskirts of Orkney on purpose</clue>
+        <clue number="10" format="5" solution="XXXXX">Cheeky comment about fascists</clue>
+        <clue number="12" format="3" solution="XXX">Mummy's mild reprimand</clue>
+        <clue number="13" format="7" solution="XXXXXXX">Chap returning undated charcuterie is probably not kosher</clue>
+        <clue number="14" format="7" solution="XXXXXXX">Connection between 1 to 22 across, using 9 for 8 1 across.</clue>
+        <clue number="15" format="7" solution="XXXXXXX">Finished tour in common area</clue>
+        <clue number="16" format="5" solution="XXXXX">How a radio operator starts dialling?</clue>
+        <clue number="17" format="8" solution="XXXXXXXX">Run away from raucous hotel orgy for religious beliefs</clue>
+        <clue number="18" format="3" solution="XXX">Transient digs up new senior centre</clue>
+        <clue number="20" format="8" solution="XXXXXXXX">Leader of uppity minions rebelled in desire for solidarity</clue>
+        <clue number="22" format="6" solution="XXXXXX">Good-for-nothing queen finally raised dough</clue>
+        <clue number="23" format="5" solution="XXXXX">Rusty brown clutter is lead-free</clue>
+        <clue number="24" format="3" solution="XXX">Airway reported complaint</clue>
+        <clue number="27" format="5" solution="XXXXX">Riddle is written up by dusk</clue>
+        <clue number="28" format="5" solution="XXXXX">Old master, say, caught in fib</clue>
+        <clue number="30" format="5" solution="XXXXX">Terse lunatic is given a new position</clue>
+        <clue number="31" format="5" solution="XXXXX">Dandy's bulge</clue>
+        <clue number="32" format="5" solution="XXXXX">Fresh, least worn out</clue>
+        <clue number="35" format="3" solution="XXX">Broadcast given by rising artist about the origin of indie</clue>
+      </clues>
+    </crossword>
+  </rectangular-puzzle>
+</crossword-compiler-applet>
