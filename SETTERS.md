@@ -10,40 +10,34 @@ The entire puzzle should be wrapped in `<rectangular-puzzle>` and `<crossword>` 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<rectangular-puzzle xmlns="http://crossword.info/xml/rectangular-puzzle">
+<rectangular-puzzle xmlns="[http://crossword.info/xml/rectangular-puzzle](http://crossword.info/xml/rectangular-puzzle)">
   <metadata>
-    <creator>AuthorName</creator>
+    <!-- Optional: see below -->
   </metadata>
   <crossword>
-    </crossword>
-</rectangular-puzzle>
-```
-
-### Metadata
-
-Optionally include a `<metadata>` block before the `<crossword>` element.
-Provide a `<creator>` or `<author>` tag with the setter's preferred name.
-The viewer displays whichever value is found.
-
-```xml
-<rectangular-puzzle xmlns="http://crossword.info/xml/rectangular-puzzle">
-  <metadata>
-    <creator>AuthorName</creator>
-    <author>AuthorName</author>
-  </metadata>
-  <crossword>
-    ...
+    <!-- Grid and Clues go here -->
   </crossword>
 </rectangular-puzzle>
 ```
 
+### Metadata (Optional)
+
+You can include a `<metadata>` block before the `<crossword>` element. Provide a `<creator>` or `<author>` tag with your preferred name, which will be displayed below the puzzle.
+
+```xml
+<metadata>
+  <creator>AuthorName</creator>
+</metadata>
+```
+
 ### The Grid `<grid>`
 
-The grid defines the puzzle's dimensions and contains all the cells.
+The grid defines the puzzle's dimensions and contains all the cells. Any cells not defined within the grid will be automatically treated as black squares.
 
 ```xml
 <grid width="15" height="15">
-  </grid>
+  <!-- Cell definitions go here -->
+</grid>
 ```
 
 ### Cells `<cell>`
@@ -55,46 +49,46 @@ These are the black squares in the grid. They are simply defined with `type="blo
 
 *Example:*
 ```xml
-<cell x="1" y="1" type="block"/>
+<cell x="2" y="1" type="block"/>
 ```
 
 **2. Letter Cells**
 These are the white squares where answers are entered.
 - `solution`: The correct letter for the square.
-- `number`: (Optional) The clue number that starts in this square. This number links the grid position to a clue in the clue list.
 
-*Example of a letter cell that starts clue #8:*
-```xml
-<cell x="1" y="2" solution="M" number="8"/>
-```
+**Important Note on Numbering:** The parser **automatically calculates and assigns clue numbers** based on the grid structure. Any `number` attribute you add to a `<cell>` tag will be ignored.
 
-*Example of a letter cell that is not a starting square:*
+*Example of a letter cell:*
 ```xml
-<cell x="1" y="4" solution="T"/>
+<cell x="1" y="1" solution="C"/>
 ```
 
 ### The Clues `<clues>`
 
-Clues are provided in two separate `<clues>` blocks—one for "Across" and one for "Down".
+Clues must be provided in two separate `<clues>` blocks—the first for "Across" and the second for "Down". If a block is missing, those clues will not appear.
 
 Each individual `<clue>` must have:
-- `number`: The number that corresponds to a numbered cell in the grid.
-- `format`: (Optional) An enumeration string, like `7,5`, to indicate the answer length(s).
+- `number`: The number that corresponds to the starting square of the clue in the grid. This is used to match the clue text to the correct word.
+- `format`: (Optional) An enumeration string, like `7,5`, to indicate the answer length(s). If omitted, the parser will calculate the length.
 - **Clue Text:** The text of the clue goes inside the tag.
 
 *Example:*
 ```xml
-<clues ordering="normal">
+<!-- Across Clues -->
+<clues>
   <title><b>Across</b></title>
-  <clue word="1" number="1" format="12">Swiftness drinking beer - a drunk's charm?</clue>
+  <clue number="1" format="12">Swiftness drinking beer - a drunk's charm?</clue>
+  <!-- ... more across clues -->
 </clues>
 
-<clues ordering="normal">
+<!-- Down Clues -->
+<clues>
   <title><b>Down</b></title>
-  <clue word="15" number="2" format="7">Space covered by large crumpled blanket</clue>
+  <clue number="2" format="7">Space covered by large crumpled blanket</clue>
+  <!-- ... more down clues -->
 </clues>
 ```
-> **Note:** The `word` attribute in the `<clue>` tag is ignored by the viewer's parser, which calculates word boundaries automatically. Only the `number` attribute is used to link clues to the grid.
+> **Note:** The `word`, and `ordering` attributes in the `<clue>` and `<clues>` tags are ignored by the parser.
 
 ### A Minimal Complete Example
 
@@ -102,31 +96,26 @@ Here is a simple 3x3 puzzle to demonstrate a complete file.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<rectangular-puzzle xmlns="http://crossword.info/xml/rectangular-puzzle">
+<rectangular-puzzle xmlns="[http://crossword.info/xml/rectangular-puzzle](http://crossword.info/xml/rectangular-puzzle)">
   <metadata>
     <creator>AuthorName</creator>
   </metadata>
   <crossword>
     <grid width="3" height="3">
-      <cell x="1" y="1" solution="C" number="1"/>
+      <cell x="1" y="1" solution="C"/>
       <cell x="1" y="2" solution="A"/>
       <cell x="1" y="3" solution="T"/>
-
       <cell x="2" y="1" solution="A"/>
       <cell x="2" y="2" type="block"/>
-      <cell x="2" y="3" type="block"/>
-
       <cell x="3" y="1" solution="R"/>
-      <cell x="3" y="2" type="block"/>
-      <cell x="3" y="3" type="block"/>
     </grid>
 
-    <clues ordering="normal">
+    <clues>
       <title><b>Across</b></title>
       <clue number="1" format="3">A domestic feline</clue>
     </clues>
 
-    <clues ordering="normal">
+    <clues>
       <title><b>Down</b></title>
       <clue number="1" format="3">A road vehicle</clue>
     </clues>
@@ -136,14 +125,17 @@ Here is a simple 3x3 puzzle to demonstrate a complete file.
 
 ### Using Your Puzzle
 
-Once you have created your `.xml` file, save it in the project directory. The
-viewer loads `social_deduction_ok.xml` by default, but you can specify your file
-via the `?puzzle=` URL parameter or by editing the fetch call in `index.js`:
+To add your puzzle to the viewer:
+1.  Save your puzzle as an `.xml` file in the project's root directory.
+2.  Open `index.js` and add an entry for your puzzle to the `puzzles` array at the top of the file.
 
+*Example of adding a new puzzle:*
 ```javascript
-// In index.js, find this line and change the filename if you prefer a fixed file
-const puzzleFile = getPuzzleFileFromURL();
-fetch(puzzleFile)
-  .then(res => res.text())
-  // ...
+// In index.js
+const puzzles = [
+  { name: 'Social Deduction', file: 'social_deduction_ok.xml' },
+  { name: 'Oliver\'s Crossword', file: 'okeydoke_puzzle1.xml' },
+  { name: 'My New Puzzle', file: 'my_new_puzzle.xml' } // Add your puzzle here
+];
 ```
+Your puzzle will then appear in the "Show all available crosswords" menu.
