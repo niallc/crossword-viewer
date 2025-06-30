@@ -1,4 +1,4 @@
-// Crossword class module (v2.3 - Mobile keyboard focus fix)
+// Crossword class module (v2.4 - Added architectural documentation)
 import { parsePuzzle } from './puzzle-parser.js';
 import { getWordCells } from './grid-utils.js';
 import {
@@ -7,6 +7,50 @@ import {
   rleEncode,
   rleDecode
 } from './state-utils.js';
+
+//================================================================================
+// ARCHITECTURAL NOTE: THE "HIDDEN INPUT" METHOD FOR KEYBOARD INPUT
+//--------------------------------------------------------------------------------
+// The primary challenge in this application is handling text input reliably
+// across all major browsers (Desktop Chrome/Firefox, Mobile Safari/Chrome).
+//
+// Initial attempts using `contenteditable` on the grid cells proved to be highly
+// unreliable and buggy:
+// - Mobile keyboards would often fail to appear or would disappear unexpectedly.
+// - Text could be inserted in the wrong place (e.g., next to the clue number).
+// - Firefox had specific bugs blocking input on certain cells.
+// - It was difficult to enforce a single-character limit per cell.
+//
+// To solve these issues, this application uses a standard, robust web development
+// pattern that decouples the visual grid from the input mechanism.
+//
+// The architecture has three key parts:
+//
+// 1. A NON-EDITABLE VISUAL GRID:
+//    The grid cells (`<div class="cell">`) are purely for display. They are not
+//    `contenteditable`. This prevents the browser from directly manipulating the
+//    grid's structure, which was a major source of bugs.
+//
+// 2. A SINGLE, HIDDEN <input> ELEMENT:
+//    A standard `<input type="text">` element exists in the DOM but is moved
+//    off-screen with CSS. This input acts as the single, reliable gateway for
+//    all keyboard events, both physical and virtual (mobile).
+//
+// 3. JAVASCRIPT-CONTROLLED EVENT FLOW:
+//    - When a user taps/clicks a visual grid cell, our JavaScript calls `.focus()`
+//      on the hidden input. This is the W3C-recommended way to reliably trigger
+//      the virtual keyboard on mobile devices.
+//    - An `input` event listener on the hidden input captures the typed character.
+//      It updates the correct visual cell's `.letter` div and immediately clears
+//      the hidden input, making it ready for the next keystroke.
+//    - A `keydown` listener on the same hidden input handles non-character keys
+//      like Backspace and the arrow keys for navigation and deletion.
+//
+// This design is superior because it sidesteps the notoriously inconsistent
+// `contenteditable` attribute and relies instead on the highly optimized and
+// standardized behavior of the `<input>` element, ensuring a consistent user
+// experience across all platforms.
+//================================================================================
 
 function getArrowForDirection(direction, forward = true) {
   if (direction === 'across') {
@@ -24,7 +68,7 @@ function getMoveBackDir(currentDirection) {
 
 export default class Crossword {
   constructor(xmlData, puzzleId) {
-    console.log('Crossword Viewer: Starting v2.3');
+    console.log('Crossword Viewer: Starting v2.4');
     if (typeof xmlData === 'undefined') {
       console.error('ERROR: CrosswordPuzzleData not found.');
       return;
@@ -73,7 +117,7 @@ export default class Crossword {
       letter.classList.add('letter');
       cell.appendChild(letter);
       
-      // Cells are no longer editable. Clicks are handled to focus the hidden input.
+      // Event listeners to handle cell selection and focus the hidden input.
       cell.addEventListener('pointerdown', (e) => {
         this.pointerInfo = { cell, pointerId: e.pointerId, x: e.clientX, y: e.clientY };
       });
@@ -87,7 +131,7 @@ export default class Crossword {
         const dist = Math.hypot(dx, dy);
         const sameCell = this.pointerInfo.cell === cell;
         this.pointerInfo = null;
-        if (sameCell && dist < 10) {
+        if (sameCell && dist < 10) { // Check for a tap/click vs. a drag
           this.selectCell(cell);
           e.preventDefault();
         }
@@ -97,7 +141,7 @@ export default class Crossword {
     return cell;
   }
 
-  // Handles character entry from both physical and virtual keyboards.
+  // Handles character entry from both physical and virtual keyboards via the hidden input.
   handleCharacterInput(e) {
     if (!this.selectedCell) return;
 
@@ -115,7 +159,7 @@ export default class Crossword {
     this.hiddenInput.value = '';
   }
 
-  // Handles navigation and deletion keys.
+  // Handles navigation (arrows) and deletion (Backspace) from the hidden input.
   handleNavigation(e) {
     if (!this.selectedCell) return;
     const key = e.key;
@@ -200,6 +244,7 @@ export default class Crossword {
         this.selectedCell = cell;
         this.selectedCell.classList.add('selected');
 
+        // If the current direction doesn't form a valid word, switch directions.
         let cells = getWordCells(this.puzzleData, this.cellEls, this.selectedCell, this.currentDirection);
         if (cells.length <= 1) {
           const otherDir = this.currentDirection === 'across' ? 'down' : 'across';
@@ -211,7 +256,18 @@ export default class Crossword {
     }
     this.highlightWord(this.selectedCell);
     
-    // Defer focusing the hidden input to prevent mobile keyboards from immediately hiding.
+    //============================================================================
+    // MOBILE KEYBOARD FIX:
+    // On mobile browsers, calling .focus() directly within a 'click' or 'pointerup'
+    // event handler can cause a "focus battle". The browser might immediately
+    // move focus back to the body after the event, causing the virtual keyboard
+    // to flash on screen and then instantly disappear.
+    //
+    // Wrapping the .focus() call in a `setTimeout(..., 0)` defers the execution
+    // until the browser has finished its current event processing task. This
+    // ensures our focus command is the last one, preventing the conflict and
+    // keeping the keyboard visible.
+    //============================================================================
     setTimeout(() => {
         if (this.hiddenInput) {
             this.hiddenInput.focus();
@@ -248,7 +304,9 @@ export default class Crossword {
 
   autoAdvance() {
     let moved = false;
+    // Try to move forward in the current direction.
     moved = this.moveSelection(getArrowForDirection(this.currentDirection, true));
+    // If we hit a wall, try to switch directions and move forward from there.
     if (!moved) {
       this.currentDirection = this.currentDirection === 'across' ? 'down' : 'across';
       this.moveSelection(getArrowForDirection(this.currentDirection, true));
@@ -268,6 +326,7 @@ export default class Crossword {
   loadStateFromLocalStorage() {
     try {
       let serialized = localStorage.getItem(this.getStorageKey());
+      // Migration logic for old key
       if (!serialized && this.puzzleId === 'social_deduction_ok.xml') {
         const oldState = localStorage.getItem('crosswordState');
         if (oldState) {
@@ -314,6 +373,7 @@ export default class Crossword {
   handleBackspace() {
     if (!this.selectedCell) return;
     const letterEl = this.selectedCell.querySelector('.letter');
+    // If the current cell has a letter, clear it.
     if (letterEl && letterEl.textContent) {
       letterEl.textContent = '';
       this.saveStateToLocalStorage();
@@ -339,6 +399,7 @@ export default class Crossword {
       this.highlightedCells.push(el);
     });
 
+    // Highlight the corresponding clue in the list.
     document.querySelectorAll('#clues li.highlight').forEach(li => li.classList.remove('highlight'));
     const clueNumber = cells.length > 0 ? cells[0].data.number : null;
     if (clueNumber) {
@@ -359,15 +420,15 @@ export default class Crossword {
     if (!topEl || !bottomEl) return;
 
     if (!this.selectedCell) {
-      if (topEl) topEl.textContent = '';
-      if (bottomEl) bottomEl.textContent = '';
+      topEl.textContent = '';
+      bottomEl.textContent = '';
       return;
     }
 
     const cells = getWordCells(this.puzzleData, this.cellEls, this.selectedCell, this.currentDirection);
     if (cells.length === 0) {
-      if (topEl) topEl.textContent = '';
-      if (bottomEl) bottomEl.textContent = '';
+      topEl.textContent = '';
+      bottomEl.textContent = '';
       return;
     }
 
@@ -377,14 +438,14 @@ export default class Crossword {
       : this.puzzleData.cluesDown;
     const clue = clues.find(cl => cl.number === clueNumber);
     if (!clue) {
-      if (topEl) topEl.textContent = '';
-      if (bottomEl) bottomEl.textContent = '';
+      topEl.textContent = '';
+      bottomEl.textContent = '';
       return;
     }
     const enumStr = clue.enumeration || clue.length;
     const text = `${clue.number}. ${clue.text} (${enumStr})`;
-    if (topEl) topEl.textContent = text;
-    if (bottomEl) bottomEl.textContent = text;
+    topEl.textContent = text;
+    bottomEl.textContent = text;
   }
 
   clearFeedback() {
