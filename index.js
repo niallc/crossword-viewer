@@ -1,4 +1,4 @@
-// index.js v1.1
+// index.js v1.2
 import Crossword from './crossword.js';
 import { findFirstLetterCell } from './grid-utils.js';
 
